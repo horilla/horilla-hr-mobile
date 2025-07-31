@@ -6,8 +6,10 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        maven(url = "https://maven.regulaforensics.com/RegulaDocumentReader")
     }
 }
+
 
 // Redirect build output directory
 val newBuildDir: Directory = rootProject.layout.buildDirectory.dir("../../build").get()

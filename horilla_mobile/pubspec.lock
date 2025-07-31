@@ -45,10 +45,10 @@ packages:
     dependency: transitive
     description:
       name: async
-      sha256: d2872f9c19731c2e5f10444b14686eb7cc85c76274bd6c16e1816bff9a3bab63
+      sha256: "758e6d74e971c3e5aceb4110bfd6698efc7f501675bcfe0c775459a8140750eb"
       url: "https://pub.dev"
     source: hosted
-    version: "2.12.0"
+    version: "2.13.0"
   boolean_selector:
     dependency: transitive
     description:
@@ -221,10 +221,10 @@ packages:
     dependency: "direct main"
     description:
       name: date_field
-      sha256: "782cc255bb8bce17f1d7bcf7326ae463c7478315ef76ee29696dcac42355122c"
+      sha256: "5714b1ac0ba1c860877b3040601a6fd20cb846042c9ae6d8216ffede422d43d1"
       url: "https://pub.dev"
     source: hosted
-    version: "4.1.0"
+    version: "6.0.3+1"
   date_format_field:
     dependency: "direct main"
     description:
@@ -285,10 +285,10 @@ packages:
     dependency: transitive
     description:
       name: fake_async
-      sha256: "6a95e56b2449df2273fd8c45a662d6947ce1ebb7aafe80e550a3f68297f3cacc"
+      sha256: "5368f224a74523e8d2e7399ea1638b37aecfca824a3cc4dfdf77bf1fa905ac44"
       url: "https://pub.dev"
     source: hosted
-    version: "1.3.2"
+    version: "1.3.3"
   ffi:
     dependency: transitive
     description:
@@ -535,10 +535,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_quill
-      sha256: "6274834823e61291c0cedee9dd7f73fc7836ea07a12596de8f5fa08598b5eb74"
+      sha256: "8e33ef670abad16405582a37ce63ac82b7531998682e8bd8348d0f3da998b8ce"
       url: "https://pub.dev"
     source: hosted
-    version: "10.8.5"
+    version: "11.4.2"
   flutter_quill_delta_from_html:
     dependency: transitive
     description:
@@ -769,10 +769,10 @@ packages:
     dependency: transitive
     description:
       name: intl
-      sha256: d6f56758b7d3014a48af9701c085700aac781a92a87a62b1333b46d8879661cf
+      sha256: "3df61194eb431efc39c4ceba583b95633a403f46c9fd341e550ce0bfa50e9aa5"
       url: "https://pub.dev"
     source: hosted
-    version: "0.19.0"
+    version: "0.20.2"
   latlong2:
     dependency: "direct main"
     description:
@@ -785,10 +785,10 @@ packages:
     dependency: transitive
     description:
       name: leak_tracker
-      sha256: c35baad643ba394b40aac41080300150a4f08fd0fd6a10378f8f7c6bc161acec
+      sha256: "6bb818ecbdffe216e81182c2f0714a2e62b593f4a4f13098713ff1685dfb6ab0"
       url: "https://pub.dev"
     source: hosted
-    version: "10.0.8"
+    version: "10.0.9"
   leak_tracker_flutter_testing:
     dependency: transitive
     description:
@@ -1185,10 +1185,10 @@ packages:
     dependency: transitive
     description:
       name: quill_native_bridge
-      sha256: "0b3200c57bb4f1f12d6c764648d42482891f20f12024c75fe3479cafc1e132c9"
+      sha256: "00752aca7d67cbd3254709a47558be78427750cb81aa42cfbed354d4a079bcfa"
       url: "https://pub.dev"
     source: hosted
-    version: "10.7.11"
+    version: "11.0.1"
   quill_native_bridge_android:
     dependency: transitive
     description:
@@ -1390,10 +1390,10 @@ packages:
     dependency: "direct main"
     description:
       name: table_calendar
-      sha256: b2896b7c86adf3a4d9c911d860120fe3dbe03c85db43b22fd61f14ee78cdbb63
+      sha256: "0c0c6219878b363a2d5f40c7afb159d845f253d061dc3c822aa0d5fe0f721982"
       url: "https://pub.dev"
     source: hosted
-    version: "3.1.3"
+    version: "3.2.0"
   term_glyph:
     dependency: transitive
     description:
@@ -1414,10 +1414,10 @@ packages:
     dependency: "direct main"
     description:
       name: timeago
-      sha256: "054cedf68706bb142839ba0ae6b135f6b68039f0b8301cbe8784ae653d5ff8de"
+      sha256: b05159406a97e1cbb2b9ee4faa9fb096fe0e2dfcd8b08fcd2a00553450d3422e
       url: "https://pub.dev"
     source: hosted
-    version: "3.7.0"
+    version: "3.7.1"
   timeline_tile:
     dependency: "direct main"
     description:
@@ -1558,10 +1558,10 @@ packages:
     dependency: transitive
     description:
       name: vm_service
-      sha256: "0968250880a6c5fe7edc067ed0a13d4bae1577fe2771dcf3010d52c4a9d3ca14"
+      sha256: ddfa8d30d89985b96407efce8acbdd124701f96741f2d981ca860662f1c0dc02
       url: "https://pub.dev"
     source: hosted
-    version: "14.3.1"
+    version: "15.0.0"
   web:
     dependency: transitive
     description:

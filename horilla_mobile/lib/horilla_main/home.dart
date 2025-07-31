@@ -709,6 +709,36 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Widget _buildDashboardCard({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+  }) {
+    return Card(
+      elevation: 3,
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12.0),
+          child: ListTile(
+            leading: Icon(icon, color: Colors.blue, size: 28),
+            title: Text(title,
+                style: const TextStyle(fontWeight: FontWeight.bold)),
+            subtitle: Text(
+              subtitle,
+              style: TextStyle(color: Colors.grey.shade700),
+            ),
+            trailing: const Icon(Icons.keyboard_arrow_right),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -803,67 +833,68 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(16.0),
         child: ListView(
           children: [
-            const SizedBox(height: 50.0),
-            const SizedBox(height: 50.0),
-            Card(
-              child: ListTile(
-                leading: const Icon(Icons.people),
-                title: const Text('Employees'),
-                subtitle: Text(
-                  'View and manage all your employees.',
-                  style: TextStyle(color: Colors.grey.shade700),
-                ),
-                trailing: const Icon(Icons.keyboard_arrow_right),
-                onTap: () {
-                  Navigator.pushNamed(context, '/employees_list',
+            const SizedBox(height: 30),
+
+            // Optional Welcome Message
+            Text(
+              'Welcome back!',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Colors.grey.shade600,
+              ),
+
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'Manage your team and tasks from here.',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Colors.grey.shade600,
+              ),
+
+            ),
+            const SizedBox(height: 30),
+
+            // Employees Card
+            _buildDashboardCard(
+              icon: Icons.people,
+              title: 'Employees',
+              subtitle: 'View and manage all your employees.',
+              onTap: () {
+                Navigator.pushNamed(context, '/employees_list',
+                    arguments: permissionCheck);
+              },
+            ),
+
+            // Attendance Card
+            _buildDashboardCard(
+              icon: Icons.checklist_rtl,
+              title: 'Attendances',
+              subtitle: 'Record and view employee attendance.',
+              onTap: () {
+                if (permissionCheck) {
+                  Navigator.pushNamed(context, '/attendance_overview',
                       arguments: permissionCheck);
-                },
-              ),
+                } else {
+                  Navigator.pushNamed(context, '/employee_hour_account',
+                      arguments: permissionCheck);
+                }
+              },
             ),
-            Card(
-              child: ListTile(
-                leading: const Icon(Icons.checklist_rtl),
-                title: const Text('Attendances'),
-                subtitle: Text(
-                  'Record and view employee information.',
-                  style: TextStyle(color: Colors.grey.shade700),
-                ),
-                trailing: const Icon(Icons.keyboard_arrow_right),
-                onTap: () {
-                  if (permissionCheck) {
-                    Navigator.pushNamed(context, '/attendance_overview',
-                        arguments: permissionCheck);
-                  } else {
-                    Navigator.pushNamed(context, '/employee_hour_account',
-                        arguments: permissionCheck);
-                  }
-                },
-              ),
-            ),
-            Card(
-              child: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    if (permissionLeaveOverviewCheck) {
-                      Navigator.pushNamed(context, '/leave_overview');
-                    } else {
-                      Navigator.pushNamed(context, '/my_leave_request');
-                    }
-                  });
-                },
-                child: ListTile(
-                  leading: const Icon(Icons.calendar_month_outlined),
-                  title: const Text('Leaves'),
-                  subtitle: Text(
-                    'Record and view Leave information',
-                    style: TextStyle(color: Colors.grey.shade700),
-                  ),
-                  trailing: const Icon(Icons.keyboard_arrow_right),
-                ),
-              ),
+
+            // Leaves Card
+            _buildDashboardCard(
+              icon: Icons.calendar_month_outlined,
+              title: 'Leaves',
+              subtitle: 'Record and view leave information.',
+              onTap: () {
+                if (permissionLeaveOverviewCheck) {
+                  Navigator.pushNamed(context, '/leave_overview');
+                } else {
+                  Navigator.pushNamed(context, '/my_leave_request');
+                }
+              },
             ),
           ],
         ),
