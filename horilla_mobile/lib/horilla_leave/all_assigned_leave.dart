@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:multiselect_dropdown_flutter/multiselect_dropdown_flutter.dart';
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
 import 'package:shimmer/shimmer.dart';
+import '../../res/consts/app_colors.dart';
 
 class AllAssignedLeave extends StatefulWidget {
   const AllAssignedLeave({super.key});
@@ -851,8 +852,8 @@ class _AllAssignedLeave extends State<AllAssignedLeave> {
 
   Widget shimmerListTile() {
     return Shimmer.fromColors(
-      baseColor: Colors.grey[300]!,
-      highlightColor: Colors.grey[100]!,
+      baseColor: grey300,
+      highlightColor: grey100,
       child: ListTile(
         title: Container(
           width: double.infinity,
@@ -878,8 +879,8 @@ class _AllAssignedLeave extends State<AllAssignedLeave> {
                       margin: const EdgeInsets.all(8),
                       elevation: 0,
                       child: Shimmer.fromColors(
-                        baseColor: Colors.grey[300]!,
-                        highlightColor: Colors.grey[100]!,
+                        baseColor: grey300,
+                        highlightColor: grey100,
                         period: const Duration(seconds: 30),
                         child: Container(
                           decoration: BoxDecoration(
@@ -1008,8 +1009,8 @@ class _AllAssignedLeave extends State<AllAssignedLeave> {
                       borderRadius: BorderRadius.circular(8.0),
                       child: _isShimmerVisible
                           ? Shimmer.fromColors(
-                        baseColor: Colors.grey[300]!,
-                        highlightColor: Colors.grey[100]!,
+                        baseColor: grey300,
+                        highlightColor: grey100,
                         period: const Duration(seconds: 30),
                         child: Container(
                           decoration: BoxDecoration(

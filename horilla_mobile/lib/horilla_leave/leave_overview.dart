@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
 import 'leave_request.dart';
 import 'package:shimmer/shimmer.dart';
+import '../../res/consts/app_colors.dart';
 
 class LeaveOverview extends StatefulWidget {
   const LeaveOverview({super.key});
@@ -718,8 +719,8 @@ class _LeaveOverview extends State<LeaveOverview>
 
 Widget shimmerListTile() {
   return Shimmer.fromColors(
-    baseColor: Colors.grey[300]!,
-    highlightColor: Colors.grey[100]!,
+    baseColor: grey300,
+    highlightColor: grey100,
     child: ListTile(
       title: Container(
         width: double.infinity,
@@ -778,8 +779,8 @@ Widget _buildGridItem(
 
 Widget _buildShimmerEffect(BuildContext context) {
   return Shimmer.fromColors(
-    baseColor: Colors.grey[300]!,
-    highlightColor: Colors.grey[100]!,
+    baseColor: grey300,
+    highlightColor: grey100,
     child: ListView(
       children: [
         LayoutBuilder(
@@ -868,8 +869,8 @@ Widget _buildShimmerGridItem(BuildContext context) {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Shimmer.fromColors(
-          baseColor: Colors.grey[300]!,
-          highlightColor: Colors.grey[100]!,
+          baseColor: grey300,
+          highlightColor: grey100,
           child: Container(
             width: 100.0,
             height: 50.0,
@@ -878,8 +879,8 @@ Widget _buildShimmerGridItem(BuildContext context) {
         ),
         const SizedBox(height: 10.0),
         Shimmer.fromColors(
-          baseColor: Colors.grey[300]!,
-          highlightColor: Colors.grey[100]!,
+          baseColor: grey300,
+          highlightColor: grey100,
           child: Container(
             width: 100.0,
             height: 20.0,
@@ -893,8 +894,8 @@ Widget _buildShimmerGridItem(BuildContext context) {
 
 Widget _buildShimmerText(BuildContext context) {
   return Shimmer.fromColors(
-    baseColor: Colors.grey[300]!,
-    highlightColor: Colors.grey[100]!,
+    baseColor: grey300,
+    highlightColor: grey100,
     child: Container(
       width: MediaQuery.of(context).size.width * 0.3,
       height: 20.0,
@@ -905,8 +906,8 @@ Widget _buildShimmerText(BuildContext context) {
 
 Widget _buildShimmerIconButton(BuildContext context) {
   return Shimmer.fromColors(
-    baseColor: Colors.grey[300]!,
-    highlightColor: Colors.grey[100]!,
+    baseColor: grey300,
+    highlightColor: grey100,
     child: Container(
       width: 40.0,
       height: 40.0,

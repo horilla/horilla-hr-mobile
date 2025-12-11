@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import '../res/consts/app_colors.dart';
 
 class EmployeeListPage extends StatefulWidget {
   const EmployeeListPage({super.key});
@@ -338,8 +339,8 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
                           margin: const EdgeInsets.all(8),
                           elevation: 0,
                           child: Shimmer.fromColors(
-                            baseColor: Colors.grey[300]!,
-                            highlightColor: Colors.grey[100]!,
+                            baseColor: grey300,
+                            highlightColor: grey100,
                             child: Container(
                               decoration: BoxDecoration(
                                 color: Colors.grey[100],
@@ -387,8 +388,8 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
                       itemCount: 6,
                       itemBuilder: (context, index) {
                         return Shimmer.fromColors(
-                          baseColor: Colors.grey[300]!,
-                          highlightColor: Colors.grey[100]!,
+                          baseColor: grey300,
+                          highlightColor: grey100,
                           child: Card(
                             margin:
                             const EdgeInsets.symmetric(vertical: 8),

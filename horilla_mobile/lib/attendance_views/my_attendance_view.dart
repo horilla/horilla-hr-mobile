@@ -3,6 +3,7 @@ import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_not
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import '../res/consts/app_colors.dart';
 
 class MyAttendanceViews extends StatefulWidget {
   const MyAttendanceViews({super.key});
@@ -157,9 +158,9 @@ class _MyAttendanceViews extends State<MyAttendanceViews>
     employeeProfile = args['employee_profile'] ?? 'None';
     permissionCheck = args['permission_check'];
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: whiteColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: whiteColor,
         automaticallyImplyLeading: false,
         title: const Text('My Attendances',
             style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
@@ -283,7 +284,7 @@ class _MyAttendanceViews extends State<MyAttendanceViews>
                 children: [
                   Text(
                     'Date',
-                    style: TextStyle(color: Colors.grey.shade700),
+                    style: TextStyle(color: grey700),
                   ),
                   Text(attendanceDate,
                       style: const TextStyle(color: Colors.black)),
@@ -297,7 +298,7 @@ class _MyAttendanceViews extends State<MyAttendanceViews>
                 children: [
                   Text(
                     'Check-In',
-                    style: TextStyle(color: Colors.grey.shade700),
+                    style: TextStyle(color: grey700),
                   ),
                   Text(attendanceClockIn,
                       style: const TextStyle(color: Colors.black)),
@@ -311,7 +312,7 @@ class _MyAttendanceViews extends State<MyAttendanceViews>
                 children: [
                   Text(
                     'Check-Out',
-                    style: TextStyle(color: Colors.grey.shade700),
+                    style: TextStyle(color: grey700),
                   ),
                   Text(attendanceClockOut,
                       style: const TextStyle(color: Colors.black)),
@@ -325,7 +326,7 @@ class _MyAttendanceViews extends State<MyAttendanceViews>
                 children: [
                   Text(
                     'Shift',
-                    style: TextStyle(color: Colors.grey.shade700),
+                    style: TextStyle(color: grey700),
                   ),
                   Text(shiftName, style: const TextStyle(color: Colors.black)),
                 ],
@@ -338,7 +339,7 @@ class _MyAttendanceViews extends State<MyAttendanceViews>
                 children: [
                   Text(
                     'Minimum Hour',
-                    style: TextStyle(color: Colors.grey.shade700),
+                    style: TextStyle(color: grey700),
                   ),
                   Text(minimumHour,
                       style: const TextStyle(color: Colors.black)),
@@ -352,7 +353,7 @@ class _MyAttendanceViews extends State<MyAttendanceViews>
                 children: [
                   Text(
                     'Check-In Date',
-                    style: TextStyle(color: Colors.grey.shade700),
+                    style: TextStyle(color: grey700),
                   ),
                   Text(attendanceClockInDate,
                       style: const TextStyle(color: Colors.black)),
@@ -366,7 +367,7 @@ class _MyAttendanceViews extends State<MyAttendanceViews>
                 children: [
                   Text(
                     'Check-Out Date',
-                    style: TextStyle(color: Colors.grey.shade700),
+                    style: TextStyle(color: grey700),
                   ),
                   Text(attendanceClockOutDate,
                       style: const TextStyle(color: Colors.black)),
@@ -380,7 +381,7 @@ class _MyAttendanceViews extends State<MyAttendanceViews>
                 children: [
                   Text(
                     'At Work',
-                    style: TextStyle(color: Colors.grey.shade700),
+                    style: TextStyle(color: grey700),
                   ),
                   Text(attendanceWorkedHour,
                       style: const TextStyle(color: Colors.black)),
@@ -409,31 +410,31 @@ class _MyAttendanceViews extends State<MyAttendanceViews>
                 BottomBarItem(
                   inActiveItem: Icon(
                     Icons.home_filled,
-                    color: Colors.white,
+                    color: whiteColor,
                   ),
                   activeItem: Icon(
                     Icons.home_filled,
-                    color: Colors.white,
+                    color: whiteColor,
                   ),
                 ),
                 BottomBarItem(
                   inActiveItem: Icon(
                     Icons.update_outlined,
-                    color: Colors.white,
+                    color: whiteColor,
                   ),
                   activeItem: Icon(
                     Icons.update_outlined,
-                    color: Colors.white,
+                    color: whiteColor,
                   ),
                 ),
                 BottomBarItem(
                   inActiveItem: Icon(
                     Icons.person,
-                    color: Colors.white,
+                    color: whiteColor,
                   ),
                   activeItem: Icon(
                     Icons.person,
-                    color: Colors.white,
+                    color: whiteColor,
                   ),
                 ),
               ],
@@ -467,7 +468,7 @@ class Home extends StatelessWidget {
       Navigator.pushNamed(context, '/home');
     });
     return Container(
-      color: Colors.white,
+      color: whiteColor,
       child: const Center(child: Text('Page 1')),
     );
   }
@@ -479,7 +480,7 @@ class Overview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        color: Colors.white, child: const Center(child: Text('Page 2')));
+        color: whiteColor, child: const Center(child: Text('Page 2')));
   }
 }
 
@@ -492,7 +493,7 @@ class User extends StatelessWidget {
       Navigator.pushNamed(context, '/user');
     });
     return Container(
-      color: Colors.white,
+      color: whiteColor,
       child: const Center(child: Text('Page 1')),
     );
   }

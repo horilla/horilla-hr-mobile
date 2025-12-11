@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:html/parser.dart' as html_parser;
+import '../res/consts/app_colors.dart';
 
 class AttendanceOverview extends StatefulWidget {
   const AttendanceOverview({super.key});
@@ -502,8 +503,8 @@ class _AttendanceOverviewState extends State<AttendanceOverview>
 
   Widget shimmerListTile() {
     return Shimmer.fromColors(
-      baseColor: Colors.grey[300]!,
-      highlightColor: Colors.grey[100]!,
+      baseColor: grey300,
+      highlightColor: grey100,
       child: ListTile(
         title: Container(
           width: double.infinity,
@@ -525,8 +526,8 @@ class _AttendanceOverviewState extends State<AttendanceOverview>
       child: ListView(
         children: [
           Shimmer.fromColors(
-            baseColor: Colors.grey[300]!,
-            highlightColor: Colors.grey[100]!,
+            baseColor: grey300,
+            highlightColor: grey100,
             child: SizedBox(
               height: MediaQuery.of(context).size.height * 0.15,
               child: Padding(
@@ -570,8 +571,8 @@ class _AttendanceOverviewState extends State<AttendanceOverview>
             ),
           ),
           Shimmer.fromColors(
-            baseColor: Colors.grey[300]!,
-            highlightColor: Colors.grey[100]!,
+            baseColor: grey300,
+            highlightColor: grey100,
             child: Container(
               padding: const EdgeInsets.all(8.0),
               child: Container(
@@ -622,8 +623,8 @@ class _AttendanceOverviewState extends State<AttendanceOverview>
                             return Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Shimmer.fromColors(
-                                baseColor: Colors.grey[300]!,
-                                highlightColor: Colors.grey[100]!,
+                                baseColor: grey300,
+                                highlightColor: grey100,
                                 child: Container(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Container(

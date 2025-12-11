@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import '../res/consts/app_colors.dart';
 
 class AttendanceAttendance extends StatefulWidget {
   const AttendanceAttendance({super.key});
@@ -241,12 +242,12 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                   children: [
                     Image.asset(imagePath),
                     const SizedBox(height: 16),
-                    const Text(
+                    Text(
                       "Attendance Created Successfully",
                       style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: Colors.red),
+                          color: redColor),
                     ),
                   ],
                 ),
@@ -284,12 +285,12 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                   children: [
                     Image.asset(imagePath),
                     const SizedBox(height: 16),
-                    const Text(
+                    Text(
                       "Attendance Updated Successfully",
                       style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: Colors.red),
+                          color: redColor),
                     ),
                   ],
                 ),
@@ -327,12 +328,12 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                   children: [
                     Image.asset(imagePath),
                     const SizedBox(height: 16),
-                    const Text(
+                    Text(
                       "Attendance Deleted Successfully",
                       style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: Colors.red),
+                          color: redColor),
                     ),
                   ],
                 ),
@@ -370,12 +371,12 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                   children: [
                     Image.asset(imagePath),
                     const SizedBox(height: 16),
-                    const Text(
+                    Text(
                       "Attendance Validated Successfully",
                       style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: Colors.red),
+                          color: redColor),
                     ),
                   ],
                 ),
@@ -1117,8 +1118,8 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
       builder: (BuildContext context, Widget? child) {
         return Theme(
           data: ThemeData.light().copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: Colors.blue,
+            colorScheme: ColorScheme.light(
+              primary: infoColor,
             ),
           ),
           child: child!,
@@ -1161,16 +1162,16 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
             return Stack(
               children: [
                 AlertDialog(
-                  backgroundColor: Colors.white,
+                  backgroundColor: whiteColor,
                   title: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
+                      Text(
                         "Edit Attendance",
                         style: TextStyle(
                             fontSize: 21,
                             fontWeight: FontWeight.bold,
-                            color: Colors.black),
+                            color: blackColor),
                       ),
                       IconButton(
                         icon: const Icon(Icons.close),
@@ -1192,17 +1193,17 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                               padding: const EdgeInsets.only(bottom: 10),
                               child: Text(
                                 _errorMessage ?? '',
-                                style: const TextStyle(
-                                    color: Colors.red,
+                                style: TextStyle(
+                                    color: redColor,
                                     fontWeight: FontWeight.bold),
                               ),
                             ),
                           SizedBox(
                               height:
                               MediaQuery.of(context).size.height * 0.03),
-                          const Text(
+                          Text(
                             'Employee',
-                            style: TextStyle(color: Colors.black),
+                            style: TextStyle(color: blackColor),
                           ),
                           SizedBox(
                               height:
@@ -1212,7 +1213,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                               controller: _typeAheadController,
                               decoration: InputDecoration(
                                 labelText: 'Search Employee',
-                                labelStyle: TextStyle(color: Colors.grey[350]),
+                                labelStyle: TextStyle(color: labelTextColor),
                                 contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 10.0),
                                 border: const OutlineInputBorder(),
@@ -1263,9 +1264,9 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                           SizedBox(
                               height:
                               MediaQuery.of(context).size.height * 0.03),
-                          const Text(
+                          Text(
                             "Attendance Date",
-                            style: TextStyle(color: Colors.black),
+                            style: TextStyle(color: blackColor),
                           ),
                           SizedBox(
                               height:
@@ -1299,9 +1300,9 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                           SizedBox(
                               height:
                               MediaQuery.of(context).size.height * 0.03),
-                          const Text(
+                          Text(
                             "Shift",
-                            style: TextStyle(color: Colors.black),
+                            style: TextStyle(color: blackColor),
                           ),
                           SizedBox(
                               height:
@@ -1311,7 +1312,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                               controller: typeAheadEditShiftController,
                               decoration: InputDecoration(
                                 labelText: 'Search Shift',
-                                labelStyle: TextStyle(color: Colors.grey[350]),
+                                labelStyle: TextStyle(color: labelTextColor),
                                 border: const OutlineInputBorder(),
                                 contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 10.0),
@@ -1366,9 +1367,9 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
+                                    Text(
                                       'Check-In Date',
-                                      style: TextStyle(color: Colors.black),
+                                      style: TextStyle(color: blackColor),
                                     ),
                                     SizedBox(
                                         height:
@@ -1408,9 +1409,9 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
+                                    Text(
                                       'Check-In',
-                                      style: TextStyle(color: Colors.black),
+                                      style: TextStyle(color: blackColor),
                                     ),
                                     SizedBox(
                                         height:
@@ -1464,9 +1465,9 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
+                                    Text(
                                       'Check-Out Date',
-                                      style: TextStyle(color: Colors.black),
+                                      style: TextStyle(color: blackColor),
                                     ),
                                     SizedBox(
                                         height:
@@ -1506,9 +1507,9 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
+                                    Text(
                                       'Check-Out',
-                                      style: TextStyle(color: Colors.black),
+                                      style: TextStyle(color: blackColor),
                                     ),
                                     SizedBox(
                                         height:
@@ -1562,9 +1563,9 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
+                                    Text(
                                       'Working Hours',
-                                      style: TextStyle(color: Colors.black),
+                                      style: TextStyle(color: blackColor),
                                     ),
                                     SizedBox(
                                         height:
@@ -1597,9 +1598,9 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
+                                    Text(
                                       'Minimum Hour',
-                                      style: TextStyle(color: Colors.black),
+                                      style: TextStyle(color: blackColor),
                                     ),
                                     SizedBox(
                                         height:
@@ -1699,7 +1700,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         },
                         style: ButtonStyle(
                           backgroundColor:
-                          MaterialStateProperty.all<Color>(Colors.red),
+                          MaterialStateProperty.all<Color>(redColor),
                           shape:
                           MaterialStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
@@ -1707,8 +1708,8 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                             ),
                           ),
                         ),
-                        child: const Text('Save',
-                            style: TextStyle(color: Colors.white)),
+                        child: Text('Save',
+                            style: TextStyle(color: whiteColor)),
                       ),
                     ),
                   ],
@@ -1754,16 +1755,16 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
             return Stack(
               children: [
                 AlertDialog(
-                  backgroundColor: Colors.white,
+                  backgroundColor: whiteColor,
                   title: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
+                      Text(
                         "Edit Attendance",
                         style: TextStyle(
                             fontSize: 21,
                             fontWeight: FontWeight.bold,
-                            color: Colors.black),
+                            color: blackColor),
                       ),
                       IconButton(
                         icon: const Icon(Icons.close),
@@ -1785,17 +1786,17 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                               padding: const EdgeInsets.only(bottom: 10),
                               child: Text(
                                 _errorMessage ?? '',
-                                style: const TextStyle(
-                                    color: Colors.red,
+                                style: TextStyle(
+                                    color: redColor,
                                     fontWeight: FontWeight.bold),
                               ),
                             ),
                           SizedBox(
                               height:
                               MediaQuery.of(context).size.height * 0.03),
-                          const Text(
+                          Text(
                             'Employee',
-                            style: TextStyle(color: Colors.black),
+                            style: TextStyle(color: blackColor),
                           ),
                           SizedBox(
                               height:
@@ -1805,7 +1806,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                               controller: _typeAheadController,
                               decoration: InputDecoration(
                                 labelText: 'Search Employee',
-                                labelStyle: TextStyle(color: Colors.grey[350]),
+                                labelStyle: TextStyle(color: labelTextColor),
                                 contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 10.0),
                                 border: const OutlineInputBorder(),
@@ -1856,9 +1857,9 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                           SizedBox(
                               height:
                               MediaQuery.of(context).size.height * 0.03),
-                          const Text(
+                          Text(
                             "Attendance Date",
-                            style: TextStyle(color: Colors.black),
+                            style: TextStyle(color: blackColor),
                           ),
                           SizedBox(
                               height:
@@ -1892,9 +1893,9 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                           SizedBox(
                               height:
                               MediaQuery.of(context).size.height * 0.03),
-                          const Text(
+                          Text(
                             "Shift",
-                            style: TextStyle(color: Colors.black),
+                            style: TextStyle(color: blackColor),
                           ),
                           SizedBox(
                               height:
@@ -1904,7 +1905,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                               controller: typeAheadEditShiftController,
                               decoration: InputDecoration(
                                 labelText: 'Search Shift',
-                                labelStyle: TextStyle(color: Colors.grey[350]),
+                                labelStyle: TextStyle(color: labelTextColor),
                                 border: const OutlineInputBorder(),
                                 contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 10.0),
@@ -1959,9 +1960,9 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
+                                    Text(
                                       'Check-In Date',
-                                      style: TextStyle(color: Colors.black),
+                                      style: TextStyle(color: blackColor),
                                     ),
                                     SizedBox(
                                         height:
@@ -2001,9 +2002,9 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
+                                    Text(
                                       'Check-In',
-                                      style: TextStyle(color: Colors.black),
+                                      style: TextStyle(color: blackColor),
                                     ),
                                     SizedBox(
                                         height:
@@ -2057,9 +2058,9 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
+                                    Text(
                                       'Check-Out Date',
-                                      style: TextStyle(color: Colors.black),
+                                      style: TextStyle(color: blackColor),
                                     ),
                                     SizedBox(
                                         height:
@@ -2099,9 +2100,9 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
+                                    Text(
                                       'Check-Out',
-                                      style: TextStyle(color: Colors.black),
+                                      style: TextStyle(color: blackColor),
                                     ),
                                     SizedBox(
                                         height:
@@ -2155,9 +2156,9 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
+                                    Text(
                                       'Working Hours',
-                                      style: TextStyle(color: Colors.black),
+                                      style: TextStyle(color: blackColor),
                                     ),
                                     SizedBox(
                                         height:
@@ -2190,9 +2191,9 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
+                                    Text(
                                       'Minimum Hour',
-                                      style: TextStyle(color: Colors.black),
+                                      style: TextStyle(color: blackColor),
                                     ),
                                     SizedBox(
                                         height:
@@ -2294,7 +2295,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         },
                         style: ButtonStyle(
                           backgroundColor:
-                          MaterialStateProperty.all<Color>(Colors.red),
+                          MaterialStateProperty.all<Color>(redColor),
                           shape:
                           MaterialStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
@@ -2302,8 +2303,8 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                             ),
                           ),
                         ),
-                        child: const Text('Save',
-                            style: TextStyle(color: Colors.white)),
+                        child: Text('Save',
+                            style: TextStyle(color: whiteColor)),
                       ),
                     ),
                   ],
@@ -2329,14 +2330,14 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
             return Stack(
               children: [
                 AlertDialog(
-                  backgroundColor: Colors.white,
+                  backgroundColor: whiteColor,
                   title: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
+                      Text(
                         "Add Attendance",
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.black),
+                            fontWeight: FontWeight.bold, color: blackColor),
                       ),
                       IconButton(
                         icon: const Icon(Icons.close),
@@ -2358,17 +2359,17 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                               padding: const EdgeInsets.only(bottom: 10),
                               child: Text(
                                 _errorMessage ?? '',
-                                style: const TextStyle(
-                                    color: Colors.red,
+                                style: TextStyle(
+                                    color: redColor,
                                     fontWeight: FontWeight.bold),
                               ),
                             ),
                           SizedBox(
                               height:
                               MediaQuery.of(context).size.height * 0.03),
-                          const Text(
+                          Text(
                             'Employee',
-                            style: TextStyle(color: Colors.black),
+                            style: TextStyle(color: blackColor),
                           ),
                           SizedBox(
                               height:
@@ -2378,7 +2379,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                               controller: _typeAheadCreateController,
                               decoration: InputDecoration(
                                 labelText: 'Search Employee',
-                                labelStyle: TextStyle(color: Colors.grey[350]),
+                                labelStyle: TextStyle(color: labelTextColor),
                                 border: const OutlineInputBorder(),
                                 contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 10.0),
@@ -2431,9 +2432,9 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                           SizedBox(
                               height:
                               MediaQuery.of(context).size.height * 0.03),
-                          const Text(
+                          Text(
                             "Attendance Date",
-                            style: TextStyle(color: Colors.black),
+                            style: TextStyle(color: blackColor),
                           ),
                           SizedBox(
                               height:
@@ -2456,7 +2457,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                             },
                             decoration: InputDecoration(
                               labelText: "Attendance Date",
-                              labelStyle: TextStyle(color: Colors.grey[350]),
+                              labelStyle: TextStyle(color: labelTextColor),
                               border: const OutlineInputBorder(),
                               errorText: _validateDate
                                   ? 'Please select a Attendance date'
@@ -2468,9 +2469,9 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                           SizedBox(
                               height:
                               MediaQuery.of(context).size.height * 0.03),
-                          const Text(
+                          Text(
                             "Shift",
-                            style: TextStyle(color: Colors.black),
+                            style: TextStyle(color: blackColor),
                           ),
                           SizedBox(
                               height:
@@ -2480,7 +2481,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                               controller: _typeAheadCreateShiftController,
                               decoration: InputDecoration(
                                 labelText: 'Search Shift',
-                                labelStyle: TextStyle(color: Colors.grey[350]),
+                                labelStyle: TextStyle(color: labelTextColor),
                                 border: const OutlineInputBorder(),
                                 contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 10.0),
@@ -2539,9 +2540,9 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
+                                    Text(
                                       'Check-In Date',
-                                      style: TextStyle(color: Colors.black),
+                                      style: TextStyle(color: blackColor),
                                     ),
                                     SizedBox(
                                         height:
@@ -2569,7 +2570,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                       decoration: InputDecoration(
                                         labelText: "Check-In Date",
                                         labelStyle:
-                                        TextStyle(color: Colors.grey[350]),
+                                        TextStyle(color: labelTextColor),
                                         border: const OutlineInputBorder(),
                                         errorText: _validateCheckInDate
                                             ? 'Please Choose Check-In Date'
@@ -2589,9 +2590,9 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
+                                    Text(
                                       'Check-In',
-                                      style: TextStyle(color: Colors.black),
+                                      style: TextStyle(color: blackColor),
                                     ),
                                     SizedBox(
                                         height:
@@ -2612,7 +2613,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                       decoration: InputDecoration(
                                         labelText: '00:00',
                                         labelStyle:
-                                        TextStyle(color: Colors.grey[350]),
+                                        TextStyle(color: labelTextColor),
                                         border: const OutlineInputBorder(),
                                         errorText: _validateCheckIn
                                             ? 'Please Choose a Check-In'
@@ -2653,9 +2654,9 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
+                                    Text(
                                       'Check-Out Date',
-                                      style: TextStyle(color: Colors.black),
+                                      style: TextStyle(color: blackColor),
                                     ),
                                     SizedBox(
                                         height:
@@ -2686,7 +2687,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                             ? 'Please Choose a Check-Out Date'
                                             : null,
                                         labelStyle:
-                                        TextStyle(color: Colors.grey[350]),
+                                        TextStyle(color: labelTextColor),
                                         border: const OutlineInputBorder(),
                                         contentPadding:
                                         const EdgeInsets.symmetric(
@@ -2703,9 +2704,9 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
+                                    Text(
                                       'Check-Out',
-                                      style: TextStyle(color: Colors.black),
+                                      style: TextStyle(color: blackColor),
                                     ),
                                     SizedBox(
                                         height:
@@ -2726,7 +2727,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                       decoration: InputDecoration(
                                         labelText: '00:00',
                                         labelStyle:
-                                        TextStyle(color: Colors.grey[350]),
+                                        TextStyle(color: labelTextColor),
                                         border: const OutlineInputBorder(),
                                         errorText: _validateCheckOut
                                             ? 'Please Choose a Check-Out'
@@ -2767,9 +2768,9 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
+                                    Text(
                                       'Working Hours',
-                                      style: TextStyle(color: Colors.black),
+                                      style: TextStyle(color: blackColor),
                                     ),
                                     SizedBox(
                                         height:
@@ -2790,7 +2791,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                       decoration: InputDecoration(
                                         labelText: '00:00',
                                         labelStyle:
-                                        TextStyle(color: Colors.grey[350]),
+                                        TextStyle(color: labelTextColor),
                                         border: const OutlineInputBorder(),
                                         contentPadding:
                                         const EdgeInsets.symmetric(
@@ -2810,9 +2811,9 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text(
+                                    Text(
                                       'Minimum Hour',
-                                      style: TextStyle(color: Colors.black),
+                                      style: TextStyle(color: blackColor),
                                     ),
                                     SizedBox(
                                         height:
@@ -2833,7 +2834,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                       decoration: InputDecoration(
                                         labelText: '00:00',
                                         labelStyle:
-                                        TextStyle(color: Colors.grey[350]),
+                                        TextStyle(color: labelTextColor),
                                         border: const OutlineInputBorder(),
                                         contentPadding:
                                         const EdgeInsets.symmetric(
@@ -3064,7 +3065,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         },
                         style: ButtonStyle(
                           backgroundColor:
-                          MaterialStateProperty.all<Color>(Colors.red),
+                          MaterialStateProperty.all<Color>(redColor),
                           shape:
                           MaterialStateProperty.all<RoundedRectangleBorder>(
                             RoundedRectangleBorder(
@@ -3072,8 +3073,8 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                             ),
                           ),
                         ),
-                        child: const Text('Save',
-                            style: TextStyle(color: Colors.white)),
+                        child: Text('Save',
+                            style: TextStyle(color: whiteColor)),
                       ),
                     ),
                   ],
@@ -3095,19 +3096,19 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
     return DefaultTabController(
       length: 4,
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: whiteColor,
         key: _scaffoldKey,
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: whiteColor,
           leading: IconButton(
             icon: const Icon(Icons.menu), // Menu icon
             onPressed: () {
               _scaffoldKey.currentState?.openDrawer();
             },
           ),
-          title: const Text('Attendance',
+          title: Text('Attendance',
               style:
-              TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+              TextStyle(color: blackColor, fontWeight: FontWeight.bold)),
           actions: [
             Padding(
               padding: const EdgeInsets.all(12.0), // Adjust the value as needed
@@ -3146,14 +3147,14 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                       },
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size(75, 50),
-                        backgroundColor: Colors.white,
+                        backgroundColor: whiteColor,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(4.0),
-                          side: const BorderSide(color: Colors.red),
+                          side: BorderSide(color: redColor),
                         ),
                       ),
-                      child: const Text('CREATE',
-                          style: TextStyle(color: Colors.red)),
+                      child: Text('CREATE',
+                          style: TextStyle(color: redColor)),
                     ),
                   ),
                 ],
@@ -3236,9 +3237,9 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
             ? AnimatedNotchBottomBar(
           /// Provide NotchBottomBarController
           notchBottomBarController: _controller,
-          color: Colors.red,
+          color: redColor,
           showLabel: true,
-          notchColor: Colors.red,
+          notchColor: redColor,
           kBottomRadius: 28.0,
           kIconSize: 24.0,
 
@@ -3246,35 +3247,35 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
           removeMargins: false,
           bottomBarWidth: MediaQuery.of(context).size.width * 1,
           durationInMilliSeconds: 300,
-          bottomBarItems: const [
+          bottomBarItems: [
             BottomBarItem(
               inActiveItem: Icon(
                 Icons.home_filled,
-                color: Colors.white,
+                color: whiteColor,
               ),
               activeItem: Icon(
                 Icons.home_filled,
-                color: Colors.white,
+                color: whiteColor,
               ),
             ),
             BottomBarItem(
               inActiveItem: Icon(
                 Icons.update_outlined,
-                color: Colors.white,
+                color: whiteColor,
               ),
               activeItem: Icon(
                 Icons.update_outlined,
-                color: Colors.white,
+                color: whiteColor,
               ),
             ),
             BottomBarItem(
               inActiveItem: Icon(
                 Icons.person,
-                color: Colors.white,
+                color: whiteColor,
               ),
               activeItem: Icon(
                 Icons.person,
-                color: Colors.white,
+                color: whiteColor,
               ),
               // itemLabel: 'Profile',
             ),
@@ -3303,13 +3304,13 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
   }
   Widget shimmerListTile() {
     return Shimmer.fromColors(
-      baseColor: Colors.grey[300]!,
-      highlightColor: Colors.grey[100]!,
+      baseColor: grey300,
+      highlightColor: grey100,
       child: ListTile(
         title: Container(
           width: double.infinity,
           height: 20.0,
-          color: Colors.white,
+          color: whiteColor,
         ),
       ),
     );
@@ -3327,13 +3328,13 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                   margin: const EdgeInsets.all(8),
                   elevation: 0,
                   child: Shimmer.fromColors(
-                    baseColor: Colors.grey[300]!,
-                    highlightColor: Colors.grey[100]!,
+                    baseColor: grey300,
+                    highlightColor: grey100,
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(4.0),
-                        border: Border.all(color: Colors.grey),
-                        color: Colors.white,
+                        border: Border.all(color: grey300),
+                        color: whiteColor,
                       ),
                       child: const TextField(
                         decoration: InputDecoration(
@@ -3374,8 +3375,8 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
 
   Widget _buildTabBarShimmer() {
     return Shimmer.fromColors(
-      baseColor: Colors.grey[300]!,
-      highlightColor: Colors.grey[100]!,
+      baseColor: grey300,
+      highlightColor: grey100,
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
@@ -3385,7 +3386,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
               height: 30.0,
               width: 120.0,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: whiteColor,
                 borderRadius: BorderRadius.circular(16.0),
               ),
             );
@@ -3411,7 +3412,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                       elevation: 0,
                       child: Container(
                         decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey.shade50),
+                          border: Border.all(color: grey100),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: TextField(
@@ -3438,17 +3439,17 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                             });
                           },
                           decoration: InputDecoration(
-                            hintStyle: TextStyle(color: Colors.blueGrey.shade300, fontSize: 14),
+                            hintStyle: TextStyle(color: grey700, fontSize: 14),
                             hintText: 'Search',
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(8.0),
                               borderSide: BorderSide.none,
                             ),
                             filled: true,
-                            fillColor: Colors.grey[100],
+                            fillColor: grey100,
                             prefixIcon: Transform.scale(
                               scale: 0.8,
-                              child: Icon(Icons.search, color: Colors.blueGrey.shade300),
+                              child: Icon(Icons.search, color: grey700),
                             ),
                             contentPadding: const EdgeInsets.symmetric(
                                 vertical: 12.0, horizontal: 4.0),
@@ -3463,9 +3464,9 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.02),
             TabBar(
-              indicatorColor: Colors.red,
-              labelColor: Colors.red,
-              unselectedLabelColor: Colors.grey,
+              indicatorColor: redColor,
+              labelColor: redColor,
+              unselectedLabelColor: iconSecondaryColor,
               isScrollable: true,
               tabs: [
                 Tab(text: 'My Attendances ($myAttendances)'),
@@ -3481,7 +3482,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
               child: TabBarView(
                 children: [
                   myAttendances == 0
-                      ? const Center(
+                      ? Center(
                     child: Padding(
                       padding: EdgeInsets.all(20.0),
                       child: Column(
@@ -3490,7 +3491,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         children: [
                           Icon(
                             Icons.inventory_outlined,
-                            color: Colors.black,
+                            color: blackColor,
                             size: 92,
                           ),
                           SizedBox(height: 20),
@@ -3498,7 +3499,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                             "There are no attendance records to display",
                             style: TextStyle(
                                 fontSize: 16.0,
-                                color: Colors.black,
+                                color: blackColor,
                                 fontWeight: FontWeight.bold),
                           ),
                         ],
@@ -3511,7 +3512,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                       searchText),
                   if (attendanceTypeCheck == true)...[
                     toValidate == 0
-                        ? const Center(
+                        ? Center(
                       child: Padding(
                         padding: EdgeInsets.all(20.0),
                         child: Column(
@@ -3520,7 +3521,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                           children: [
                             Icon(
                               Icons.inventory_outlined,
-                              color: Colors.black,
+                              color: blackColor,
                               size: 92,
                             ),
                             SizedBox(height: 20),
@@ -3528,7 +3529,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                               "There are no attendance records to display",
                               style: TextStyle(
                                   fontSize: 16.0,
-                                  color: Colors.black,
+                                  color: blackColor,
                                   fontWeight: FontWeight.bold),
                             ),
                           ],
@@ -3540,7 +3541,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         _scrollController,
                         searchText),
                     overtime == 0
-                        ? const Center(
+                        ? Center(
                       child: Padding(
                         padding: EdgeInsets.all(20.0),
                         child: Column(
@@ -3549,7 +3550,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                           children: [
                             Icon(
                               Icons.inventory_outlined,
-                              color: Colors.black,
+                              color: blackColor,
                               size: 92,
                             ),
                             SizedBox(height: 20),
@@ -3557,7 +3558,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                               "There are no attendance records to display",
                               style: TextStyle(
                                   fontSize: 16.0,
-                                  color: Colors.black,
+                                  color: blackColor,
                                   fontWeight: FontWeight.bold),
                             ),
                           ],
@@ -3569,7 +3570,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         _scrollController,
                         searchText),
                     validated == 0
-                        ? const Center(
+                        ? Center(
                       child: Padding(
                         padding: EdgeInsets.all(20.0),
                         child: Column(
@@ -3578,7 +3579,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                           children: [
                             Icon(
                               Icons.inventory_outlined,
-                              color: Colors.black,
+                              color: blackColor,
                               size: 92,
                             ),
                             SizedBox(height: 20),
@@ -3586,7 +3587,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                               "There are no attendance records to display",
                               style: TextStyle(
                                   fontSize: 16.0,
-                                  color: Colors.black,
+                                  color: blackColor,
                                   fontWeight: FontWeight.bold),
                             ),
                           ],
@@ -3618,18 +3619,18 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
         itemCount: 10,
         itemBuilder: (context, index) {
           return Shimmer.fromColors(
-            baseColor: Colors.grey[300]!,
-            highlightColor: Colors.grey[100]!,
+            baseColor: grey300,
+            highlightColor: grey100,
             child: Container(
               padding: const EdgeInsets.all(8.0),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: Colors.grey[50]!),
+                  color: whiteColor,
+                  border: Border.all(color: grey100),
                   borderRadius: BorderRadius.circular(8.0),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.shade400.withOpacity(0.3),
+                      color: disabledColor.withOpacity(0.3),
                       spreadRadius: 2,
                       blurRadius: 5,
                       offset: const Offset(0, 3),
@@ -3638,10 +3639,10 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                 ),
                 child: Card(
                   shape: RoundedRectangleBorder(
-                    side: const BorderSide(color: Colors.white, width: 0.0),
+                    side: BorderSide(color: whiteColor, width: 0.0),
                     borderRadius: BorderRadius.circular(10.0),
                   ),
-                  color: Colors.white,
+                  color: whiteColor,
                   elevation: 0.1,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -3654,7 +3655,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                             Container(
                               width: 40.0,
                               height: 40.0,
-                              color: Colors.grey[300],
+                              color: grey300,
                             ),
                           ],
                         ),
@@ -3662,13 +3663,13 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                             height: MediaQuery.of(context).size.height * 0.005),
                         Container(
                           height: 20.0,
-                          color: Colors.grey[300],
+                          color: grey300,
                         ),
                         const SizedBox(height: 10),
                         Container(
                           height: 20.0,
                           width: 80.0,
-                          color: Colors.grey[300],
+                          color: grey300,
                         ),
                       ],
                     ),
@@ -3693,18 +3694,18 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
         itemCount: 10,
         itemBuilder: (context, index) {
           return Shimmer.fromColors(
-            baseColor: Colors.grey[300]!,
-            highlightColor: Colors.grey[100]!,
+            baseColor: grey300,
+            highlightColor: grey100,
             child: Container(
               padding: const EdgeInsets.all(8.0),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: Colors.grey[50]!),
+                  color: whiteColor,
+                  border: Border.all(color: grey100),
                   borderRadius: BorderRadius.circular(8.0),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.shade400.withOpacity(0.3),
+                      color: disabledColor.withOpacity(0.3),
                       spreadRadius: 2,
                       blurRadius: 5,
                       offset: const Offset(0, 3),
@@ -3713,10 +3714,10 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                 ),
                 child: Card(
                   shape: RoundedRectangleBorder(
-                    side: const BorderSide(color: Colors.white, width: 0.0),
+                    side: BorderSide(color: whiteColor, width: 0.0),
                     borderRadius: BorderRadius.circular(10.0),
                   ),
-                  color: Colors.white,
+                  color: whiteColor,
                   elevation: 0.1,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -3729,7 +3730,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                             Container(
                               width: 40.0,
                               height: 40.0,
-                              color: Colors.grey[300],
+                              color: grey300,
                             ),
                           ],
                         ),
@@ -3737,13 +3738,13 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                             height: MediaQuery.of(context).size.height * 0.005),
                         Container(
                           height: 20.0,
-                          color: Colors.grey[300],
+                          color: grey300,
                         ),
                         const SizedBox(height: 10),
                         Container(
                           height: 20.0,
                           width: 80.0,
-                          color: Colors.grey[300],
+                          color: grey300,
                         ),
                       ],
                     ),
@@ -3768,18 +3769,18 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
         itemCount: 10,
         itemBuilder: (context, index) {
           return Shimmer.fromColors(
-            baseColor: Colors.grey[300]!,
-            highlightColor: Colors.grey[100]!,
+            baseColor: grey300,
+            highlightColor: grey100,
             child: Container(
               padding: const EdgeInsets.all(8.0),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: Colors.grey[50]!),
+                  color: whiteColor,
+                  border: Border.all(color: grey100),
                   borderRadius: BorderRadius.circular(8.0),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.shade400.withOpacity(0.3),
+                      color: disabledColor.withOpacity(0.3),
                       spreadRadius: 2,
                       blurRadius: 5,
                       offset: const Offset(0, 3),
@@ -3788,10 +3789,10 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                 ),
                 child: Card(
                   shape: RoundedRectangleBorder(
-                    side: const BorderSide(color: Colors.white, width: 0.0),
+                    side: BorderSide(color: whiteColor, width: 0.0),
                     borderRadius: BorderRadius.circular(10.0),
                   ),
-                  color: Colors.white,
+                  color: whiteColor,
                   elevation: 0.1,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -3804,7 +3805,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                             Container(
                               width: 40.0,
                               height: 40.0,
-                              color: Colors.grey[300],
+                              color: grey300,
                             ),
                           ],
                         ),
@@ -3812,13 +3813,13 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                             height: MediaQuery.of(context).size.height * 0.005),
                         Container(
                           height: 20.0,
-                          color: Colors.grey[300],
+                          color: grey300,
                         ),
                         const SizedBox(height: 10),
                         Container(
                           height: 20.0,
                           width: 80.0,
-                          color: Colors.grey[300],
+                          color: grey300,
                         ),
                       ],
                     ),
@@ -3843,18 +3844,18 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
         itemCount: 10,
         itemBuilder: (context, index) {
           return Shimmer.fromColors(
-            baseColor: Colors.grey[300]!,
-            highlightColor: Colors.grey[100]!,
+            baseColor: grey300,
+            highlightColor: grey100,
             child: Container(
               padding: const EdgeInsets.all(8.0),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: Colors.grey[50]!),
+                  color: whiteColor,
+                  border: Border.all(color: grey100),
                   borderRadius: BorderRadius.circular(8.0),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.shade400.withOpacity(0.3),
+                      color: disabledColor.withOpacity(0.3),
                       spreadRadius: 2,
                       blurRadius: 5,
                       offset: const Offset(0, 3),
@@ -3863,10 +3864,10 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                 ),
                 child: Card(
                   shape: RoundedRectangleBorder(
-                    side: const BorderSide(color: Colors.white, width: 0.0),
+                    side: BorderSide(color: whiteColor, width: 0.0),
                     borderRadius: BorderRadius.circular(10.0),
                   ),
-                  color: Colors.white,
+                  color: whiteColor,
                   elevation: 0.1,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
@@ -3879,7 +3880,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                             Container(
                               width: 40.0,
                               height: 40.0,
-                              color: Colors.grey[300],
+                              color: grey300,
                             ),
                           ],
                         ),
@@ -3887,13 +3888,13 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                             height: MediaQuery.of(context).size.height * 0.005),
                         Container(
                           height: 20.0,
-                          color: Colors.grey[300],
+                          color: grey300,
                         ),
                         const SizedBox(height: 10),
                         Container(
                           height: 20.0,
                           width: 80.0,
-                          color: Colors.grey[300],
+                          color: grey300,
                         ),
                       ],
                     ),
@@ -4042,13 +4043,13 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              backgroundColor: Colors.white,
+              backgroundColor: whiteColor,
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text(" "),
                   IconButton(
-                    icon: const Icon(Icons.close, color: Colors.grey),
+                    icon: Icon(Icons.close, color: iconSecondaryColor),
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
@@ -4073,7 +4074,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               border:
-                              Border.all(color: Colors.grey, width: 1.0),
+                              Border.all(color: grey300, width: 1.0),
                             ),
                             child: Stack(
                               children: [
@@ -4091,8 +4092,8 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                         errorBuilder: (BuildContext context,
                                             Object exception,
                                             StackTrace? stackTrace) {
-                                          return const Icon(Icons.person,
-                                              color: Colors.grey);
+                                          return Icon(Icons.person,
+                                              color: iconSecondaryColor);
                                         },
                                       ),
                                     ),
@@ -4103,7 +4104,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                     child: Container(
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
-                                        color: Colors.grey[400],
+                                        color: disabledColor,
                                       ),
                                       child: const Icon(Icons.person),
                                     ),
@@ -4140,7 +4141,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                             children: [
                               Container(
                                 decoration: BoxDecoration(
-                                  color: Colors.grey[200],
+                                  color: borderLightColor,
                                   borderRadius: BorderRadius.circular(4.0),
                                 ),
                               ),
@@ -4149,7 +4150,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                       0.008),
                               Container(
                                 decoration: BoxDecoration(
-                                  color: Colors.grey[200],
+                                  color: borderLightColor,
                                   borderRadius: BorderRadius.circular(4.0),
                                 ),
                               ),
@@ -4164,7 +4165,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         children: [
                           Text(
                             'Date',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text('${record['attendance_date'] ?? 'None'}'),
                         ],
@@ -4174,7 +4175,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         children: [
                           Text(
                             'Check-In',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text('${record['attendance_clock_in'] ?? 'None'}'),
                         ],
@@ -4184,7 +4185,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         children: [
                           Text(
                             'Check-Out',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text('${record['attendance_clock_out'] ?? 'None'}'),
                         ],
@@ -4194,7 +4195,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         children: [
                           Text(
                             'Shift',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text('${record['shift_name'] ?? 'None'}'),
                         ],
@@ -4204,7 +4205,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         children: [
                           Text(
                             'Minimum Hour',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text('${record['minimum_hour'] ?? 'None'}'),
                         ],
@@ -4214,7 +4215,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         children: [
                           Text(
                             'Check-In Date',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text(
                               '${record['attendance_clock_in_date'] ?? 'None'}'),
@@ -4225,7 +4226,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         children: [
                           Text(
                             'Check-Out Date',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text(
                               '${record['attendance_clock_out_date'] ?? 'None'}'),
@@ -4236,7 +4237,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         children: [
                           Text(
                             'At Work',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text('${record['attendance_worked_hour'] ?? 'None'}'),
                         ],
@@ -4253,15 +4254,15 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
       },
       child: Container(
         padding: const EdgeInsets.all(8.0),
-        color: Colors.white,
+        color: whiteColor,
         child: Container(
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey[50]!),
+            border: Border.all(color: grey100),
             borderRadius: BorderRadius.circular(8.0),
-            color: Colors.white,
+            color: whiteColor,
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.shade400.withOpacity(0.3),
+                color: disabledColor.withOpacity(0.3),
                 spreadRadius: 2,
                 blurRadius: 5,
                 offset: const Offset(0, 3),
@@ -4270,10 +4271,10 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
           ),
           child: Card(
             shape: RoundedRectangleBorder(
-              side: const BorderSide(color: Colors.white, width: 0.0),
+              side: BorderSide(color: whiteColor, width: 0.0),
               borderRadius: BorderRadius.circular(10.0),
             ),
-            color: Colors.white,
+            color: whiteColor,
             elevation: 0.1,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -4290,7 +4291,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
-                              color: Colors.grey,
+                              color: iconSecondaryColor,
                               width: 1.0), // Optional border
                         ),
                         child: Stack(
@@ -4308,8 +4309,8 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                     errorBuilder: (BuildContext context,
                                         Object exception,
                                         StackTrace? stackTrace) {
-                                      return const Icon(Icons.person,
-                                          color: Colors.grey); // Fallback icon
+                                      return Icon(Icons.person,
+                                          color: iconSecondaryColor); // Fallback icon
                                     },
                                   ),
                                 ),
@@ -4320,7 +4321,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                 child: Container(
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: Colors.grey[400],
+                                    color: disabledColor,
                                   ),
                                   child: const Icon(Icons.person),
                                 ),
@@ -4359,7 +4360,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                     children: [
                       Text(
                         'Date',
-                        style: TextStyle(color: Colors.grey.shade700),
+                        style: TextStyle(color: grey700),
                       ),
                       Text('${record['attendance_date'] ?? 'None'}'),
                     ],
@@ -4369,7 +4370,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                     children: [
                       Text(
                         'Check-In',
-                        style: TextStyle(color: Colors.grey.shade700),
+                        style: TextStyle(color: grey700),
                       ),
                       Text('${record['attendance_clock_in'] ?? 'None'}'),
                     ],
@@ -4379,7 +4380,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                     children: [
                       Text(
                         'Check-Out',
-                        style: TextStyle(color: Colors.grey.shade700),
+                        style: TextStyle(color: grey700),
                       ),
                       Text('${record['attendance_clock_out'] ?? 'None'}'),
                     ],
@@ -4389,7 +4390,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                     children: [
                       Text(
                         'Worked Hours',
-                        style: TextStyle(color: Colors.grey.shade700),
+                        style: TextStyle(color: grey700),
                       ),
                       Text('${record['attendance_worked_hour'] ?? 'None'}'),
                     ],
@@ -4399,7 +4400,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                     children: [
                       Text(
                         'Minimum Hours',
-                        style: TextStyle(color: Colors.grey.shade700),
+                        style: TextStyle(color: grey700),
                       ),
                       Text('${record['minimum_hour'] ?? 'None'}'),
                     ],
@@ -4409,7 +4410,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                     children: [
                       Text(
                         'Shift',
-                        style: TextStyle(color: Colors.grey.shade700),
+                        style: TextStyle(color: grey700),
                       ),
                       Text('${record['shift_name'] ?? 'None'}'),
                     ],
@@ -4432,13 +4433,13 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              backgroundColor: Colors.white,
+              backgroundColor: whiteColor,
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text(" "),
                   IconButton(
-                    icon: const Icon(Icons.close, color: Colors.grey),
+                    icon: Icon(Icons.close, color: iconSecondaryColor),
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
@@ -4463,7 +4464,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               border:
-                              Border.all(color: Colors.grey, width: 1.0),
+                              Border.all(color: grey300, width: 1.0),
                             ),
                             child: Stack(
                               children: [
@@ -4481,8 +4482,8 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                         errorBuilder: (BuildContext context,
                                             Object exception,
                                             StackTrace? stackTrace) {
-                                          return const Icon(Icons.person,
-                                              color: Colors.grey);
+                                          return Icon(Icons.person,
+                                              color: iconSecondaryColor);
                                         },
                                       ),
                                     ),
@@ -4493,7 +4494,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                     child: Container(
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
-                                        color: Colors.grey[400],
+                                        color: disabledColor,
                                       ),
                                       child: const Icon(Icons.person),
                                     ),
@@ -4530,7 +4531,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                             children: [
                               Container(
                                 decoration: BoxDecoration(
-                                  color: Colors.grey[200],
+                                  color: borderLightColor,
                                   borderRadius: BorderRadius.circular(4.0),
                                 ),
                               ),
@@ -4539,7 +4540,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                       0.008),
                               Container(
                                 decoration: BoxDecoration(
-                                  color: Colors.grey[200],
+                                  color: borderLightColor,
                                   borderRadius: BorderRadius.circular(4.0),
                                 ),
                               ),
@@ -4554,7 +4555,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         children: [
                           Text(
                             'Date',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text('${record['attendance_date'] ?? 'None'}'),
                         ],
@@ -4564,7 +4565,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         children: [
                           Text(
                             'Check-In',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text('${record['attendance_clock_in'] ?? 'None'}'),
                         ],
@@ -4574,7 +4575,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         children: [
                           Text(
                             'Check-Out',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text('${record['attendance_clock_out'] ?? 'None'}'),
                         ],
@@ -4584,7 +4585,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         children: [
                           Text(
                             'Shift',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text('${record['shift_name'] ?? 'None'}'),
                         ],
@@ -4594,7 +4595,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         children: [
                           Text(
                             'Minimum Hour',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text('${record['minimum_hour'] ?? 'None'}'),
                         ],
@@ -4604,7 +4605,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         children: [
                           Text(
                             'Check-In Date',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text(
                               '${record['attendance_clock_in_date'] ?? 'None'}'),
@@ -4615,7 +4616,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         children: [
                           Text(
                             'Check-Out Date',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text(
                               '${record['attendance_clock_out_date'] ?? 'None'}'),
@@ -4626,7 +4627,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         children: [
                           Text(
                             'At Work',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text('${record['attendance_worked_hour'] ?? 'None'}'),
                         ],
@@ -4647,15 +4648,15 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            backgroundColor: Colors.white,
+                            backgroundColor: whiteColor,
                             title: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const Text(
+                                Text(
                                   "Confirmation",
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.black),
+                                      color: blackColor),
                                 ),
                                 IconButton(
                                   icon: const Icon(Icons.close),
@@ -4667,12 +4668,12 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                             ),
                             content: SizedBox(
                               height: MediaQuery.of(context).size.height * 0.1,
-                              child: const Center(
+                              child: Center(
                                 child: Text(
                                   "Are you sure you want to Validate this Attendance?",
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.black,
+                                    color: blackColor,
                                     fontSize: 17,
                                   ),
                                 ),
@@ -4697,7 +4698,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                   style: ButtonStyle(
                                     backgroundColor:
                                     MaterialStateProperty.all<Color>(
-                                        Colors.green),
+                                        successColor),
                                     shape: MaterialStateProperty.all<
                                         RoundedRectangleBorder>(
                                       RoundedRectangleBorder(
@@ -4706,9 +4707,9 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                       ),
                                     ),
                                   ),
-                                  child: const Text(
+                                  child: Text(
                                     "Continue",
-                                    style: TextStyle(color: Colors.white),
+                                    style: TextStyle(color: whiteColor),
                                   ),
                                 ),
                               ),
@@ -4718,7 +4719,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
+                      backgroundColor: successColor,
                       // Red color for assign button
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),
@@ -4728,9 +4729,9 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         vertical: MediaQuery.of(context).size.height * 0.001,
                       ),
                     ),
-                    child: const Text(
+                    child: Text(
                       "Validate",
-                      style: TextStyle(fontSize: 18, color: Colors.white),
+                      style: TextStyle(fontSize: 18, color: whiteColor),
                     ),
                   ),
                 ),
@@ -4741,15 +4742,15 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
       },
       child: Container(
         padding: const EdgeInsets.all(8.0),
-        color: Colors.white,
+        color: whiteColor,
         child: Container(
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey[50]!),
+            border: Border.all(color: grey100),
             borderRadius: BorderRadius.circular(8.0),
-            color: Colors.white,
+            color: whiteColor,
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.shade400.withOpacity(0.3),
+                color: disabledColor.withOpacity(0.3),
                 spreadRadius: 2,
                 blurRadius: 5,
                 offset: const Offset(0, 3),
@@ -4758,10 +4759,10 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
           ),
           child: Card(
             shape: RoundedRectangleBorder(
-              side: const BorderSide(color: Colors.white, width: 0.0),
+              side: BorderSide(color: whiteColor, width: 0.0),
               borderRadius: BorderRadius.circular(10.0),
             ),
-            color: Colors.white,
+            color: whiteColor,
             elevation: 0.1,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -4778,7 +4779,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
-                              color: Colors.grey,
+                              color: iconSecondaryColor,
                               width: 1.0), // Optional border
                         ),
                         child: Stack(
@@ -4796,8 +4797,8 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                     errorBuilder: (BuildContext context,
                                         Object exception,
                                         StackTrace? stackTrace) {
-                                      return const Icon(Icons.person,
-                                          color: Colors.grey); // Fallback icon
+                                      return Icon(Icons.person,
+                                          color: iconSecondaryColor); // Fallback icon
                                     },
                                   ),
                                 ),
@@ -4808,7 +4809,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                 child: Container(
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: Colors.grey[400],
+                                    color: disabledColor,
                                   ),
                                   child: const Icon(Icons.person),
                                 ),
@@ -4848,16 +4849,16 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                 topLeft: Radius.circular(15.0),
                                 bottomLeft: Radius.circular(15.0),
                               ),
-                              color: Colors.blue[100],
+                              color: infoColor.withOpacity(0.3),
                             ),
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
                                   vertical: 0.0),
                               child: IconButton(
-                                icon: const Icon(
+                                icon: Icon(
                                   Icons.edit,
                                   size: 18.0,
-                                  color: Colors.blue,
+                                  color: infoColor,
                                 ),
                                 onPressed: () {
                                   setState(() {
@@ -4877,16 +4878,16 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                 topRight: Radius.circular(15.0),
                                 bottomRight: Radius.circular(15.0),
                               ),
-                              color: Colors.red[100],
+                              color: errorBackgroundColor,
                             ),
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
                                   vertical: 0.0),
                               child: IconButton(
-                                icon: const Icon(
+                                icon: Icon(
                                   Icons.delete,
                                   size: 18.0,
-                                  color: Colors.red,
+                                  color: redColor,
                                 ),
                                 onPressed: () async {
                                   isSaveClick = true;
@@ -4894,18 +4895,18 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                     context: context,
                                     builder: (BuildContext context) {
                                       return AlertDialog(
-                                        backgroundColor: Colors.white,
+                                        backgroundColor: whiteColor,
                                         title: Row(
                                           mainAxisAlignment:
                                           MainAxisAlignment
                                               .spaceBetween,
                                           children: [
-                                            const Text(
+                                            Text(
                                               "Confirmation",
                                               style: TextStyle(
                                                 fontWeight:
                                                 FontWeight.bold,
-                                                color: Colors.black,
+                                                color: blackColor,
                                               ),
                                             ),
                                             IconButton(
@@ -4923,13 +4924,13 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                               .size
                                               .height *
                                               0.1,
-                                          child: const Center(
+                                          child: Center(
                                             child: Text(
                                               "Are you sure you want to delete this attendance?",
                                               style: TextStyle(
                                                 fontWeight:
                                                 FontWeight.bold,
-                                                color: Colors.black,
+                                                color: blackColor,
                                                 fontSize: 17,
                                               ),
                                             ),
@@ -4957,7 +4958,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                                 backgroundColor:
                                                 MaterialStateProperty
                                                     .all<Color>(
-                                                    Colors.red),
+                                                    redColor),
                                                 shape: MaterialStateProperty
                                                     .all<
                                                     RoundedRectangleBorder>(
@@ -4969,10 +4970,10 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                                   ),
                                                 ),
                                               ),
-                                              child: const Text(
+                                              child: Text(
                                                 "Continue",
                                                 style: TextStyle(
-                                                    color: Colors.white),
+                                                    color: whiteColor),
                                               ),
                                             ),
                                           ),
@@ -4995,17 +4996,16 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                 topLeft: Radius.circular(15.0),
                                 bottomLeft: Radius.circular(15.0),
                               ),
-                              color: Colors.blue[
-                              100], // Blue background for edit icon
+                              color: infoColor.withOpacity(0.3), // Blue background for edit icon
                             ),
                             child: Padding(
                               padding: const EdgeInsets.symmetric(
                                   vertical: 0.0),
                               child: IconButton(
-                                icon: const Icon(
+                                icon: Icon(
                                   Icons.edit,
                                   size: 18.0, // Reduce icon size
-                                  color: Colors.blue, // Set icon color
+                                  color: infoColor, // Set icon color
                                 ),
                                 onPressed: () {
                                   setState(() {
@@ -5029,7 +5029,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                     children: [
                       Text(
                         'Date',
-                        style: TextStyle(color: Colors.grey.shade700),
+                        style: TextStyle(color: grey700),
                       ),
                       Text('${record['attendance_date'] ?? 'None'}'),
                     ],
@@ -5039,7 +5039,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                     children: [
                       Text(
                         'Check-In',
-                        style: TextStyle(color: Colors.grey.shade700),
+                        style: TextStyle(color: grey700),
                       ),
                       Text('${record['attendance_clock_in'] ?? 'None'}'),
                     ],
@@ -5049,7 +5049,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                     children: [
                       Text(
                         'Shift',
-                        style: TextStyle(color: Colors.grey.shade700),
+                        style: TextStyle(color: grey700),
                       ),
                       Text('${record['shift_name'] ?? 'None'}'),
                     ],
@@ -5065,16 +5065,16 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
-                                backgroundColor: Colors.white,
+                                backgroundColor: whiteColor,
                                 title: Row(
                                   mainAxisAlignment:
                                   MainAxisAlignment.spaceBetween,
                                   children: [
-                                    const Text(
+                                    Text(
                                       "Confirmation",
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
-                                          color: Colors.black),
+                                          color: blackColor),
                                     ),
                                     IconButton(
                                       icon: const Icon(Icons.close),
@@ -5088,12 +5088,12 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                 content: SizedBox(
                                   height:
                                   MediaQuery.of(context).size.height * 0.1,
-                                  child: const Center(
+                                  child: Center(
                                     child: Text(
                                       "Are you sure you want to Validate this Attendance?",
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.black,
+                                        color: blackColor,
                                         fontSize: 17,
                                       ),
                                     ),
@@ -5119,7 +5119,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                       style: ButtonStyle(
                                         backgroundColor:
                                         MaterialStateProperty.all<Color>(
-                                            Colors.green),
+                                            successColor),
                                         shape: MaterialStateProperty.all<
                                             RoundedRectangleBorder>(
                                           RoundedRectangleBorder(
@@ -5128,9 +5128,9 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                           ),
                                         ),
                                       ),
-                                      child: const Text(
+                                      child: Text(
                                         "Continue",
-                                        style: TextStyle(color: Colors.white),
+                                        style: TextStyle(color: whiteColor),
                                       ),
                                     ),
                                   ),
@@ -5140,7 +5140,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                           );
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
+                          backgroundColor: successColor,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8.0),
                           ),
@@ -5150,9 +5150,9 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                             vertical: MediaQuery.of(context).size.height * 0.01,
                           ),
                         ),
-                        child: const Text(
+                        child: Text(
                           'Validate',
-                          style: TextStyle(fontSize: 18, color: Colors.white),
+                          style: TextStyle(fontSize: 18, color: whiteColor),
                         ),
                       ),
                     ],
@@ -5174,13 +5174,13 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              backgroundColor: Colors.white,
+              backgroundColor: whiteColor,
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text(""),
                   IconButton(
-                    icon: const Icon(Icons.close, color: Colors.grey),
+                    icon: Icon(Icons.close, color: iconSecondaryColor),
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
@@ -5205,7 +5205,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               border:
-                              Border.all(color: Colors.grey, width: 1.0),
+                              Border.all(color: grey300, width: 1.0),
                             ),
                             child: Stack(
                               children: [
@@ -5223,8 +5223,8 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                         errorBuilder: (BuildContext context,
                                             Object exception,
                                             StackTrace? stackTrace) {
-                                          return const Icon(Icons.person,
-                                              color: Colors.grey);
+                                          return Icon(Icons.person,
+                                              color: iconSecondaryColor);
                                         },
                                       ),
                                     ),
@@ -5235,7 +5235,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                     child: Container(
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
-                                        color: Colors.grey[400],
+                                        color: disabledColor,
                                       ),
                                       child: const Icon(Icons.person),
                                     ),
@@ -5272,7 +5272,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                             children: [
                               Container(
                                 decoration: BoxDecoration(
-                                  color: Colors.grey[200],
+                                  color: borderLightColor,
                                   borderRadius: BorderRadius.circular(4.0),
                                 ),
                               ),
@@ -5281,7 +5281,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                       0.008),
                               Container(
                                 decoration: BoxDecoration(
-                                  color: Colors.grey[200],
+                                  color: borderLightColor,
                                   borderRadius: BorderRadius.circular(4.0),
                                 ),
                               ),
@@ -5296,7 +5296,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         children: [
                           Text(
                             'Date',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text('${record['attendance_date'] ?? 'None'}'),
                         ],
@@ -5306,7 +5306,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         children: [
                           Text(
                             'Check-In',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text('${record['attendance_clock_in'] ?? 'None'}'),
                         ],
@@ -5316,7 +5316,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         children: [
                           Text(
                             'Check-Out',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text('${record['attendance_clock_out'] ?? 'None'}'),
                         ],
@@ -5326,7 +5326,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         children: [
                           Text(
                             'Shift',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text('${record['shift_name'] ?? 'None'}'),
                         ],
@@ -5336,7 +5336,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         children: [
                           Text(
                             'Minimum Hour',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text('${record['minimum_hour'] ?? 'None'}'),
                         ],
@@ -5346,7 +5346,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         children: [
                           Text(
                             'Check-In Date',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text(
                               '${record['attendance_clock_in_date'] ?? 'None'}'),
@@ -5357,7 +5357,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         children: [
                           Text(
                             'Check-Out Date',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text(
                               '${record['attendance_clock_out_date'] ?? 'None'}'),
@@ -5368,7 +5368,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         children: [
                           Text(
                             'At Work',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text('${record['attendance_worked_hour'] ?? 'None'}'),
                         ],
@@ -5387,16 +5387,16 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            backgroundColor: Colors.white,
+                            backgroundColor: whiteColor,
                             title: Row(
                               mainAxisAlignment:
                               MainAxisAlignment.spaceBetween,
                               children: [
-                                const Text(
+                                Text(
                                   "Confirmation",
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.black),
+                                      color: blackColor),
                                 ),
                                 IconButton(
                                   icon: const Icon(Icons.close),
@@ -5409,12 +5409,12 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                             content: SizedBox(
                               height: MediaQuery.of(context).size.height *
                                   0.1,
-                              child: const Center(
+                              child: Center(
                                 child: Text(
                                   'Are you sure you want to Validate this Attendance?',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.black,
+                                    color: blackColor,
                                     fontSize: 17,
                                   ),
                                 ),
@@ -5438,7 +5438,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                   style: ButtonStyle(
                                     backgroundColor:
                                     MaterialStateProperty.all<Color>(
-                                        Colors.green),
+                                        successColor),
                                     shape: MaterialStateProperty.all<
                                         RoundedRectangleBorder>(
                                       RoundedRectangleBorder(
@@ -5447,9 +5447,9 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                       ),
                                     ),
                                   ),
-                                  child: const Text('Validate',
+                                  child: Text('Validate',
                                       style:
-                                      TextStyle(color: Colors.white)),
+                                      TextStyle(color: whiteColor)),
                                 ),
                               ),
                             ],
@@ -5458,7 +5458,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
+                      backgroundColor: successColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),
                       ),
@@ -5469,9 +5469,9 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         MediaQuery.of(context).size.height * 0.001,
                       ),
                     ),
-                    child: const Text(
+                    child: Text(
                       "Validate",
-                      style: TextStyle(fontSize: 18, color: Colors.white),
+                      style: TextStyle(fontSize: 18, color: whiteColor),
                     ),
                   )
                       : const SizedBox.shrink(),
@@ -5483,15 +5483,15 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
       },
       child: Container(
         padding: const EdgeInsets.all(8.0),
-        color: Colors.white,
+        color: whiteColor,
         child: Container(
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey[50]!),
+            border: Border.all(color: grey100),
             borderRadius: BorderRadius.circular(8.0),
-            color: Colors.white,
+            color: whiteColor,
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.shade400.withOpacity(0.3),
+                color: disabledColor.withOpacity(0.3),
                 spreadRadius: 2,
                 blurRadius: 5,
                 offset: const Offset(0, 3),
@@ -5500,10 +5500,10 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
           ),
           child: Card(
             shape: RoundedRectangleBorder(
-              side: const BorderSide(color: Colors.white, width: 0.0),
+              side: BorderSide(color: whiteColor, width: 0.0),
               borderRadius: BorderRadius.circular(10.0),
             ),
-            color: Colors.white,
+            color: whiteColor,
             elevation: 0.1, //
             child: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -5519,7 +5519,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         height: 40.0,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          border: Border.all(color: Colors.grey, width: 1.0),
+                          border: Border.all(color: grey300, width: 1.0),
                         ),
                         child: Stack(
                           children: [
@@ -5536,8 +5536,8 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                     errorBuilder: (BuildContext context,
                                         Object exception,
                                         StackTrace? stackTrace) {
-                                      return const Icon(Icons.person,
-                                          color: Colors.grey);
+                                      return Icon(Icons.person,
+                                          color: iconSecondaryColor);
                                     },
                                   ),
                                 ),
@@ -5548,7 +5548,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                 child: Container(
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: Colors.grey[400],
+                                    color: disabledColor,
                                   ),
                                   child: const Icon(Icons.person),
                                 ),
@@ -5589,16 +5589,16 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                   topLeft: Radius.circular(15.0),
                                   bottomLeft: Radius.circular(15.0),
                                 ),
-                                color: Colors.blue[100],
+                                color: infoColor.withOpacity(0.3),
                               ),
                               child: Padding(
                                 padding:
                                 const EdgeInsets.symmetric(vertical: 0.0),
                                 child: IconButton(
-                                  icon: const Icon(
+                                  icon: Icon(
                                     Icons.edit,
                                     size: 18.0,
-                                    color: Colors.blue,
+                                    color: infoColor,
                                   ),
                                   onPressed: () {
                                     setState(() {
@@ -5621,16 +5621,16 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                   topRight: Radius.circular(15.0),
                                   bottomRight: Radius.circular(15.0),
                                 ),
-                                color: Colors.red[100],
+                                color: errorBackgroundColor,
                               ),
                               child: Padding(
                                 padding:
                                 const EdgeInsets.symmetric(vertical: 0.0),
                                 child: IconButton(
-                                  icon: const Icon(
+                                  icon: Icon(
                                     Icons.delete,
                                     size: 18.0, // Reduce icon size
-                                    color: Colors.red, // Set icon color
+                                    color: redColor, // Set icon color
                                   ),
                                   onPressed: () async {
                                     isSaveClick = true;
@@ -5638,16 +5638,16 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                       context: context,
                                       builder: (BuildContext context) {
                                         return AlertDialog(
-                                          backgroundColor: Colors.white,
+                                          backgroundColor: whiteColor,
                                           title: Row(
                                             mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                             children: [
-                                              const Text(
+                                              Text(
                                                 "Confirmation",
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.bold,
-                                                  color: Colors.black,
+                                                  color: blackColor,
                                                 ),
                                               ),
                                               IconButton(
@@ -5664,12 +5664,12 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                                 .size
                                                 .height *
                                                 0.1,
-                                            child: const Center(
+                                            child: Center(
                                               child: Text(
                                                 "Are you sure you want to delete this attendance?",
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.bold,
-                                                  color: Colors.black,
+                                                  color: blackColor,
                                                   fontSize: 17,
                                                 ),
                                               ),
@@ -5696,7 +5696,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                                 style: ButtonStyle(
                                                   backgroundColor:
                                                   MaterialStateProperty.all<
-                                                      Color>(Colors.red),
+                                                      Color>(redColor),
                                                   shape:
                                                   MaterialStateProperty.all<
                                                       RoundedRectangleBorder>(
@@ -5707,10 +5707,10 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                                     ),
                                                   ),
                                                 ),
-                                                child: const Text(
+                                                child: Text(
                                                   "Continue",
                                                   style: TextStyle(
-                                                      color: Colors.white),
+                                                      color: whiteColor),
                                                 ),
                                               ),
                                             ),
@@ -5733,7 +5733,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                     children: [
                       Text(
                         'Date',
-                        style: TextStyle(color: Colors.grey.shade700),
+                        style: TextStyle(color: grey700),
                       ),
                       Text('${record['attendance_date'] ?? 'None'}'),
                     ],
@@ -5743,7 +5743,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                     children: [
                       Text(
                         'Check-In',
-                        style: TextStyle(color: Colors.grey.shade700),
+                        style: TextStyle(color: grey700),
                       ),
                       Text('${record['attendance_clock_in'] ?? 'None'}'),
                     ],
@@ -5753,7 +5753,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                     children: [
                       Text(
                         'Shift',
-                        style: TextStyle(color: Colors.grey.shade700),
+                        style: TextStyle(color: grey700),
                       ),
                       Text('${record['shift_name'] ?? 'None'}'),
                     ],
@@ -5772,16 +5772,16 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                               context: context,
                               builder: (BuildContext context) {
                                 return AlertDialog(
-                                  backgroundColor: Colors.white,
+                                  backgroundColor: whiteColor,
                                   title: Row(
                                     mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                     children: [
-                                      const Text(
+                                      Text(
                                         "Confirmation",
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
-                                            color: Colors.black),
+                                            color: blackColor),
                                       ),
                                       IconButton(
                                         icon: const Icon(Icons.close),
@@ -5794,12 +5794,12 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                   content: SizedBox(
                                     height: MediaQuery.of(context).size.height *
                                         0.1,
-                                    child: const Center(
+                                    child: Center(
                                       child: Text(
                                         'Do you want to Validate this Attendance?',
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
-                                          color: Colors.black,
+                                          color: blackColor,
                                           fontSize: 17,
                                         ),
                                       ),
@@ -5825,7 +5825,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                         style: ButtonStyle(
                                           backgroundColor:
                                           MaterialStateProperty.all<Color>(
-                                              Colors.green),
+                                              successColor),
                                           shape: MaterialStateProperty.all<
                                               RoundedRectangleBorder>(
                                             RoundedRectangleBorder(
@@ -5834,9 +5834,9 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                             ),
                                           ),
                                         ),
-                                        child: const Text('Continue',
+                                        child: Text('Continue',
                                             style:
-                                            TextStyle(color: Colors.white)),
+                                            TextStyle(color: whiteColor)),
                                       ),
                                     ),
                                   ],
@@ -5845,7 +5845,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                             );
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green,
+                            backgroundColor: successColor,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8.0),
                             ),
@@ -5856,9 +5856,9 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                               MediaQuery.of(context).size.height * 0.01,
                             ),
                           ),
-                          child: const Text(
+                          child: Text(
                             'Validate',
-                            style: TextStyle(fontSize: 18, color: Colors.white),
+                            style: TextStyle(fontSize: 18, color: whiteColor),
                           ),
                         ),
                       ],
@@ -5881,13 +5881,13 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              backgroundColor: Colors.white,
+              backgroundColor: whiteColor,
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text(" "),
                   IconButton(
-                    icon: const Icon(Icons.close, color: Colors.grey),
+                    icon: Icon(Icons.close, color: iconSecondaryColor),
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
@@ -5912,7 +5912,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               border:
-                              Border.all(color: Colors.grey, width: 1.0),
+                              Border.all(color: grey300, width: 1.0),
                             ),
                             child: Stack(
                               children: [
@@ -5930,8 +5930,8 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                         errorBuilder: (BuildContext context,
                                             Object exception,
                                             StackTrace? stackTrace) {
-                                          return const Icon(Icons.person,
-                                              color: Colors.grey);
+                                          return Icon(Icons.person,
+                                              color: iconSecondaryColor);
                                         },
                                       ),
                                     ),
@@ -5942,7 +5942,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                     child: Container(
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
-                                        color: Colors.grey[400],
+                                        color: disabledColor,
                                       ),
                                       child: const Icon(Icons.person),
                                     ),
@@ -5979,7 +5979,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                             children: [
                               Container(
                                 decoration: BoxDecoration(
-                                  color: Colors.grey[200],
+                                  color: borderLightColor,
                                   borderRadius: BorderRadius.circular(4.0),
                                 ),
                               ),
@@ -5988,7 +5988,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                       0.008),
                               Container(
                                 decoration: BoxDecoration(
-                                  color: Colors.grey[200],
+                                  color: borderLightColor,
                                   borderRadius: BorderRadius.circular(4.0),
                                 ),
                               ),
@@ -6003,7 +6003,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         children: [
                           Text(
                             'Date',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text('${record['attendance_date'] ?? 'None'}'),
                         ],
@@ -6013,7 +6013,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         children: [
                           Text(
                             'Check-In',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text('${record['attendance_clock_in'] ?? 'None'}'),
                         ],
@@ -6023,7 +6023,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         children: [
                           Text(
                             'Check-Out',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text('${record['attendance_clock_out'] ?? 'None'}'),
                         ],
@@ -6033,7 +6033,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         children: [
                           Text(
                             'Shift',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text('${record['shift_name'] ?? 'None'}'),
                         ],
@@ -6043,7 +6043,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         children: [
                           Text(
                             'Minimum Hour',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text('${record['minimum_hour'] ?? 'None'}'),
                         ],
@@ -6053,7 +6053,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         children: [
                           Text(
                             'Check-In Date',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text(
                               '${record['attendance_clock_in_date'] ?? 'None'}'),
@@ -6064,7 +6064,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         children: [
                           Text(
                             'Check-Out Date',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text(
                               '${record['attendance_clock_out_date'] ?? 'None'}'),
@@ -6075,7 +6075,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         children: [
                           Text(
                             'At Work',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text('${record['attendance_worked_hour'] ?? 'None'}'),
                         ],
@@ -6092,15 +6092,15 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
       },
       child: Container(
         padding: const EdgeInsets.all(8.0),
-        color: Colors.white,
+        color: whiteColor,
         child: Container(
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey[50]!),
+            border: Border.all(color: grey100),
             borderRadius: BorderRadius.circular(8.0),
-            color: Colors.white,
+            color: whiteColor,
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.shade400.withOpacity(0.3),
+                color: disabledColor.withOpacity(0.3),
                 spreadRadius: 2,
                 blurRadius: 5,
                 offset: const Offset(0, 3),
@@ -6109,10 +6109,10 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
           ),
           child: Card(
             shape: RoundedRectangleBorder(
-              side: const BorderSide(color: Colors.white, width: 0.0),
+              side: BorderSide(color: whiteColor, width: 0.0),
               borderRadius: BorderRadius.circular(10.0),
             ),
-            color: Colors.white,
+            color: whiteColor,
             elevation: 0.1,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -6128,7 +6128,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                         height: 40.0,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          border: Border.all(color: Colors.grey, width: 1.0),
+                          border: Border.all(color: grey300, width: 1.0),
                         ),
                         child: Stack(
                           children: [
@@ -6145,8 +6145,8 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                     errorBuilder: (BuildContext context,
                                         Object exception,
                                         StackTrace? stackTrace) {
-                                      return const Icon(Icons.person,
-                                          color: Colors.grey);
+                                      return Icon(Icons.person,
+                                          color: iconSecondaryColor);
                                     },
                                   ),
                                 ),
@@ -6157,7 +6157,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                                 child: Container(
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    color: Colors.grey[400],
+                                    color: disabledColor,
                                   ),
                                   child: const Icon(Icons.person),
                                 ),
@@ -6195,7 +6195,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                     children: [
                       Text(
                         'Date',
-                        style: TextStyle(color: Colors.grey.shade700),
+                        style: TextStyle(color: grey700),
                       ),
                       Text(record['attendance_date'] ?? 'None'),
                     ],
@@ -6205,7 +6205,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                     children: [
                       Text(
                         'Check-In',
-                        style: TextStyle(color: Colors.grey.shade700),
+                        style: TextStyle(color: grey700),
                       ),
                       Text(record['attendance_clock_in'] ?? 'None'),
                     ],
@@ -6215,7 +6215,7 @@ class _AttendanceAttendance extends State<AttendanceAttendance>
                     children: [
                       Text(
                         'Shift',
-                        style: TextStyle(color: Colors.grey.shade700),
+                        style: TextStyle(color: grey700),
                       ),
                       Text(record['shift_name'] ?? 'None'),
                     ],

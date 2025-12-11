@@ -6,6 +6,7 @@ import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_not
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
+import '../res/consts/app_colors.dart';
 
 class RotatingWorkTypePage extends StatefulWidget {
   final String selectedEmployerId;
@@ -1716,7 +1717,7 @@ class _RotatingWorkTypePageState extends State<RotatingWorkTypePage> {
                         children: [
                           Text(
                             'Title',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Flexible(
                             child: Text(
@@ -1732,7 +1733,7 @@ class _RotatingWorkTypePageState extends State<RotatingWorkTypePage> {
                         children: [
                           Text(
                             'Based On',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text('${record['based_on'] ?? 'None'}'),
                         ],
@@ -1742,7 +1743,7 @@ class _RotatingWorkTypePageState extends State<RotatingWorkTypePage> {
                         children: [
                           Text(
                             'Start Date',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text('${record['start_date'] ?? 'None'}'),
                         ],
@@ -1752,7 +1753,7 @@ class _RotatingWorkTypePageState extends State<RotatingWorkTypePage> {
                         children: [
                           Text(
                             'Current Work Type',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Flexible(
                             child: Text(
@@ -1768,7 +1769,7 @@ class _RotatingWorkTypePageState extends State<RotatingWorkTypePage> {
                         children: [
                           Text(
                             'Next Work Type',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Flexible(
                             child: Text(
@@ -1784,7 +1785,7 @@ class _RotatingWorkTypePageState extends State<RotatingWorkTypePage> {
                         children: [
                           Text(
                             'Next Change Date',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text('${record['next_change_date'] ?? 'None'}'),
                         ],

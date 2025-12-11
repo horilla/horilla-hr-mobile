@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
 import 'package:shimmer/shimmer.dart';
+import '../../res/consts/app_colors.dart';
 
 class LeaveTypes extends StatefulWidget {
   const LeaveTypes({super.key});
@@ -243,8 +244,8 @@ class _LeaveTypes extends State<LeaveTypes> {
         child: Center(
           child: isLoading
               ? Shimmer.fromColors(
-            baseColor: Colors.grey[300]!,
-            highlightColor: Colors.grey[100]!,
+            baseColor: grey300,
+            highlightColor: grey100,
             child: ListView.builder(
               itemCount: 20,
               itemBuilder: (context, index) => Padding(
@@ -470,8 +471,8 @@ class _LeaveTypes extends State<LeaveTypes> {
 
 Widget shimmerListTile() {
   return Shimmer.fromColors(
-    baseColor: Colors.grey[300]!,
-    highlightColor: Colors.grey[100]!,
+    baseColor: grey300,
+    highlightColor: grey100,
     child: ListTile(
       title: Container(
         width: double.infinity,

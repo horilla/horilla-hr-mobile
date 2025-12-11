@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Allow cleartext (HTTP) traffic for local development -->
+    <domain-config cleartextTrafficPermitted="true">
+        <!-- Localhost and common local network ranges -->
+        <domain includeSubdomains="true">localhost</domain>
+        <domain includeSubdomains="true">127.0.0.1</domain>
+        <domain includeSubdomains="true">10.0.2.2</domain> <!-- Android emulator host -->
+        <domain includeSubdomains="true">10.0.0.0/8</domain> <!-- Private network range -->
+        <domain includeSubdomains="true">192.168.0.0/16</domain> <!-- Private network range -->
+        <domain includeSubdomains="true">172.16.0.0/12</domain> <!-- Private network range -->
+    </domain-config>
+
+    <!-- Base configuration for all other domains (HTTPS only) -->
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

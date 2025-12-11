@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
-import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../main.dart';
+import '../res/consts/app_colors.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -15,7 +15,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  late StreamSubscription subscription;
+  StreamSubscription? subscription;
   var isDeviceConnected = false;
   bool isAlertSet = false;
   bool _passwordVisible = false;
@@ -24,12 +24,39 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController passwordController = TextEditingController();
   double horizontalMargin = 0.0;
   Timer? _notificationTimer;
+  String? _serverError;
+  String? _usernameError;
+  String? _passwordError;
+  bool _isLoading = false;
 
 
   @override
   void initState() {
     super.initState();
     getConnectivity();
+
+    // Clear errors when user starts typing
+    serverController.addListener(() {
+      if (_serverError != null) {
+        setState(() {
+          _serverError = null;
+        });
+      }
+    });
+    usernameController.addListener(() {
+      if (_usernameError != null) {
+        setState(() {
+          _usernameError = null;
+        });
+      }
+    });
+    passwordController.addListener(() {
+      if (_passwordError != null) {
+        setState(() {
+          _passwordError = null;
+        });
+      }
+    });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       double screenWidth = MediaQuery.of(context).size.width;
@@ -55,16 +82,80 @@ class _LoginPageState extends State<LoginPage> {
 
 
   Future<void> _login() async {
+    // Clear previous errors and set loading state
+    setState(() {
+      _serverError = null;
+      _usernameError = null;
+      _passwordError = null;
+      _isLoading = true;
+    });
+
     String serverAddress = serverController.text.trim();
     String username = usernameController.text.trim();
     String password = passwordController.text.trim();
+
+    // Validate empty fields
+    bool hasError = false;
+    if (serverAddress.isEmpty) {
+      setState(() {
+        _serverError = 'Server address is required';
+      });
+      hasError = true;
+    }
+    if (username.isEmpty) {
+      setState(() {
+        _usernameError = 'Email is required';
+      });
+      hasError = true;
+    }
+    if (password.isEmpty) {
+      setState(() {
+        _passwordError = 'Password is required';
+      });
+      hasError = true;
+    }
+
+    if (hasError) {
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
+    // Ensure server address has a scheme (http:// or https://)
+    if (!serverAddress.startsWith('http://') && !serverAddress.startsWith('https://')) {
+      // For local development, default to http://
+      serverAddress = 'http://$serverAddress';
+    }
+
+    // Remove trailing slash if present
+    if (serverAddress.endsWith('/')) {
+      serverAddress = serverAddress.substring(0, serverAddress.length - 1);
+    }
+
     String url = '$serverAddress/api/auth/login/';
 
+    print('Attempting login to: $url'); // Debug log
+
     try {
+      // Send JSON body with proper headers to avoid CORS issues
       http.Response response = await http.post(
         Uri.parse(url),
-        body: {'username': username, 'password': password},
-      ).timeout(Duration(seconds: 3));
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: jsonEncode({
+          'username': username,
+          'password': password,
+        }),
+      ).timeout(Duration(seconds: 10));
+
+      print('Login response status: ${response.statusCode}'); // Debug log
+      print('Login response headers: ${response.headers}'); // Debug log
+      if (response.statusCode != 200) {
+        print('Login response body: ${response.body}'); // Debug log
+      }
 
       if (response.statusCode == 200) {
         final responseBody = jsonDecode(response.body);
@@ -93,26 +184,60 @@ class _LoginPageState extends State<LoginPage> {
 
         Navigator.pushReplacementNamed(context, '/home');
       } else {
+        // Try to parse error message from response
+        String errorMessage = 'Invalid email or password';
+        try {
+          final errorBody = jsonDecode(response.body);
+          errorMessage = errorBody['detail'] ?? 
+                        errorBody['message'] ?? 
+                        errorBody['error'] ?? 
+                        'Invalid email or password';
+        } catch (e) {
+          // If parsing fails, use default message
+        }
+        
+        setState(() {
+          _isLoading = false;
+        });
+        
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Invalid email or password'),
+          SnackBar(
+            content: Text(errorMessage),
             backgroundColor: Colors.red,
           ),
         );
       }
     } on TimeoutException {
+      setState(() {
+        _isLoading = false;
+      });
+      
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Connection timeout'),
+          content: Text('Connection timeout. Please check your server address and try again.'),
           backgroundColor: Colors.red,
         ),
       );
     } catch (e) {
-      print(e);
+      setState(() {
+        _isLoading = false;
+      });
+      
+      print('Login error: $e'); // Debug log
+      String errorMessage = 'Connection failed';
+      if (e.toString().contains('CORS')) {
+        errorMessage = 'CORS error: Please ensure the server allows requests from this app';
+      } else if (e.toString().contains('Failed host lookup')) {
+        errorMessage = 'Cannot reach server. Please check the server address.';
+      } else if (e.toString().contains('SocketException')) {
+        errorMessage = 'Network error. Please check your connection and server address.';
+      }
+      
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Invalid server address'),
+        SnackBar(
+          content: Text(errorMessage),
           backgroundColor: Colors.red,
+          duration: Duration(seconds: 5),
         ),
       );
     }
@@ -188,7 +313,7 @@ class _LoginPageState extends State<LoginPage> {
                     Container(
                       padding: const EdgeInsets.all(10.0),
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey[300]!),
+                        border: Border.all(color: grey300),
                         borderRadius: BorderRadius.circular(20.0),
                         color: Colors.white,
                         boxShadow: [
@@ -214,46 +339,63 @@ class _LoginPageState extends State<LoginPage> {
                             'Server Address',
                             serverController,
                             false,
+                            errorText: _serverError,
+                            enabled: !_isLoading,
                           ),
                           SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                           _buildTextFormField(
                             'Email',
                             usernameController,
                             false,
+                            errorText: _usernameError,
+                            enabled: !_isLoading,
                           ),
                           SizedBox(height: MediaQuery.of(context).size.height * 0.02),
                           _buildTextFormField(
                             'Password',
                             passwordController,
                             true,
-                            _passwordVisible,
-                                () {
+                            passwordVisible: _passwordVisible,
+                            togglePasswordVisibility: () {
                               setState(() {
                                 _passwordVisible = !_passwordVisible;
                               });
                             },
+                            errorText: _passwordError,
+                            enabled: !_isLoading,
                           ),
                           SizedBox(height: MediaQuery.of(context).size.height * 0.04),
                           SizedBox(
                             width: double.infinity,
                             child: ElevatedButton(
-                              onPressed: _login,
+                              onPressed: _isLoading ? null : _login,
                               style: ElevatedButton.styleFrom(
-                                foregroundColor: Colors.white,
-                                backgroundColor: Colors.red,
+                                foregroundColor: whiteColor,
+                                backgroundColor: redColor,
+                                disabledBackgroundColor: redColor.withOpacity(0.6),
+                                disabledForegroundColor: whiteColor,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8.0),
                                 ),
                               ),
-                              child: const Padding(
-                                padding: EdgeInsets.symmetric(vertical: 10.0),
-                                child: Text(
-                                  'Sign In',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20,
-                                  ),
-                                ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 10.0),
+                                child: _isLoading
+                                    ? SizedBox(
+                                        height: 20,
+                                        width: 20,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          valueColor: AlwaysStoppedAnimation<Color>(whiteColor),
+                                        ),
+                                      )
+                                    : const Text(
+                                        'Sign In',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20,
+                                        ),
+                                      ),
                               ),
                             ),
                           ),
@@ -274,10 +416,12 @@ class _LoginPageState extends State<LoginPage> {
   Widget _buildTextFormField(
       String label,
       TextEditingController controller,
-      bool isPassword, [
+      bool isPassword, {
         bool? passwordVisible,
         VoidCallback? togglePasswordVisibility,
-      ]) {
+        String? errorText,
+        bool enabled = true,
+      }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -291,10 +435,22 @@ class _LoginPageState extends State<LoginPage> {
         SizedBox(height: MediaQuery.of(context).size.height * 0.005),
         TextFormField(
           controller: controller,
+          enabled: enabled,
           obscureText: isPassword ? !(passwordVisible ?? false) : false,
           decoration: InputDecoration(
             border: OutlineInputBorder(
-              borderSide: const BorderSide(width: 1),
+              borderSide: BorderSide(
+                width: 1,
+                color: errorText != null ? Colors.red : grey300,
+              ),
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderSide: const BorderSide(width: 1, color: Colors.red),
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderSide: const BorderSide(width: 2, color: Colors.red),
               borderRadius: BorderRadius.circular(8.0),
             ),
             contentPadding: EdgeInsets.symmetric(
@@ -312,13 +468,30 @@ class _LoginPageState extends State<LoginPage> {
                 : null,
           ),
         ),
+        if (errorText != null) ...[
+          SizedBox(height: MediaQuery.of(context).size.height * 0.005),
+          Padding(
+            padding: const EdgeInsets.only(left: 12.0),
+            child: Text(
+              errorText,
+              style: const TextStyle(
+                color: Colors.red,
+                fontSize: 12,
+              ),
+            ),
+          ),
+        ],
       ],
     );
   }
 
   @override
   void dispose() {
-    subscription.cancel();
+    subscription?.cancel();
+    serverController.dispose();
+    usernameController.dispose();
+    passwordController.dispose();
+    _notificationTimer?.cancel();
     super.dispose();
   }
 }

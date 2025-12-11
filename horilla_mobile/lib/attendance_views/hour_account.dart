@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:shimmer/shimmer.dart';
+import '../res/consts/app_colors.dart';
 
 class HourAccountFormPage extends StatefulWidget {
   const HourAccountFormPage({super.key});
@@ -1608,7 +1609,7 @@ class _HourAccountFormPageState extends State<HourAccountFormPage> {
                         children: [
                           Text(
                             'Month',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text(
                             record['month'] != null &&
@@ -1623,7 +1624,7 @@ class _HourAccountFormPageState extends State<HourAccountFormPage> {
                         children: [
                           Text(
                             'Year',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text('${record['year'] ?? 'None'}'),
                         ],
@@ -1633,7 +1634,7 @@ class _HourAccountFormPageState extends State<HourAccountFormPage> {
                         children: [
                           Text(
                             'Worked Hours',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text('${record['worked_hours'] ?? 'None'}'),
                         ],
@@ -1643,7 +1644,7 @@ class _HourAccountFormPageState extends State<HourAccountFormPage> {
                         children: [
                           Text(
                             'Pending Hour',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text('${record['pending_hours'] ?? 'None'}'),
                         ],
@@ -1653,7 +1654,7 @@ class _HourAccountFormPageState extends State<HourAccountFormPage> {
                         children: [
                           Text(
                             'Overtime',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text('${record['overtime'] ?? 'None'}'),
                         ],
@@ -1929,7 +1930,7 @@ class _HourAccountFormPageState extends State<HourAccountFormPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text('Month',
-                                style: TextStyle(color: Colors.grey.shade700)),
+                                style: TextStyle(color: grey700)),
                             Text(
                               record['month'] != null &&
                                       record['month'].isNotEmpty
@@ -1942,7 +1943,7 @@ class _HourAccountFormPageState extends State<HourAccountFormPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text('Year',
-                                style: TextStyle(color: Colors.grey.shade700)),
+                                style: TextStyle(color: grey700)),
                             Text('${record['year']}'),
                           ],
                         ),
@@ -1950,7 +1951,7 @@ class _HourAccountFormPageState extends State<HourAccountFormPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text('Worked Hours',
-                                style: TextStyle(color: Colors.grey.shade700)),
+                                style: TextStyle(color: grey700)),
                             Text('${record['worked_hours']}'),
                           ],
                         ),
@@ -2161,8 +2162,8 @@ class _HourAccountFormPageState extends State<HourAccountFormPage> {
 
   Widget shimmerListTile() {
     return Shimmer.fromColors(
-      baseColor: Colors.grey[300]!,
-      highlightColor: Colors.grey[100]!,
+      baseColor: grey300,
+      highlightColor: grey100,
       child: ListTile(
         title: Container(
           width: double.infinity,
@@ -2187,8 +2188,8 @@ class _HourAccountFormPageState extends State<HourAccountFormPage> {
                     margin: const EdgeInsets.all(8),
                     elevation: 0,
                     child: Shimmer.fromColors(
-                      baseColor: Colors.grey[300]!,
-                      highlightColor: Colors.grey[100]!,
+                      baseColor: grey300,
+                      highlightColor: grey100,
                       child: Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(4.0),
@@ -2222,8 +2223,8 @@ class _HourAccountFormPageState extends State<HourAccountFormPage> {
               itemCount: 10,
               itemBuilder: (context, index) {
                 return Shimmer.fromColors(
-                  baseColor: Colors.grey[300]!,
-                  highlightColor: Colors.grey[100]!,
+                  baseColor: grey300,
+                  highlightColor: grey100,
                   child: Container(
                     padding: const EdgeInsets.all(8.0),
                     child: Container(

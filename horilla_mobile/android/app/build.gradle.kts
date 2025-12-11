@@ -26,8 +26,8 @@ android {
         applicationId = "com.cybrosys.horilla_project"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = 21
-        targetSdk = 35
+        minSdk = flutter.minSdkVersion
+        targetSdk = 36
         versionCode = 9
         versionName = "1.0.3"
     }

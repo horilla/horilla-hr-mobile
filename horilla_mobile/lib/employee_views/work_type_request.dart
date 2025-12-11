@@ -6,6 +6,7 @@ import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_not
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
+import '../res/consts/app_colors.dart';
 
 class WorkTypeRequestPage extends StatefulWidget {
   final String selectedEmployerId;
@@ -1847,7 +1848,7 @@ class _WorkTypeRequestPageState extends State<WorkTypeRequestPage> {
                         children: [
                           Text(
                             'Work Type',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Flexible(
                             child: Text(
@@ -1865,7 +1866,7 @@ class _WorkTypeRequestPageState extends State<WorkTypeRequestPage> {
                         children: [
                           Text(
                             'Previous work type',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Flexible(
                             child: Text(
@@ -1883,7 +1884,7 @@ class _WorkTypeRequestPageState extends State<WorkTypeRequestPage> {
                         children: [
                           Text(
                             'Requested date',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Flexible(
                             child: Text(
@@ -1901,7 +1902,7 @@ class _WorkTypeRequestPageState extends State<WorkTypeRequestPage> {
                         children: [
                           Text(
                             'Requested till',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Flexible(
                             child: Text(
@@ -1919,7 +1920,7 @@ class _WorkTypeRequestPageState extends State<WorkTypeRequestPage> {
                         children: [
                           Text(
                             'Is permanent work type',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Flexible(
                             child: Text(
@@ -2680,7 +2681,7 @@ class _WorkTypeRequestPageState extends State<WorkTypeRequestPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text('Requested Work Type',
-                                style: TextStyle(color: Colors.grey.shade700)),
+                                style: TextStyle(color: grey700)),
                             Flexible(
                               child: Text(
                                 '${record['work_type_name'] ?? 'None'}',
@@ -2696,7 +2697,7 @@ class _WorkTypeRequestPageState extends State<WorkTypeRequestPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text('Previous/Current Work Type',
-                                style: TextStyle(color: Colors.grey.shade700)),
+                                style: TextStyle(color: grey700)),
                             Flexible(
                               child: Text(
                                 '${record['previous_work_type_name'] ?? 'None'}',
@@ -2712,7 +2713,7 @@ class _WorkTypeRequestPageState extends State<WorkTypeRequestPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text('Requested Date',
-                                style: TextStyle(color: Colors.grey.shade700)),
+                                style: TextStyle(color: grey700)),
                             Flexible(
                               child: Text(
                                 '${record['requested_date'] ?? 'None'}',
@@ -2728,7 +2729,7 @@ class _WorkTypeRequestPageState extends State<WorkTypeRequestPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text('Requested Till',
-                                style: TextStyle(color: Colors.grey.shade700)),
+                                style: TextStyle(color: grey700)),
                             Flexible(
                               child: Text(
                                 '${record['requested_till'] ?? 'None'}',

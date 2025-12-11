@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import '../res/consts/app_colors.dart';
 
 class AttendanceRequest extends StatefulWidget {
   const AttendanceRequest({super.key});
@@ -1863,8 +1864,8 @@ class _AttendanceRequest extends State<AttendanceRequest>
 
   Widget shimmerListTile() {
     return Shimmer.fromColors(
-      baseColor: Colors.grey[300]!,
-      highlightColor: Colors.grey[100]!,
+      baseColor: grey300,
+      highlightColor: grey100,
       child: ListTile(
         title: Container(
           width: double.infinity,
@@ -1887,8 +1888,8 @@ class _AttendanceRequest extends State<AttendanceRequest>
                   margin: const EdgeInsets.all(8),
                   elevation: 0,
                   child: Shimmer.fromColors(
-                    baseColor: Colors.grey[300]!,
-                    highlightColor: Colors.grey[100]!,
+                    baseColor: grey300,
+                    highlightColor: grey100,
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(4.0),
@@ -2120,8 +2121,8 @@ class _AttendanceRequest extends State<AttendanceRequest>
         itemCount: 10,
         itemBuilder: (context, index) {
           return Shimmer.fromColors(
-            baseColor: Colors.grey[300]!,
-            highlightColor: Colors.grey[100]!,
+            baseColor: grey300,
+            highlightColor: grey100,
             child: Container(
               padding: const EdgeInsets.all(8.0),
               child: Container(
@@ -2193,8 +2194,8 @@ class _AttendanceRequest extends State<AttendanceRequest>
         itemCount: 10,
         itemBuilder: (context, index) {
           return Shimmer.fromColors(
-            baseColor: Colors.grey[300]!,
-            highlightColor: Colors.grey[100]!,
+            baseColor: grey300,
+            highlightColor: grey100,
             child: Container(
               padding: const EdgeInsets.all(8.0),
               child: Container(
@@ -2413,7 +2414,7 @@ class _AttendanceRequest extends State<AttendanceRequest>
                         children: [
                           Text(
                             'Date',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text('${record['attendance_date'] ?? 'None'}'),
                         ],
@@ -2423,7 +2424,7 @@ class _AttendanceRequest extends State<AttendanceRequest>
                         children: [
                           Text(
                             'Check-In',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text('${record['attendance_clock_in'] ?? 'None'}'),
                         ],
@@ -2433,7 +2434,7 @@ class _AttendanceRequest extends State<AttendanceRequest>
                         children: [
                           Text(
                             'Check-Out',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text('${record['attendance_clock_out'] ?? 'None'}'),
                         ],
@@ -2443,7 +2444,7 @@ class _AttendanceRequest extends State<AttendanceRequest>
                         children: [
                           Text(
                             'Shift',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text('${record['shift_name'] ?? 'None'}'),
                         ],
@@ -2453,7 +2454,7 @@ class _AttendanceRequest extends State<AttendanceRequest>
                         children: [
                           Text(
                             'Minimum Hour',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text('${record['minimum_hour'] ?? 'None'}'),
                         ],
@@ -2463,7 +2464,7 @@ class _AttendanceRequest extends State<AttendanceRequest>
                         children: [
                           Text(
                             'Check-In Date',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text(
                               '${record['attendance_clock_in_date'] ?? 'None'}'),
@@ -2474,7 +2475,7 @@ class _AttendanceRequest extends State<AttendanceRequest>
                         children: [
                           Text(
                             'Check-Out Date',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text(
                               '${record['attendance_clock_out_date'] ?? 'None'}'),
@@ -2485,7 +2486,7 @@ class _AttendanceRequest extends State<AttendanceRequest>
                         children: [
                           Text(
                             'At Work',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text('${record['attendance_worked_hour'] ?? 'None'}'),
                         ],
@@ -2800,7 +2801,7 @@ class _AttendanceRequest extends State<AttendanceRequest>
                     children: [
                       Text(
                         'Date',
-                        style: TextStyle(color: Colors.grey.shade700),
+                        style: TextStyle(color: grey700),
                       ),
                       Text('${record['attendance_date'] ?? 'None'}'),
                     ],
@@ -2810,7 +2811,7 @@ class _AttendanceRequest extends State<AttendanceRequest>
                     children: [
                       Text(
                         'Check-In',
-                        style: TextStyle(color: Colors.grey.shade700),
+                        style: TextStyle(color: grey700),
                       ),
                       Text('${record['attendance_clock_in'] ?? 'None'}'),
                     ],
@@ -2820,7 +2821,7 @@ class _AttendanceRequest extends State<AttendanceRequest>
                     children: [
                       Text(
                         'Shift',
-                        style: TextStyle(color: Colors.grey.shade700),
+                        style: TextStyle(color: grey700),
                       ),
                       Text('${record['shift_name'] ?? 'None'}'),
                     ],
@@ -3140,7 +3141,7 @@ class _AttendanceRequest extends State<AttendanceRequest>
                   children: [
                     Text(
                       'Date',
-                      style: TextStyle(color: Colors.grey.shade700),
+                      style: TextStyle(color: grey700),
                     ),
                     Text('${record['attendance_date'] ?? 'None'}'),
                   ],
@@ -3150,7 +3151,7 @@ class _AttendanceRequest extends State<AttendanceRequest>
                   children: [
                     Text(
                       'Check-In',
-                      style: TextStyle(color: Colors.grey.shade700),
+                      style: TextStyle(color: grey700),
                     ),
                     Text('${record['attendance_clock_in'] ?? 'None'}'),
                   ],
@@ -3160,7 +3161,7 @@ class _AttendanceRequest extends State<AttendanceRequest>
                   children: [
                     Text(
                       'Shift',
-                      style: TextStyle(color: Colors.grey.shade700),
+                      style: TextStyle(color: grey700),
                     ),
                     Text('${record['shift_name'] ?? 'None'}'),
                   ],

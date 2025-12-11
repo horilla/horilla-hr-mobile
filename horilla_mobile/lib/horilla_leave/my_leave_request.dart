@@ -9,6 +9,7 @@ import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_not
 import 'dart:io';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:shimmer/shimmer.dart';
+import '../../res/consts/app_colors.dart';
 
 class MyLeaveRequest extends StatefulWidget {
   const MyLeaveRequest({super.key});
@@ -1816,7 +1817,7 @@ class _MyLeaveRequest extends State<MyLeaveRequest>
                                 children: [
                                   Text(
                                     'Attachment:',
-                                    style: TextStyle(color: Colors.grey.shade700),
+                                    style: TextStyle(color: grey700),
                                   ),
                                   TextButton(
                                     onPressed: () {
@@ -2910,8 +2911,8 @@ class _MyLeaveRequest extends State<MyLeaveRequest>
 
   Widget shimmerListTile() {
     return Shimmer.fromColors(
-      baseColor: Colors.grey[300]!,
-      highlightColor: Colors.grey[100]!,
+      baseColor: grey300,
+      highlightColor: grey100,
       child: ListTile(
         title: Container(
           width: double.infinity,
@@ -2942,8 +2943,8 @@ class _MyLeaveRequest extends State<MyLeaveRequest>
               child: Row(
                 children: [
                   Shimmer.fromColors(
-                    baseColor: Colors.grey[300]!,
-                    highlightColor: Colors.grey[100]!,
+                    baseColor: grey300,
+                    highlightColor: grey100,
                     child: SizedBox(
                       width: MediaQuery.of(context).size.width * 0.9,
                       height: MediaQuery.of(context).size.height * 0.2,
@@ -3047,8 +3048,8 @@ class _MyLeaveRequest extends State<MyLeaveRequest>
 
   Widget _buildShimmerTabContent() {
     return Shimmer.fromColors(
-      baseColor: Colors.grey[300]!,
-      highlightColor: Colors.grey[100]!,
+      baseColor: grey300,
+      highlightColor: grey100,
       child: ListView.builder(
         itemCount: 3,
         itemBuilder: (context, index) {
@@ -3298,7 +3299,7 @@ class _MyLeaveRequest extends State<MyLeaveRequest>
                             Text(
                               'Start Date',
                               style:
-                              TextStyle(color: Colors.grey.shade700),
+                              TextStyle(color: grey700),
                             ),
                             Text('${currentRequests[0]['start_date']}'),
                           ],
@@ -3310,7 +3311,7 @@ class _MyLeaveRequest extends State<MyLeaveRequest>
                             Text(
                               'Start Date Breakdown',
                               style:
-                              TextStyle(color: Colors.grey.shade700),
+                              TextStyle(color: grey700),
                             ),
                             Text(
                                 '${breakdownMaps[currentRequests[0]['start_date_breakdown']]}'),
@@ -3323,7 +3324,7 @@ class _MyLeaveRequest extends State<MyLeaveRequest>
                             Text(
                               'End Date',
                               style:
-                              TextStyle(color: Colors.grey.shade700),
+                              TextStyle(color: grey700),
                             ),
                             Text('${currentRequests[0]['end_date']}'),
                           ],
@@ -3335,7 +3336,7 @@ class _MyLeaveRequest extends State<MyLeaveRequest>
                             Text(
                               'End Date Breakdown',
                               style:
-                              TextStyle(color: Colors.grey.shade700),
+                              TextStyle(color: grey700),
                             ),
                             Text(
                                 '${breakdownMaps[currentRequests[0]['end_date_breakdown']]}'),
@@ -3348,7 +3349,7 @@ class _MyLeaveRequest extends State<MyLeaveRequest>
                             Text(
                               'Requested Days',
                               style:
-                              TextStyle(color: Colors.grey.shade700),
+                              TextStyle(color: grey700),
                             ),
                             Text(
                                 '${currentRequests[0]['requested_days']}'),
@@ -3361,7 +3362,7 @@ class _MyLeaveRequest extends State<MyLeaveRequest>
                             Text(
                               'Description',
                               style:
-                              TextStyle(color: Colors.grey.shade700),
+                              TextStyle(color: grey700),
                             ),
                           ],
                         ),
@@ -3391,7 +3392,7 @@ class _MyLeaveRequest extends State<MyLeaveRequest>
                               Text(
                                 'Attachment',
                                 style: TextStyle(
-                                    color: Colors.grey.shade700),
+                                    color: grey700),
                               ),
                               TextButton(
                                 onPressed: () {
@@ -3682,7 +3683,7 @@ class _MyLeaveRequest extends State<MyLeaveRequest>
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text('Start Date',
-                          style: TextStyle(color: Colors.grey.shade700)),
+                          style: TextStyle(color: grey700)),
                       Text('${record['start_date']}'),
                     ],
                   ),
@@ -3690,7 +3691,7 @@ class _MyLeaveRequest extends State<MyLeaveRequest>
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text('End Date',
-                          style: TextStyle(color: Colors.grey.shade700)),
+                          style: TextStyle(color: grey700)),
                       Text('${record['end_date']}'),
                     ],
                   ),
@@ -3698,7 +3699,7 @@ class _MyLeaveRequest extends State<MyLeaveRequest>
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text('Requested Days',
-                          style: TextStyle(color: Colors.grey.shade700)),
+                          style: TextStyle(color: grey700)),
                       Text('${record['requested_days']}'),
                     ],
                   ),
@@ -3706,7 +3707,7 @@ class _MyLeaveRequest extends State<MyLeaveRequest>
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text('Status',
-                          style: TextStyle(color: Colors.grey.shade700)),
+                          style: TextStyle(color: grey700)),
                       Container(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 5.0, vertical: 2.0),
@@ -4107,8 +4108,8 @@ class _MyLeaveRequest extends State<MyLeaveRequest>
         itemCount: 10,
         itemBuilder: (context, index) {
           return Shimmer.fromColors(
-            baseColor: Colors.grey[300]!,
-            highlightColor: Colors.grey[100]!,
+            baseColor: grey300,
+            highlightColor: grey100,
             child: ListTile(
               leading: const CircleAvatar(
                 backgroundColor: Colors.white,

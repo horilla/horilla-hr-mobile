@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:multiselect_dropdown_flutter/multiselect_dropdown_flutter.dart';
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
 import 'package:shimmer/shimmer.dart';
+import '../../res/consts/app_colors.dart';
 
 class SelectedLeaveType extends StatefulWidget {
   const SelectedLeaveType({super.key});
@@ -398,8 +399,8 @@ class _SelectedLeaveType extends State<SelectedLeaveType> {
         padding: const EdgeInsets.all(25.0),
         child: isLoading
             ? Shimmer.fromColors(
-          baseColor: Colors.grey[300]!,
-          highlightColor: Colors.grey[100]!,
+          baseColor: grey300,
+          highlightColor: grey100,
           child: Container(
             padding: const EdgeInsets.fromLTRB(20.0, 0.0, 16.0, 15.0),
             decoration: BoxDecoration(
@@ -1099,8 +1100,8 @@ class _SelectedLeaveType extends State<SelectedLeaveType> {
 
 Widget shimmerListTile() {
   return Shimmer.fromColors(
-    baseColor: Colors.grey[300]!,
-    highlightColor: Colors.grey[100]!,
+    baseColor: grey300,
+    highlightColor: grey100,
     child: ListTile(
       title: Container(
         width: double.infinity,

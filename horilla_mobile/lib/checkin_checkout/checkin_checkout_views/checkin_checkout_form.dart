@@ -12,6 +12,7 @@ import '../../horilla_main/home.dart';
 import 'face_detection.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
+import '../../res/consts/app_colors.dart';
 
 
 
@@ -708,8 +709,8 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage> {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Shimmer.fromColors(
-            baseColor: Colors.grey[300]!,
-            highlightColor: Colors.grey[100]!,
+            baseColor: grey300,
+            highlightColor: grey100,
             child: ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -785,8 +786,8 @@ class _CheckInCheckOutFormPageState extends State<CheckInCheckOutFormPage> {
           child: Padding(
             padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 0.0, bottom: 8.0),
             child: Shimmer.fromColors(
-              baseColor: Colors.grey[300]!,
-              highlightColor: Colors.grey[100]!,
+              baseColor: grey300,
+              highlightColor: grey100,
               child: Container(
                 width: MediaQuery.of(context).size.width * 0.95,
                 height: MediaQuery.of(context).size.height * 0.07,

@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'dart:io';
+import '../../res/consts/app_colors.dart';
 
 class LeaveAllocationRequest extends StatefulWidget {
   const LeaveAllocationRequest({super.key});
@@ -1010,7 +1011,7 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                               children: [
                                 Text(
                                   'Attachment:',
-                                  style: TextStyle(color: Colors.grey.shade700),
+                                  style: TextStyle(color: grey700),
                                 ),
                                 TextButton(
                                   onPressed: () {
@@ -1361,7 +1362,7 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                       children: [
                         Text(
                           'Attachment:',
-                          style: TextStyle(color: Colors.grey.shade700),
+                          style: TextStyle(color: grey700),
                         ),
                         TextButton(
                           onPressed: () {
@@ -2556,8 +2557,8 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
 
   Widget shimmerListTile() {
     return Shimmer.fromColors(
-      baseColor: Colors.grey[300]!,
-      highlightColor: Colors.grey[100]!,
+      baseColor: grey300,
+      highlightColor: grey100,
       child: ListTile(
         title: Container(
           width: double.infinity,
@@ -2599,8 +2600,8 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                   margin: const EdgeInsets.all(8),
                   elevation: 0,
                   child: Shimmer.fromColors(
-                    baseColor: Colors.grey[300]!,
-                    highlightColor: Colors.grey[100]!,
+                    baseColor: grey300,
+                    highlightColor: grey100,
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(4.0),
@@ -3014,7 +3015,7 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                             children: [
                               Text(
                                 'Requested days',
-                                style: TextStyle(color: Colors.grey.shade700),
+                                style: TextStyle(color: grey700),
                               ),
                               Text('${record['requested_days'] ?? "None"}'),
                             ],
@@ -3024,7 +3025,7 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                             children: [
                               Text(
                                 'Leave Type',
-                                style: TextStyle(color: Colors.grey.shade700),
+                                style: TextStyle(color: grey700),
                               ),
                               Text('${record['leave_type_id']['name'] ?? "None"}'),
                             ],
@@ -3034,7 +3035,7 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                             children: [
                               Text(
                                 'Description',
-                                style: TextStyle(color: Colors.grey.shade700),
+                                style: TextStyle(color: grey700),
                               ),
                             ],
                           ),
@@ -3062,7 +3063,7 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                               children: [
                                 Text(
                                   'Attachment:',
-                                  style: TextStyle(color: Colors.grey.shade700),
+                                  style: TextStyle(color: grey700),
                                 ),
                                 TextButton(
                                   onPressed: () {
@@ -3353,7 +3354,7 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text('Requested Days',
-                          style: TextStyle(color: Colors.grey.shade700)),
+                          style: TextStyle(color: grey700)),
                       Text('${record['requested_days']}'),
                     ],
                   ),
@@ -3361,7 +3362,7 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text('Leave Type',
-                          style: TextStyle(color: Colors.grey.shade700)),
+                          style: TextStyle(color: grey700)),
                       Text('${record['leave_type_id']['name']}'),
                     ],
                   ),
@@ -3369,7 +3370,7 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text('Status',
-                          style: TextStyle(color: Colors.grey.shade700)),
+                          style: TextStyle(color: grey700)),
                       Container(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 5.0, vertical: 2.0),
@@ -3595,7 +3596,7 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                         children: [
                           Text(
                             'Leave Type',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text('${record['leave_type_id']['name']}'),
                         ],
@@ -3605,7 +3606,7 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                         children: [
                           Text(
                             'Requested days',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                           Text('${record['requested_days']}'),
                         ],
@@ -3615,7 +3616,7 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                         children: [
                           Text(
                             'Description',
-                            style: TextStyle(color: Colors.grey.shade700),
+                            style: TextStyle(color: grey700),
                           ),
                         ],
                       ),
@@ -3645,7 +3646,7 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                           children: [
                             Text(
                               'Attachment:',
-                              style: TextStyle(color: Colors.grey.shade700),
+                              style: TextStyle(color: grey700),
                             ),
                             TextButton(
                               onPressed: () {
@@ -4142,7 +4143,7 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text('Requested Days',
-                          style: TextStyle(color: Colors.grey.shade700)),
+                          style: TextStyle(color: grey700)),
                       Text('${record['requested_days']}'),
                     ],
                   ),
@@ -4150,7 +4151,7 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text('Leave Type',
-                          style: TextStyle(color: Colors.grey.shade700)),
+                          style: TextStyle(color: grey700)),
                       Text('${record['leave_type_id']['name']}'),
                     ],
                   ),
@@ -4158,7 +4159,7 @@ class _LeaveAllocationRequest extends State<LeaveAllocationRequest>
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text('Status',
-                          style: TextStyle(color: Colors.grey.shade700)),
+                          style: TextStyle(color: grey700)),
                       Container(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 5.0, vertical: 2.0),

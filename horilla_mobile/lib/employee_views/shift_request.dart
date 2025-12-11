@@ -6,6 +6,7 @@ import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_not
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
+import '../res/consts/app_colors.dart';
 
 class ShiftRequestPage extends StatefulWidget {
   final String selectedEmployerId;
@@ -1810,7 +1811,7 @@ class _ShiftRequestPageState extends State<ShiftRequestPage> {
                               children: [
                                 Text(
                                   'Requested shift',
-                                  style: TextStyle(color: Colors.grey.shade700),
+                                  style: TextStyle(color: grey700),
                                 ),
                                 Text('${record['shift_name'] ?? 'None'}'),
                               ],
@@ -1820,7 +1821,7 @@ class _ShiftRequestPageState extends State<ShiftRequestPage> {
                               children: [
                                 Text(
                                   'Previous shift',
-                                  style: TextStyle(color: Colors.grey.shade700),
+                                  style: TextStyle(color: grey700),
                                 ),
                                 Text('${record['previous_shift_name'] ?? 'None'}'),
                               ],
@@ -1830,7 +1831,7 @@ class _ShiftRequestPageState extends State<ShiftRequestPage> {
                               children: [
                                 Text(
                                   'Requested date',
-                                  style: TextStyle(color: Colors.grey.shade700),
+                                  style: TextStyle(color: grey700),
                                 ),
                                 Text('${record['requested_date'] ?? 'None'}'),
                               ],
@@ -1840,7 +1841,7 @@ class _ShiftRequestPageState extends State<ShiftRequestPage> {
                               children: [
                                 Text(
                                   'Requested till',
-                                  style: TextStyle(color: Colors.grey.shade700),
+                                  style: TextStyle(color: grey700),
                                 ),
                                 Text('${record['requested_till'] ?? 'None'}'),
                               ],
@@ -1850,7 +1851,7 @@ class _ShiftRequestPageState extends State<ShiftRequestPage> {
                               children: [
                                 Text(
                                   'Description',
-                                  style: TextStyle(color: Colors.grey.shade700),
+                                  style: TextStyle(color: grey700),
                                 ),
                                 Flexible(
                                   child: Text(
@@ -1866,7 +1867,7 @@ class _ShiftRequestPageState extends State<ShiftRequestPage> {
                               children: [
                                 Text(
                                   'Is permanent shift',
-                                  style: TextStyle(color: Colors.grey.shade700),
+                                  style: TextStyle(color: grey700),
                                 ),
                                 Text(record['is_permanent_shift'] ? 'Yes' : 'No'),
                               ],

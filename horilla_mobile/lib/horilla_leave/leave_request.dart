@@ -10,6 +10,7 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
 import 'package:shimmer/shimmer.dart';
 import 'dart:io';
+import '../../res/consts/app_colors.dart';
 
 class LeaveRequest extends StatefulWidget {
   const LeaveRequest({super.key});
@@ -1910,7 +1911,7 @@ class _LeaveRequest extends State<LeaveRequest>
                                   children: [
                                     Text(
                                       'Attachment',
-                                      style: TextStyle(color: Colors.grey.shade700),
+                                      style: TextStyle(color: grey700),
                                     ),
                                     TextButton(
                                       onPressed: () {
@@ -2747,8 +2748,8 @@ class _LeaveRequest extends State<LeaveRequest>
 
   Widget shimmerListTile() {
     return Shimmer.fromColors(
-      baseColor: Colors.grey[300]!,
-      highlightColor: Colors.grey[100]!,
+      baseColor: grey300,
+      highlightColor: grey100,
       child: ListTile(
         title: Container(
           width: double.infinity,
@@ -2777,8 +2778,8 @@ class _LeaveRequest extends State<LeaveRequest>
                         margin: const EdgeInsets.all(8), // Remove any margin
                         elevation: 0,
                         child: Shimmer.fromColors(
-                          baseColor: Colors.grey[300]!,
-                          highlightColor: Colors.grey[100]!,
+                          baseColor: grey300,
+                          highlightColor: grey100,
                           child: Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(4.0),
@@ -3149,8 +3150,8 @@ class _LeaveRequest extends State<LeaveRequest>
                 itemCount: 10,
                 itemBuilder: (context, index) {
                   return Shimmer.fromColors(
-                    baseColor: Colors.grey[300]!,
-                    highlightColor: Colors.grey[100]!,
+                    baseColor: grey300,
+                    highlightColor: grey100,
                     child: ListTile(
                       leading: const CircleAvatar(
                         backgroundColor: Colors.white,
@@ -3221,8 +3222,8 @@ class _LeaveRequest extends State<LeaveRequest>
                 itemCount: 10,
                 itemBuilder: (context, index) {
                   return Shimmer.fromColors(
-                    baseColor: Colors.grey[300]!,
-                    highlightColor: Colors.grey[100]!,
+                    baseColor: grey300,
+                    highlightColor: grey100,
                     child: ListTile(
                       leading: const CircleAvatar(
                         backgroundColor: Colors.white,
@@ -3293,8 +3294,8 @@ class _LeaveRequest extends State<LeaveRequest>
                 itemCount: 10,
                 itemBuilder: (context, index) {
                   return Shimmer.fromColors(
-                    baseColor: Colors.grey[300]!,
-                    highlightColor: Colors.grey[100]!,
+                    baseColor: grey300,
+                    highlightColor: grey100,
                     child: ListTile(
                       leading: const CircleAvatar(
                         backgroundColor: Colors.white,
@@ -3365,8 +3366,8 @@ class _LeaveRequest extends State<LeaveRequest>
                 itemCount: 10,
                 itemBuilder: (context, index) {
                   return Shimmer.fromColors(
-                    baseColor: Colors.grey[300]!,
-                    highlightColor: Colors.grey[100]!,
+                    baseColor: grey300,
+                    highlightColor: grey100,
                     child: ListTile(
                       leading: const CircleAvatar(
                         backgroundColor: Colors.white,
@@ -3437,8 +3438,8 @@ class _LeaveRequest extends State<LeaveRequest>
                 itemCount: 10,
                 itemBuilder: (context, index) {
                   return Shimmer.fromColors(
-                    baseColor: Colors.grey[300]!,
-                    highlightColor: Colors.grey[100]!,
+                    baseColor: grey300,
+                    highlightColor: grey100,
                     child: ListTile(
                       leading: const CircleAvatar(
                         backgroundColor: Colors.white,
@@ -3656,7 +3657,7 @@ class _LeaveRequest extends State<LeaveRequest>
                           children: [
                             Text(
                               'Leave Type',
-                              style: TextStyle(color: Colors.grey.shade700),
+                              style: TextStyle(color: grey700),
                             ),
                             Text('${record['leave_type_id']['name']}'),
                           ],
@@ -3666,7 +3667,7 @@ class _LeaveRequest extends State<LeaveRequest>
                           children: [
                             Text(
                               'Start Date',
-                              style: TextStyle(color: Colors.grey.shade700),
+                              style: TextStyle(color: grey700),
                             ),
                             Text('${record['start_date']}'),
                           ],
@@ -3676,7 +3677,7 @@ class _LeaveRequest extends State<LeaveRequest>
                           children: [
                             Text(
                               'Start Date Breakdown',
-                              style: TextStyle(color: Colors.grey.shade700),
+                              style: TextStyle(color: grey700),
                             ),
                             Text(
                                 '${breakdownMaps[record['start_date_breakdown']]}'),
@@ -3687,7 +3688,7 @@ class _LeaveRequest extends State<LeaveRequest>
                           children: [
                             Text(
                               'End Date',
-                              style: TextStyle(color: Colors.grey.shade700),
+                              style: TextStyle(color: grey700),
                             ),
                             Text('${record['end_date']}'),
                           ],
@@ -3697,7 +3698,7 @@ class _LeaveRequest extends State<LeaveRequest>
                           children: [
                             Text(
                               'Start Date Breakdown',
-                              style: TextStyle(color: Colors.grey.shade700),
+                              style: TextStyle(color: grey700),
                             ),
                             Text(
                                 '${breakdownMaps[record['end_date_breakdown']]}'),
@@ -3708,7 +3709,7 @@ class _LeaveRequest extends State<LeaveRequest>
                           children: [
                             Text(
                               'Requested Days',
-                              style: TextStyle(color: Colors.grey.shade700),
+                              style: TextStyle(color: grey700),
                             ),
                             Text('${record['requested_days']}'),
                           ],
@@ -3718,7 +3719,7 @@ class _LeaveRequest extends State<LeaveRequest>
                           children: [
                             Text(
                               'Description',
-                              style: TextStyle(color: Colors.grey.shade700),
+                              style: TextStyle(color: grey700),
                             ),
                           ],
                         ),
@@ -3748,7 +3749,7 @@ class _LeaveRequest extends State<LeaveRequest>
                             children: [
                               Text(
                                 'Attachment',
-                                style: TextStyle(color: Colors.grey.shade700),
+                                style: TextStyle(color: grey700),
                               ),
                               TextButton(
                                 onPressed: () {

@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import '../res/consts/app_colors.dart';
 
 class NotificationsList extends StatefulWidget {
   const NotificationsList({super.key});
@@ -235,8 +236,8 @@ class _NotificationsListState extends State<NotificationsList> {
         child: Center(
           child: isLoading
               ? Shimmer.fromColors(
-            baseColor: Colors.grey[300]!,
-            highlightColor: Colors.grey[100]!,
+            baseColor: grey300,
+            highlightColor: grey100,
             child: ListView.builder(
               itemCount: 20,
               itemBuilder: (context, index) => Padding(
@@ -254,7 +255,7 @@ class _NotificationsListState extends State<NotificationsList> {
                         width: MediaQuery.of(context).size.width * 0.05,
                         height: MediaQuery.of(context).size.height * 0.02,
                         decoration: BoxDecoration(
-                          color: Colors.grey[300]!,
+                          color: grey300,
                           shape: BoxShape.circle,
                         ),
                       ),

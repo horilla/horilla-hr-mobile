@@ -11,6 +11,7 @@ import 'dart:convert';
 import 'package:shimmer/shimmer.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import '../../checkin_checkout/checkin_checkout_views/geofencing.dart';
+import '../res/consts/app_colors.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -822,8 +823,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           child: Center(
                             child: isLoading
                                 ? Shimmer.fromColors(
-                              baseColor: Colors.grey[300]!,
-                              highlightColor: Colors.grey[100]!,
+                              baseColor: grey300,
+                              highlightColor: grey100,
                               child: ListView.builder(
                                 itemCount: 3,
                                 itemBuilder: (context, index) => Padding(
@@ -1055,8 +1056,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Shimmer.fromColors(
-                baseColor: Colors.grey[300]!,
-                highlightColor: Colors.grey[100]!,
+                baseColor: grey300,
+                highlightColor: grey100,
                 child: Container(
                   width: 24,
                   height: 24,
@@ -1257,8 +1258,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       ),
       body: _isPermissionLoading
           ? Shimmer.fromColors(
-        baseColor: Colors.grey[300]!,
-        highlightColor: Colors.grey[100]!,
+        baseColor: grey300,
+        highlightColor: grey100,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: ListView(
@@ -1353,7 +1354,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 title: const Text('Employees'),
                 subtitle: Text(
                   'View and manage all your employees.',
-                  style: TextStyle(color: Colors.grey.shade700),
+                  style: TextStyle(color: grey700),
                 ),
                 trailing: const Icon(Icons.keyboard_arrow_right),
                 onTap: () {
@@ -1368,7 +1369,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 title: const Text('Attendances'),
                 subtitle: Text(
                   'Record and view employee information.',
-                  style: TextStyle(color: Colors.grey.shade700),
+                  style: TextStyle(color: grey700),
                 ),
                 trailing: const Icon(Icons.keyboard_arrow_right),
                 onTap: () {
@@ -1398,7 +1399,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   title: const Text('Leaves'),
                   subtitle: Text(
                     'Record and view Leave information',
-                    style: TextStyle(color: Colors.grey.shade700),
+                    style: TextStyle(color: grey700),
                   ),
                   trailing: const Icon(Icons.keyboard_arrow_right),
                 ),
