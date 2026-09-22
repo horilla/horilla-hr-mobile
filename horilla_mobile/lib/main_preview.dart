@@ -22,6 +22,8 @@ import 'features/attendance/data/attendance_models.dart';
 import 'features/home/data/home_api.dart';
 import 'features/leave/data/leave_api.dart';
 import 'features/leave/data/leave_models.dart';
+import 'features/payroll/data/payroll_api.dart';
+import 'features/payroll/data/payroll_models.dart';
 import 'features/home/data/home_models.dart';
 
 final _sampleHome = HomeData(
@@ -30,6 +32,7 @@ final _sampleHome = HomeData(
     role: 'manager',
     permissions: {'view_team': true, 'approve_leave': true},
     features: {'leave': true, 'payroll': true, 'helpdesk': true},
+    currencySymbol: '₹',
   ),
   punch: PunchState(
     isClockedIn: true,
@@ -148,6 +151,19 @@ final _sampleLeave = LeaveOverview(
   ],
 );
 
+final _samplePayslips = [
+  for (var i = 0; i < 5; i++)
+    PayslipSummary(
+      id: i + 1,
+      startDate: DateTime(2026, 8 - i, 1),
+      endDate: DateTime(2026, 8 - i, 28),
+      netPay: 86420.0 - i * 1500,
+      grossPay: 102000.0 - i * 1500,
+      deduction: 15580.0,
+      status: 'paid',
+    ),
+];
+
 void main() {
   runApp(
     ProviderScope(
@@ -155,6 +171,26 @@ void main() {
         homeProvider.overrideWith((ref) async => _sampleHome),
         attendanceOverviewProvider.overrideWith((ref) async => _sampleAttendance),
         leaveOverviewProvider.overrideWith((ref) async => _sampleLeave),
+        payslipsProvider.overrideWith((ref) async => _samplePayslips),
+        payslipProvider.overrideWith(
+          (ref, id) async => PayslipDetail(
+            summary: _samplePayslips.firstWhere(
+              (p) => p.id == id,
+              orElse: () => _samplePayslips.first,
+            ),
+            earnings: const [
+              PayComponent(title: 'Basic', amount: 60000),
+              PayComponent(title: 'House rent allowance', amount: 24000),
+              PayComponent(title: 'Travel allowance', amount: 18000),
+            ],
+            deductions: const [
+              PayComponent(title: 'Provident fund', amount: 7200),
+              PayComponent(title: 'Professional tax', amount: 200),
+              PayComponent(title: 'Income tax', amount: 8180),
+            ],
+            basicPay: 60000,
+          ),
+        ),
         sessionRestoreProvider.overrideWith((ref) async {}),
         sessionProvider.overrideWith(_PreviewSession.new),
       ],

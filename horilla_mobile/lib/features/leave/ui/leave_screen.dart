@@ -9,6 +9,7 @@ import '../../../core/theme/tokens.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/app_primitives.dart';
+import '../../../shared/widgets/error_state_card.dart';
 import '../data/leave_api.dart';
 import '../data/leave_models.dart';
 
@@ -59,7 +60,7 @@ class LeaveScreen extends ConsumerWidget {
 
     final error = overview.error;
     if (error != null) {
-      return _LeaveError(
+      return ErrorStateCard(
         failure: error is ApiFailure ? error : const ApiUnknown(),
         onRetry: () => ref.invalidate(leaveOverviewProvider),
       );
@@ -313,46 +314,6 @@ class _LeaveSkeleton extends StatelessWidget {
         AppCard.skeleton(height: 96),
         SizedBox(height: AppSpace.x20),
         AppCard.skeleton(height: 160),
-      ],
-    );
-  }
-}
-
-class _LeaveError extends StatelessWidget {
-  const _LeaveError({required this.failure, required this.onRetry});
-
-  final ApiFailure failure;
-  final VoidCallback onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpace.screen,
-        AppSpace.x18,
-        AppSpace.screen,
-        AppSpace.scrollBottom,
-      ),
-      children: [
-        AppCard(
-          onTap: onRetry,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const EyebrowLabel('Could not load'),
-              const SizedBox(height: AppSpace.x8),
-              Text(failure.message, style: AppText.body),
-              const SizedBox(height: AppSpace.x12),
-              Text(
-                'Tap to try again',
-                style: AppText.meta.copyWith(
-                  color: AppColors.brandStrong,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-        ),
       ],
     );
   }

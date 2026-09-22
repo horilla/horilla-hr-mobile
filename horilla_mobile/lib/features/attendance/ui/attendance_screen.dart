@@ -8,6 +8,7 @@ import '../../../core/theme/platform_chrome.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/app_primitives.dart';
+import '../../../shared/widgets/error_state_card.dart';
 import '../data/attendance_api.dart';
 import '../data/attendance_models.dart';
 
@@ -50,7 +51,7 @@ class AttendanceScreen extends ConsumerWidget {
 
     final error = overview.error;
     if (error != null) {
-      return _ErrorState(
+      return ErrorStateCard(
         failure: error is ApiFailure ? error : const ApiUnknown(),
         onRetry: () => ref.invalidate(attendanceOverviewProvider),
       );
@@ -257,46 +258,6 @@ class _AttendanceSkeleton extends StatelessWidget {
         AppCard.skeleton(height: 120),
         SizedBox(height: AppSpace.x20),
         AppCard.skeleton(height: 220),
-      ],
-    );
-  }
-}
-
-class _ErrorState extends StatelessWidget {
-  const _ErrorState({required this.failure, required this.onRetry});
-
-  final ApiFailure failure;
-  final VoidCallback onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpace.screen,
-        AppSpace.x18,
-        AppSpace.screen,
-        AppSpace.scrollBottom,
-      ),
-      children: [
-        AppCard(
-          onTap: onRetry,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const EyebrowLabel('Could not load'),
-              const SizedBox(height: AppSpace.x8),
-              Text(failure.message, style: AppText.body),
-              const SizedBox(height: AppSpace.x12),
-              Text(
-                'Tap to try again',
-                style: AppText.meta.copyWith(
-                  color: AppColors.brandStrong,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-        ),
       ],
     );
   }

@@ -8,6 +8,7 @@ import '../../../core/theme/platform_chrome.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/app_primitives.dart';
+import '../../../shared/widgets/error_state_card.dart';
 import '../data/home_api.dart';
 import '../data/home_models.dart';
 import 'home_sections.dart';
@@ -47,7 +48,7 @@ class HomeScreen extends ConsumerWidget {
 
     final error = home.error;
     if (error != null) {
-      return _HomeError(
+      return ErrorStateCard(
         failure: error is ApiFailure ? error : const ApiUnknown(),
         onRetry: () => ref.invalidate(homeProvider),
       );
@@ -116,7 +117,7 @@ class _HomeBody extends StatelessWidget {
                   QuickAction(
                     icon: Icons.receipt_long_outlined,
                     label: 'Pay\nslips',
-                    onTap: () => context.go('/requests'),
+                    onTap: () => context.go('/requests/payslips'),
                   ),
                   QuickAction(
                     icon: Icons.add_circle_outline,
@@ -263,46 +264,6 @@ class _HomeSkeleton extends StatelessWidget {
         AppCard.skeleton(height: 84),
         SizedBox(height: AppSpace.x20),
         AppCard.skeleton(height: 96),
-      ],
-    );
-  }
-}
-
-class _HomeError extends StatelessWidget {
-  const _HomeError({required this.failure, required this.onRetry});
-
-  final ApiFailure failure;
-  final VoidCallback onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpace.screen,
-        AppSpace.x28,
-        AppSpace.screen,
-        AppSpace.scrollBottom,
-      ),
-      children: [
-        AppCard(
-          onTap: onRetry,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const EyebrowLabel('Could not load'),
-              const SizedBox(height: AppSpace.x8),
-              Text(failure.message, style: AppText.body),
-              const SizedBox(height: AppSpace.x12),
-              Text(
-                'Tap to try again',
-                style: AppText.meta.copyWith(
-                  color: AppColors.brandStrong,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-        ),
       ],
     );
   }

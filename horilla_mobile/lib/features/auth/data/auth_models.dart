@@ -32,11 +32,17 @@ class Capabilities {
     required this.role,
     required this.permissions,
     required this.features,
+    this.currencySymbol,
   });
 
   final String role;
   final Map<String, bool> permissions;
   final Map<String, bool> features;
+
+  /// Configured per install (`PayrollSettings.currency_symbol`), so it has to
+  /// come from the server. Null when this release does not send it -- money
+  /// is then rendered without a symbol rather than in a guessed currency.
+  final String? currencySymbol;
 
   static const empty = Capabilities(
     role: 'employee',
@@ -52,10 +58,13 @@ class Capabilities {
 
   static Capabilities fromJson(Map<String, dynamic>? json) {
     if (json == null) return empty;
+    final currency = json['currency_symbol'];
     return Capabilities(
       role: json['role'] is String ? json['role'] as String : 'employee',
       permissions: _bools(json['permissions']),
       features: _bools(json['features']),
+      currencySymbol:
+          currency is String && currency.isNotEmpty ? currency : null,
     );
   }
 

@@ -20,6 +20,8 @@ import '../../features/attendance/ui/attendance_screen.dart';
 import '../../features/home/ui/home_screen.dart';
 import '../../features/leave/ui/leave_apply_screen.dart';
 import '../../features/leave/ui/leave_screen.dart';
+import '../../features/payroll/ui/payslip_detail_screen.dart';
+import '../../features/payroll/ui/payslips_screen.dart';
 import '../../features/shell/ui/app_shell.dart';
 import '../../shared/widgets/placeholder_screen.dart';
 
@@ -114,6 +116,21 @@ GoRouter buildRouter({
                 path: '/requests',
                 builder: (context, state) =>
                     const PlaceholderScreen(title: 'Requests'),
+                routes: [
+                  GoRoute(
+                    path: 'payslips',
+                    builder: (context, state) => const PayslipsScreen(),
+                    routes: [
+                      GoRoute(
+                        path: ':id',
+                        builder: (context, state) => PayslipDetailScreen(
+                          payslipId:
+                              int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ],
           ),

@@ -43,6 +43,7 @@ class StoredProfile {
           'role': capabilities.role,
           'permissions': capabilities.permissions,
           'features': capabilities.features,
+          'currency_symbol': capabilities.currencySymbol,
         },
         'cleartext': isCleartext,
         'geo_fencing': geoFencingEnabled,
