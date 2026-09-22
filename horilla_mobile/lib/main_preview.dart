@@ -24,6 +24,8 @@ import 'features/leave/data/leave_api.dart';
 import 'features/leave/data/leave_models.dart';
 import 'features/payroll/data/payroll_api.dart';
 import 'features/payroll/data/payroll_models.dart';
+import 'features/requests/data/request_models.dart';
+import 'features/requests/data/requests_api.dart';
 import 'features/home/data/home_models.dart';
 
 final _sampleHome = HomeData(
@@ -164,6 +166,40 @@ final _samplePayslips = [
     ),
 ];
 
+final _sampleRequests = RequestInbox(
+  requests: [
+    WorkRequest(
+      id: 1,
+      kind: RequestKind.shift,
+      title: 'Night shift',
+      state: RequestState.pending,
+      date: DateTime.now().subtract(const Duration(days: 1)),
+      detail: 'from Day shift',
+    ),
+    WorkRequest(
+      id: 2,
+      kind: RequestKind.reimbursement,
+      title: 'Client visit taxi',
+      state: RequestState.pending,
+      date: DateTime.now().subtract(const Duration(days: 3)),
+    ),
+    WorkRequest(
+      id: 3,
+      kind: RequestKind.asset,
+      title: 'Replacement laptop charger',
+      state: RequestState.approved,
+      date: DateTime.now().subtract(const Duration(days: 9)),
+    ),
+    WorkRequest(
+      id: 4,
+      kind: RequestKind.workType,
+      title: 'Work from home',
+      state: RequestState.rejected,
+      date: DateTime.now().subtract(const Duration(days: 20)),
+    ),
+  ],
+);
+
 void main() {
   runApp(
     ProviderScope(
@@ -171,6 +207,7 @@ void main() {
         homeProvider.overrideWith((ref) async => _sampleHome),
         attendanceOverviewProvider.overrideWith((ref) async => _sampleAttendance),
         leaveOverviewProvider.overrideWith((ref) async => _sampleLeave),
+        requestInboxProvider.overrideWith((ref) async => _sampleRequests),
         payslipsProvider.overrideWith((ref) async => _samplePayslips),
         payslipProvider.overrideWith(
           (ref, id) async => PayslipDetail(
