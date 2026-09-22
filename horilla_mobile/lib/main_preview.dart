@@ -20,6 +20,8 @@ import 'features/auth/data/auth_models.dart';
 import 'features/attendance/data/attendance_api.dart';
 import 'features/attendance/data/attendance_models.dart';
 import 'features/home/data/home_api.dart';
+import 'features/leave/data/leave_api.dart';
+import 'features/leave/data/leave_models.dart';
 import 'features/home/data/home_models.dart';
 
 final _sampleHome = HomeData(
@@ -87,12 +89,72 @@ final _sampleAttendance = AttendanceOverview(
   ),
 );
 
+final _sampleLeave = LeaveOverview(
+  balances: const [
+    LeaveBalance(
+      id: 1,
+      type: LeaveType(id: 1, name: 'Casual'),
+      availableDays: 6.5,
+      carryforwardDays: 2,
+    ),
+    LeaveBalance(
+      id: 2,
+      type: LeaveType(id: 2, name: 'Sick'),
+      availableDays: 4,
+      carryforwardDays: 0,
+    ),
+    LeaveBalance(
+      id: 3,
+      type: LeaveType(id: 3, name: 'Earned'),
+      availableDays: 12,
+      carryforwardDays: 0,
+    ),
+  ],
+  requests: [
+    LeaveRequestSummary(
+      id: 1,
+      type: const LeaveType(id: 1, name: 'Casual'),
+      startDate: DateTime.now().add(const Duration(days: 10)),
+      endDate: DateTime.now().add(const Duration(days: 11)),
+      status: LeaveStatus.requested,
+      requestedDays: 2,
+    ),
+    LeaveRequestSummary(
+      id: 2,
+      type: const LeaveType(id: 2, name: 'Sick'),
+      startDate: DateTime.now().subtract(const Duration(days: 12)),
+      status: LeaveStatus.approved,
+      requestedDays: 1,
+    ),
+    LeaveRequestSummary(
+      id: 3,
+      type: const LeaveType(id: 3, name: 'Earned'),
+      startDate: DateTime.now().subtract(const Duration(days: 40)),
+      status: LeaveStatus.rejected,
+      requestedDays: 3,
+    ),
+  ],
+  holidays: [
+    Holiday(
+      id: 1,
+      name: 'Onam',
+      startDate: DateTime.now().add(const Duration(days: 2)),
+    ),
+    Holiday(
+      id: 2,
+      name: 'Gandhi Jayanti',
+      startDate: DateTime.now().add(const Duration(days: 10)),
+    ),
+  ],
+);
+
 void main() {
   runApp(
     ProviderScope(
       overrides: [
         homeProvider.overrideWith((ref) async => _sampleHome),
         attendanceOverviewProvider.overrideWith((ref) async => _sampleAttendance),
+        leaveOverviewProvider.overrideWith((ref) async => _sampleLeave),
         sessionRestoreProvider.overrideWith((ref) async {}),
         sessionProvider.overrideWith(_PreviewSession.new),
       ],

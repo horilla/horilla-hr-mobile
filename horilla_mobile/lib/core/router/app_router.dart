@@ -18,6 +18,8 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/ui/sign_in_screen.dart';
 import '../../features/attendance/ui/attendance_screen.dart';
 import '../../features/home/ui/home_screen.dart';
+import '../../features/leave/ui/leave_apply_screen.dart';
+import '../../features/leave/ui/leave_screen.dart';
 import '../../features/shell/ui/app_shell.dart';
 import '../../shared/widgets/placeholder_screen.dart';
 
@@ -92,8 +94,15 @@ GoRouter buildRouter({
                 routes: [
                   GoRoute(
                     path: 'leave',
-                    builder: (context, state) =>
-                        const PlaceholderScreen(title: 'Leave'),
+                    builder: (context, state) => const LeaveScreen(),
+                    routes: [
+                      // Inside the Time branch, so applying for leave keeps
+                      // the Time tab lit -- the handoff's group rule.
+                      GoRoute(
+                        path: 'apply',
+                        builder: (context, state) => const LeaveApplyScreen(),
+                      ),
+                    ],
                   ),
                 ],
               ),
