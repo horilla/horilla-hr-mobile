@@ -24,6 +24,11 @@ class AppCard extends StatefulWidget {
 
   /// Skeleton variant, sharing this card's geometry.
   ///
+  /// [height] is a *minimum*, not a fixed size. A skeleton exists to stand in
+  /// for a card while it loads; one that overflows its own box because the
+  /// caller asked for fewer pixels than its contents need is worse than no
+  /// skeleton at all.
+  ///
   /// Deliberately a constructor on the card rather than a separate widget:
   /// skeletons kept in their own file drift out of sync with the real card
   /// within a couple of sprints, and a skeleton whose shape is wrong is worse
@@ -61,7 +66,7 @@ class _AppCardState extends State<AppCard> {
     final card = AnimatedContainer(
       duration: const Duration(milliseconds: 120),
       curve: Curves.easeOut,
-      height: widget._skeletonHeight,
+      constraints: BoxConstraints(minHeight: widget._skeletonHeight ?? 0),
       width: double.infinity,
       padding: widget.padding,
       decoration: BoxDecoration(
