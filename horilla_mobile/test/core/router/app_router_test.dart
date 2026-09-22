@@ -13,6 +13,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:horilla_mobile/core/router/app_router.dart';
 import 'package:horilla_mobile/core/theme/app_theme.dart';
 import 'package:horilla_mobile/l10n/app_localizations.dart';
+import 'package:horilla_mobile/core/scope.dart';
+import 'package:horilla_mobile/features/shell/ui/app_shell.dart';
 import 'package:horilla_mobile/shared/widgets/app_bottom_nav.dart';
 
 /// Note: pump() rather than pumpAndSettle().
@@ -57,21 +59,48 @@ void main() {
     expect(find.byType(AppBottomNav), findsNothing);
   });
 
-  testWidgets('home shows the five tabs', (tester) async {
+  testWidgets('the tab bar shows exactly the enabled modules', (tester) async {
+    // Scope is narrowed to attendance, leave and employee management, so the
+    // bar must not advertise modules this build cannot open. Driven from
+    // Modules rather than hardcoded, so flipping a flag updates the test with
+    // the app instead of against it.
     await pumpAt(tester, '/home');
 
     expect(find.byType(AppBottomNav), findsOneWidget);
-    // Scoped to the bar: a label like "Home" also appears as the screen
-    // title, so an unscoped finder would match twice and prove nothing.
-    for (final label in ['Home', 'Time', 'Requests', 'Team', 'Me']) {
+
+    for (final branch in AppShell.branches) {
+      final label = find.descendant(
+        of: find.byType(AppBottomNav),
+        matching: find.text(branch.label),
+      );
       expect(
-        find.descendant(
-          of: find.byType(AppBottomNav),
-          matching: find.text(label),
-        ),
-        findsOneWidget,
+        label,
+        branch.enabled ? findsOneWidget : findsNothing,
+        reason: '${branch.label} enabled=${branch.enabled}',
       );
     }
+  });
+
+  testWidgets('a switched-off module is not reachable by tab', (tester) async {
+    await pumpAt(tester, '/home');
+
+    expect(Modules.requests, isFalse, reason: 'guards the assertion below');
+    expect(
+      find.descendant(
+        of: find.byType(AppBottomNav),
+        matching: find.text('Requests'),
+      ),
+      findsNothing,
+    );
+  });
+
+  testWidgets('deep-linking into a switched-off module explains itself',
+      (tester) async {
+    // A push notification from a server whose modules do not match the app is
+    // exactly how someone lands here; it must not be a blank screen.
+    await pumpAt(tester, '/requests');
+
+    expect(find.text('NOT AVAILABLE YET'), findsOneWidget);
   });
 
   testWidgets('a detail screen inside a branch keeps its tab bar',
@@ -87,10 +116,14 @@ void main() {
   testWidgets('tapping a tab switches branch', (tester) async {
     await pumpAt(tester, '/home');
 
-    await tester.tap(find.text('Requests'));
+    await tester.tap(
+      find.descendant(
+        of: find.byType(AppBottomNav),
+        matching: find.text('Time'),
+      ),
+    );
     await settleRoute(tester);
 
-    // The Requests branch root renders its own title.
-    expect(find.text('Requests'), findsWidgets);
+    expect(find.text('Attendance'), findsWidgets);
   });
 }

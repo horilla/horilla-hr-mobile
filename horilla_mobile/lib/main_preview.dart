@@ -19,6 +19,8 @@ import 'core/auth/session.dart';
 import 'features/auth/data/auth_models.dart';
 import 'features/attendance/data/attendance_api.dart';
 import 'features/attendance/data/attendance_models.dart';
+import 'features/employee/data/employee_api.dart';
+import 'features/employee/data/employee_models.dart';
 import 'features/home/data/home_api.dart';
 import 'features/leave/data/leave_api.dart';
 import 'features/leave/data/leave_models.dart';
@@ -200,6 +202,37 @@ final _sampleRequests = RequestInbox(
   ],
 );
 
+const _sampleDirectory = [
+  DirectoryEntry(
+    id: 1,
+    firstName: 'Nisha',
+    lastName: 'Prakash',
+    jobPosition: 'Engineering manager',
+    email: 'nisha@example.com',
+  ),
+  DirectoryEntry(
+    id: 2,
+    firstName: 'Arun',
+    lastName: 'Menon',
+    jobPosition: 'Senior engineer',
+    email: 'arun@example.com',
+  ),
+  DirectoryEntry(
+    id: 3,
+    firstName: 'Priya',
+    lastName: 'Nair',
+    jobPosition: 'Designer',
+    email: 'priya@example.com',
+  ),
+  DirectoryEntry(
+    id: 4,
+    firstName: 'David',
+    lastName: 'Cole',
+    jobPosition: 'QA engineer',
+    email: 'david@example.com',
+  ),
+];
+
 void main() {
   runApp(
     ProviderScope(
@@ -207,6 +240,7 @@ void main() {
         homeProvider.overrideWith((ref) async => _sampleHome),
         attendanceOverviewProvider.overrideWith((ref) async => _sampleAttendance),
         leaveOverviewProvider.overrideWith((ref) async => _sampleLeave),
+        directoryProvider.overrideWith((ref) async => _sampleDirectory),
         requestInboxProvider.overrideWith((ref) async => _sampleRequests),
         payslipsProvider.overrideWith((ref) async => _samplePayslips),
         payslipProvider.overrideWith(

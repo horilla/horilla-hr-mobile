@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/api/api_failure.dart';
+import '../../../core/scope.dart';
 import '../../../core/theme/platform_chrome.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../shared/widgets/app_card.dart';
@@ -108,27 +109,45 @@ class _HomeBody extends StatelessWidget {
               SectionHeader(title: 'Quick actions', actionLabel: null),
               const SizedBox(height: AppSpace.x12),
               QuickActions(
+                // Only destinations this build actually has. An action that
+                // leads to "not available yet" is worse than no action.
                 actions: [
-                  QuickAction(
-                    icon: Icons.event_available_outlined,
-                    label: 'Apply\nleave',
-                    onTap: () => context.go('/time/leave'),
-                  ),
-                  QuickAction(
-                    icon: Icons.receipt_long_outlined,
-                    label: 'Pay\nslips',
-                    onTap: () => context.go('/requests/payslips'),
-                  ),
-                  QuickAction(
-                    icon: Icons.add_circle_outline,
-                    label: 'New\nrequest',
-                    onTap: () => context.go('/requests'),
-                  ),
-                  QuickAction(
-                    icon: Icons.support_agent_outlined,
-                    label: 'Help\ndesk',
-                    onTap: () => context.go('/requests'),
-                  ),
+                  if (Modules.leave)
+                    QuickAction(
+                      icon: Icons.event_available_outlined,
+                      label: 'Apply\nleave',
+                      onTap: () => context.go('/time/leave'),
+                    ),
+                  if (Modules.attendance)
+                    QuickAction(
+                      icon: Icons.schedule_outlined,
+                      label: 'My\nattendance',
+                      onTap: () => context.go('/time'),
+                    ),
+                  if (Modules.employee)
+                    QuickAction(
+                      icon: Icons.group_outlined,
+                      label: 'Team\ndirectory',
+                      onTap: () => context.go('/team'),
+                    ),
+                  if (Modules.payroll)
+                    QuickAction(
+                      icon: Icons.receipt_long_outlined,
+                      label: 'Pay\nslips',
+                      onTap: () => context.go('/requests/payslips'),
+                    ),
+                  if (Modules.requests)
+                    QuickAction(
+                      icon: Icons.add_circle_outline,
+                      label: 'New\nrequest',
+                      onTap: () => context.go('/requests'),
+                    ),
+                  if (Modules.helpdesk)
+                    QuickAction(
+                      icon: Icons.support_agent_outlined,
+                      label: 'Help\ndesk',
+                      onTap: () => context.go('/requests'),
+                    ),
                 ],
               ),
 

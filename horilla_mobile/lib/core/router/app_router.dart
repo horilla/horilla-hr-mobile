@@ -17,6 +17,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/auth/ui/sign_in_screen.dart';
 import '../../features/attendance/ui/attendance_screen.dart';
+import '../../features/employee/ui/directory_screen.dart';
+import '../../features/employee/ui/me_screen.dart';
 import '../../features/home/ui/home_screen.dart';
 import '../../features/leave/ui/leave_apply_screen.dart';
 import '../../features/leave/ui/leave_screen.dart';
@@ -24,6 +26,8 @@ import '../../features/payroll/ui/payslip_detail_screen.dart';
 import '../../features/payroll/ui/payslips_screen.dart';
 import '../../features/requests/ui/requests_screen.dart';
 import '../../features/shell/ui/app_shell.dart';
+import '../scope.dart';
+import '../../shared/widgets/not_in_this_build_screen.dart';
 import '../../shared/widgets/placeholder_screen.dart';
 
 final _rootKey = GlobalKey<NavigatorState>();
@@ -113,20 +117,31 @@ GoRouter buildRouter({
           ),
           StatefulShellBranch(
             routes: [
+              // Registered even when switched off, so branch indices stay
+              // stable and re-enabling a module is one flag rather than a
+              // renumbering exercise.
               GoRoute(
                 path: '/requests',
-                builder: (context, state) => const RequestsScreen(),
+                builder: (context, state) => Modules.requests
+                    ? const RequestsScreen()
+                    : const NotInThisBuildScreen(title: 'Requests'),
                 routes: [
                   GoRoute(
                     path: 'payslips',
-                    builder: (context, state) => const PayslipsScreen(),
+                    builder: (context, state) => Modules.payroll
+                        ? const PayslipsScreen()
+                        : const NotInThisBuildScreen(title: 'Payslips'),
                     routes: [
                       GoRoute(
                         path: ':id',
-                        builder: (context, state) => PayslipDetailScreen(
-                          payslipId:
-                              int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
-                        ),
+                        builder: (context, state) => Modules.payroll
+                            ? PayslipDetailScreen(
+                                payslipId: int.tryParse(
+                                      state.pathParameters['id'] ?? '',
+                                    ) ??
+                                    0,
+                              )
+                            : const NotInThisBuildScreen(title: 'Payslip'),
                       ),
                     ],
                   ),
@@ -138,8 +153,9 @@ GoRouter buildRouter({
             routes: [
               GoRoute(
                 path: '/team',
-                builder: (context, state) =>
-                    const PlaceholderScreen(title: 'Team'),
+                builder: (context, state) => Modules.employee
+                    ? const DirectoryScreen()
+                    : const NotInThisBuildScreen(title: 'Team'),
               ),
             ],
           ),
@@ -147,8 +163,7 @@ GoRouter buildRouter({
             routes: [
               GoRoute(
                 path: '/me',
-                builder: (context, state) =>
-                    const PlaceholderScreen(title: 'Me'),
+                builder: (context, state) => const MeScreen(),
               ),
             ],
           ),
