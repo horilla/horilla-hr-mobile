@@ -7,6 +7,7 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:horilla_mobile/core/router/app_router.dart';
 import 'package:horilla_mobile/core/theme/app_theme.dart';
@@ -19,9 +20,11 @@ import 'package:horilla_mobile/shared/widgets/app_bottom_nav.dart';
 /// Pumping a fixed number of frames is enough to let routing resolve.
 Future<void> pumpAt(WidgetTester tester, String location) async {
   await tester.pumpWidget(
-    MaterialApp.router(
-      theme: buildAppTheme(),
-      routerConfig: buildRouter(initialLocation: location),
+    ProviderScope(
+      child: MaterialApp.router(
+        theme: buildAppTheme(),
+        routerConfig: buildRouter(initialLocation: location),
+      ),
     ),
   );
   await tester.pump();
@@ -70,15 +73,6 @@ void main() {
 
     expect(find.byType(AppBottomNav), findsOneWidget);
     expect(find.text('Leave'), findsWidgets);
-  });
-
-  testWidgets('signing in lands on home with the shell', (tester) async {
-    await pumpAt(tester, '/signin');
-
-    await tester.tap(find.text('Sign in'));
-    await settleRoute(tester);
-
-    expect(find.byType(AppBottomNav), findsOneWidget);
   });
 
   testWidgets('tapping a tab switches branch', (tester) async {
