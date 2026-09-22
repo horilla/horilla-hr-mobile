@@ -17,6 +17,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'app.dart';
 import 'core/auth/session.dart';
 import 'features/auth/data/auth_models.dart';
+import 'features/attendance/data/attendance_api.dart';
+import 'features/attendance/data/attendance_models.dart';
 import 'features/home/data/home_api.dart';
 import 'features/home/data/home_models.dart';
 
@@ -56,11 +58,41 @@ final _sampleHome = HomeData(
   ),
 );
 
+final _sampleAttendance = AttendanceOverview(
+  hourAccount: const HourAccount(
+    month: 'September',
+    year: '2026',
+    workedHours: '142:30',
+    pendingHours: '17:30',
+    overtime: '04:15',
+  ),
+  days: Paged<AttendanceDay>(
+    count: 6,
+    results: [
+      AttendanceDay(
+        id: 1,
+        date: DateTime.now(),
+        clockIn: '09:04',
+        workedHour: '03:12',
+      ),
+      for (var i = 1; i < 6; i++)
+        AttendanceDay(
+          id: i + 1,
+          date: DateTime.now().subtract(Duration(days: i)),
+          clockIn: '09:0$i',
+          clockOut: '18:1$i',
+          workedHour: '08:3$i',
+        ),
+    ],
+  ),
+);
+
 void main() {
   runApp(
     ProviderScope(
       overrides: [
         homeProvider.overrideWith((ref) async => _sampleHome),
+        attendanceOverviewProvider.overrideWith((ref) async => _sampleAttendance),
         sessionRestoreProvider.overrideWith((ref) async {}),
         sessionProvider.overrideWith(_PreviewSession.new),
       ],

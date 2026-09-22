@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/auth/ui/sign_in_screen.dart';
+import '../../features/attendance/ui/attendance_screen.dart';
 import '../../features/home/ui/home_screen.dart';
 import '../../features/shell/ui/app_shell.dart';
 import '../../shared/widgets/placeholder_screen.dart';
@@ -87,8 +88,7 @@ GoRouter buildRouter({
             routes: [
               GoRoute(
                 path: '/time',
-                builder: (context, state) =>
-                    const PlaceholderScreen(title: 'Attendance'),
+                builder: (context, state) => const AttendanceScreen(),
                 routes: [
                   GoRoute(
                     path: 'leave',
