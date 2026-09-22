@@ -7,10 +7,12 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:horilla_mobile/core/router/app_router.dart';
 import 'package:horilla_mobile/core/theme/app_theme.dart';
+import 'package:horilla_mobile/l10n/app_localizations.dart';
 import 'package:horilla_mobile/shared/widgets/app_bottom_nav.dart';
 
 /// Note: pump() rather than pumpAndSettle().
@@ -23,6 +25,13 @@ Future<void> pumpAt(WidgetTester tester, String location) async {
     ProviderScope(
       child: MaterialApp.router(
         theme: buildAppTheme(),
+        localizationsDelegates: const [
+          AppL10n.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: AppL10n.supportedLocales,
         routerConfig: buildRouter(initialLocation: location),
       ),
     ),

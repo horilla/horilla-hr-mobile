@@ -1,0 +1,34 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "Horilla HR",
+
+  "signInHeadline": "Your workday,\nin your pocket.",
+  "@signInHeadline": {
+    "description": "Sign-in screen headline. The line break is intentional; it is set as two lines in the design."
+  },
+  "signInSubcopy": "Punch in, book leave, check your payslip — without opening a laptop.",
+  "signInServerLabel": "Server",
+  "signInServerHint": "https://hr.yourcompany.com",
+  "signInUsernameLabel": "Username",
+  "signInPasswordLabel": "Password",
+  "signInAction": "Sign in",
+  "signInBusy": "Signing in…",
+  "signInOr": "or",
+  "signInSso": "Continue with SSO",
+  "signInFooter": "Self-hosted · you control your data",
+
+  "signInBadCredentials": "Wrong username or password.",
+  "signInCleartextWarning": "This connection is not encrypted. Only use http:// on a network you trust.",
+  "@signInCleartextWarning": {
+    "description": "Shown while typing an http:// address on a private network, which is permitted but never silent."
+  },
+
+  "tabHome": "Home",
+  "tabTime": "Time",
+  "tabRequests": "Requests",
+  "tabTeam": "Team",
+  "tabMe": "Me",
+
+  "notBuiltYet": "Not built yet"
+}

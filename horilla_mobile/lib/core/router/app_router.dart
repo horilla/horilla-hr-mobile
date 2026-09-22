@@ -21,10 +21,33 @@ import '../../shared/widgets/placeholder_screen.dart';
 
 final _rootKey = GlobalKey<NavigatorState>();
 
-GoRouter buildRouter({String initialLocation = '/signin'}) {
+/// Screens reachable without a session. Everything else redirects to sign-in.
+const _publicRoutes = {'/signin'};
+
+/// [isSignedIn] is read on every navigation, and [refreshOn] tells the router
+/// when to re-evaluate -- so a session lost mid-use (a refresh token that no
+/// longer works, or an explicit sign-out) bounces to sign-in wherever the
+/// user happens to be, rather than leaving them on a screen that can no
+/// longer load anything.
+GoRouter buildRouter({
+  String initialLocation = '/signin',
+  bool Function()? isSignedIn,
+  Listenable? refreshOn,
+}) {
   return GoRouter(
     navigatorKey: _rootKey,
     initialLocation: initialLocation,
+    refreshListenable: refreshOn,
+    redirect: isSignedIn == null
+        ? null
+        : (context, state) {
+            final signedIn = isSignedIn();
+            final atPublicRoute = _publicRoutes.contains(state.matchedLocation);
+
+            if (!signedIn && !atPublicRoute) return '/signin';
+            if (signedIn && atPublicRoute) return '/home';
+            return null;
+          },
     routes: [
       GoRoute(
         path: '/signin',

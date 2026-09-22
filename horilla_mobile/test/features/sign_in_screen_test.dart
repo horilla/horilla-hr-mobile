@@ -3,14 +3,26 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:horilla_mobile/core/theme/app_theme.dart';
+import 'package:horilla_mobile/l10n/app_localizations.dart';
 import 'package:horilla_mobile/features/auth/ui/sign_in_screen.dart';
 import 'package:horilla_mobile/shared/widgets/app_button.dart';
 
 Widget wrap(Widget child) => ProviderScope(
-      child: MaterialApp(theme: buildAppTheme(), home: child),
+      child: MaterialApp(
+        theme: buildAppTheme(),
+        localizationsDelegates: const [
+          AppL10n.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: AppL10n.supportedLocales,
+        home: child,
+      ),
     );
 
 void main() {

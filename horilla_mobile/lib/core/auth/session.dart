@@ -9,6 +9,7 @@ import '../../features/auth/data/auth_models.dart';
 import '../api/api_client.dart';
 import '../api/api_failure.dart';
 import '../api/host.dart';
+import 'profile_store.dart';
 import 'token_store.dart';
 
 /// Who is signed in, if anyone.
@@ -35,6 +36,8 @@ class Session {
 }
 
 final tokenStoreProvider = Provider<TokenStore>((ref) => TokenStore());
+
+final profileStoreProvider = Provider<ProfileStore>((ref) => ProfileStore());
 
 final apiClientProvider = Provider<ApiClient>((ref) {
   return ApiClient(
@@ -96,20 +99,68 @@ class SessionController extends Notifier<Session?> {
             refreshToken: result.refreshToken,
           ),
         );
-    ref.read(apiClientProvider).useHost(host);
 
-    state = Session(
-      host: host,
+    final profile = StoredProfile(
       user: result.user,
       capabilities: result.capabilities,
       isCleartext: normalised.isCleartext,
       geoFencingEnabled: result.geoFencingEnabled,
       faceDetectionEnabled: result.faceDetectionEnabled,
     );
+    await ref.read(profileStoreProvider).write(profile);
+
+    ref.read(apiClientProvider).useHost(host);
+    state = _sessionFrom(host, profile);
   }
+
+  /// Restores a session from storage at launch.
+  ///
+  /// Reads only, no network: a returning user gets their app immediately and
+  /// can open it with no connection. The token is what proves the session is
+  /// real -- if it has expired or been revoked, the first request refreshes
+  /// it or signs out, which is the interceptor's job rather than this one's.
+  ///
+  /// The host is taken from the *token* record, never from the profile, so a
+  /// token can only ever be sent back to the server that issued it.
+  Future<void> restore() async {
+    final stored = await ref.read(tokenStoreProvider).read();
+    if (stored == null) {
+      state = null;
+      return;
+    }
+
+    ref.read(apiClientProvider).useHost(stored.host);
+
+    final profile = await ref.read(profileStoreProvider).read();
+    if (profile == null) {
+      // Token without a profile: still signed in, just nothing cached to
+      // draw. Home fetches what it needs anyway.
+      state = Session(
+        host: stored.host,
+        user: const SignedInUser(id: 0, fullName: ''),
+        capabilities: Capabilities.empty,
+        isCleartext: stored.host.startsWith('http://'),
+        geoFencingEnabled: false,
+        faceDetectionEnabled: false,
+      );
+      return;
+    }
+
+    state = _sessionFrom(stored.host, profile);
+  }
+
+  Session _sessionFrom(String host, StoredProfile profile) => Session(
+        host: host,
+        user: profile.user,
+        capabilities: profile.capabilities,
+        isCleartext: profile.isCleartext,
+        geoFencingEnabled: profile.geoFencingEnabled,
+        faceDetectionEnabled: profile.faceDetectionEnabled,
+      );
 
   Future<void> signOut() async {
     await ref.read(tokenStoreProvider).clear();
+    await ref.read(profileStoreProvider).clear();
     state = null;
   }
 }

@@ -5,6 +5,7 @@ import '../../../core/api/api_failure.dart';
 import '../../../core/api/host.dart';
 import '../../../core/auth/session.dart';
 import '../../../core/theme/tokens.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_inset_field.dart';
 import '../../../shared/widgets/horilla_mark.dart';
@@ -60,6 +61,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
   }
 
   Future<void> _submit() async {
+    final l10n = AppL10n.of(context);
     setState(() {
       _busy = true;
       _formError = null;
@@ -88,7 +90,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
           case ApiTls():
             _hostError = failure.message;
           case ApiUnauthenticated():
-            _formError = 'Wrong username or password.';
+            _formError = l10n.signInBadCredentials;
           case ApiLockedOut():
             _formError = failure.message;
           case ApiNoCompany():
@@ -110,6 +112,8 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppL10n.of(context);
+
     return Scaffold(
       backgroundColor: AppColors.ink,
       body: SafeArea(
@@ -127,7 +131,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
               const HorillaMark(),
               const SizedBox(height: AppSpace.x28),
               Text(
-                'Your workday,\nin your pocket.',
+                l10n.signInHeadline,
                 style: AppText.cardTitle.copyWith(
                   fontSize: 30,
                   fontWeight: FontWeight.w800,
@@ -138,8 +142,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
               ),
               const SizedBox(height: AppSpace.x12),
               Text(
-                'Punch in, book leave, check your payslip — '
-                'without opening a laptop.',
+                l10n.signInSubcopy,
                 style: AppText.body.copyWith(
                   fontSize: 14,
                   color: AppColors.onDark2,
@@ -153,20 +156,20 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
               ],
 
               AppInsetField(
-                label: 'Server',
+                label: l10n.signInServerLabel,
                 controller: _host,
                 onDark: true,
                 keyboardType: TextInputType.url,
-                hintText: 'https://hr.yourcompany.com',
+                hintText: l10n.signInServerHint,
                 errorText: _hostError,
               ),
               if (_isCleartext) ...[
                 const SizedBox(height: AppSpace.x8),
-                const _CleartextWarning(),
+                _CleartextWarning(message: l10n.signInCleartextWarning),
               ],
               const SizedBox(height: AppSpace.x12),
               AppInsetField(
-                label: 'Username',
+                label: l10n.signInUsernameLabel,
                 controller: _username,
                 onDark: true,
                 errorText: _usernameError,
@@ -174,7 +177,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
               ),
               const SizedBox(height: AppSpace.x12),
               AppInsetField(
-                label: 'Password',
+                label: l10n.signInPasswordLabel,
                 controller: _password,
                 onDark: true,
                 obscureText: true,
@@ -184,7 +187,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
 
               const SizedBox(height: AppSpace.x20),
               AppButton(
-                label: _busy ? 'Signing in…' : 'Sign in',
+                label: _busy ? l10n.signInBusy : l10n.signInAction,
                 tone: AppButtonTone.onDark,
                 onPressed: _busy ? null : _submit,
               ),
@@ -197,7 +200,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: AppSpace.x12),
                     child: Text(
-                      'or',
+                      l10n.signInOr,
                       style: AppText.meta.copyWith(color: AppColors.onDark2),
                     ),
                   ),
@@ -209,8 +212,8 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
               // Disabled deliberately: there is no SAML or SSO anywhere in the
               // Horilla backend, so a live-looking button would promise
               // something that does not exist.
-              const AppButton(
-                label: 'Continue with SSO',
+              AppButton(
+                label: l10n.signInSso,
                 tone: AppButtonTone.outlinedOnDark,
                 onPressed: null,
               ),
@@ -218,7 +221,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
               const SizedBox(height: AppSpace.x28),
               Center(
                 child: Text(
-                  'Self-hosted · you control your data',
+                  l10n.signInFooter,
                   style:
                       AppText.mono.copyWith(fontSize: 11, color: AppColors.ink4),
                 ),
@@ -257,7 +260,9 @@ class _ErrorBanner extends StatelessWidget {
 /// Unencrypted connections are permitted on a local network, but never
 /// silently: the person signing in is told, every time.
 class _CleartextWarning extends StatelessWidget {
-  const _CleartextWarning();
+  const _CleartextWarning({required this.message});
+
+  final String message;
 
   @override
   Widget build(BuildContext context) {
@@ -269,8 +274,7 @@ class _CleartextWarning extends StatelessWidget {
         border: Border.all(color: AppColors.warningBorder),
       ),
       child: Text(
-        'This connection is not encrypted. Only use http:// on a network you '
-        'trust.',
+        message,
         style: AppText.meta.copyWith(color: AppColors.warningInk),
       ),
     );
