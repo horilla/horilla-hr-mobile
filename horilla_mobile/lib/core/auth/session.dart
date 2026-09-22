@@ -78,6 +78,17 @@ class SessionController extends Notifier<Session?> {
       password: password,
     );
 
+    // The pre-flight catches a server that reports an old version, but one
+    // that reports no version at all still reaches here. Credentials were
+    // correct; the server simply cannot support the app. Nothing is stored,
+    // so this leaves no half-session behind.
+    if (!result.hasMobileApi) {
+      throw const ApiIncompatibleServer(
+        'Signed in, but this Horilla server is missing the mobile API. '
+        'It needs updating before the app can use it.',
+      );
+    }
+
     await ref.read(tokenStoreProvider).write(
           StoredSession(
             host: host,

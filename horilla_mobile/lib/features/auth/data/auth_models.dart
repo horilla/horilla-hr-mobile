@@ -111,6 +111,16 @@ class SignInResult {
   final bool geoFencingEnabled;
   final bool faceDetectionEnabled;
 
+  /// Whether this server carries the mobile API this app is built against.
+  ///
+  /// Both are v2 additions. Without [refreshToken] a session dies after an
+  /// hour with no way to renew it; without capabilities the role-adaptive
+  /// navigation has nothing to read. Either one missing means the server is
+  /// older than the app supports, and the app must say so instead of signing
+  /// someone in to something that will break an hour later.
+  bool get hasMobileApi =>
+      refreshToken.isNotEmpty && capabilities.permissions.isNotEmpty;
+
   static SignInResult? fromJson(Map<String, dynamic> json) {
     final access = json['access'];
     if (access is! String || access.isEmpty) return null;
@@ -118,8 +128,9 @@ class SignInResult {
 
     return SignInResult(
       accessToken: access,
-      // A server that predates the refresh endpoint returns no refresh token.
-      // Parsing still succeeds; the version gate is what refuses those.
+      // Empty when the server predates the refresh endpoint. Parsed rather
+      // than rejected here so the caller can say *why* it is unusable --
+      // "your server is too old" rather than "login failed".
       refreshToken: refresh is String ? refresh : '',
       user: SignedInUser.fromJson(
         json['employee'] is Map<String, dynamic>
