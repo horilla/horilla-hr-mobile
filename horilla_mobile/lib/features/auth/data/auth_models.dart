@@ -94,13 +94,18 @@ class SignedInUser {
   static SignedInUser fromJson(Map<String, dynamic>? json) {
     if (json == null) return const SignedInUser(id: 0, fullName: '');
     final id = json['id'];
-    final name = json['full_name'];
-    final avatar = json['employee_profile'];
+    // Login sends full_name / employee_profile. The home aggregate sends
+    // name / avatar. Reading only the login keys left Home as "Welcome"
+    // with a blank avatar while Me, which uses the login payload, was fine.
+    String? text(String key) {
+      final value = json[key];
+      return value is String && value.isNotEmpty ? value : null;
+    }
+
     return SignedInUser(
       id: id is int ? id : 0,
-      fullName: name is String ? name : '',
-      // Empty string rather than null is common here; treat both as absent.
-      avatarUrl: avatar is String && avatar.isNotEmpty ? avatar : null,
+      fullName: text('full_name') ?? text('name') ?? '',
+      avatarUrl: text('employee_profile') ?? text('avatar'),
     );
   }
 }

@@ -202,6 +202,27 @@ void main() {
     expect(find.bySemanticsLabel('Notifications'), findsOneWidget);
   });
 
+  test('home employee block is read from name and avatar', () {
+    final user = SignedInUser.fromJson({
+      'id': 4,
+      'name': 'Adam Admin',
+      'avatar': '/media/adam.png',
+    });
+    expect(user.fullName, 'Adam Admin');
+    expect(user.avatarUrl, '/media/adam.png');
+  });
+
+  test('login employee block still uses full_name', () {
+    final user = SignedInUser.fromJson({
+      'id': 4,
+      'full_name': 'Adam Admin',
+      'name': 'ignored when login sends both',
+      'employee_profile': '/media/adam.png',
+    });
+    expect(user.fullName, 'Adam Admin');
+    expect(user.avatarUrl, '/media/adam.png');
+  });
+
   testWidgets('unread count is announced to screen readers', (tester) async {
     // The dot is the visual signal; the count has to reach anyone not
     // looking at it.
