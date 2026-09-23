@@ -24,6 +24,8 @@ import 'features/employee/data/employee_models.dart';
 import 'features/home/data/home_api.dart';
 import 'features/leave/data/leave_api.dart';
 import 'features/leave/data/leave_models.dart';
+import 'features/notifications/data/notification_models.dart';
+import 'features/notifications/data/notifications_api.dart';
 import 'features/payroll/data/payroll_api.dart';
 import 'features/payroll/data/payroll_models.dart';
 import 'features/requests/data/request_models.dart';
@@ -233,6 +235,37 @@ const _sampleDirectory = [
   ),
 ];
 
+final _sampleNotifications = NotificationInbox(
+  now: DateTime.now(),
+  all: [
+    AppNotification(
+      id: 1,
+      verb: 'Your leave request for 2 Oct was approved',
+      unread: true,
+      timestamp: DateTime.now().subtract(const Duration(hours: 2)),
+      redirect: '/time/leave',
+    ),
+    AppNotification(
+      id: 2,
+      verb: 'Arun Menon requested 3 days of casual leave',
+      unread: true,
+      timestamp: DateTime.now().subtract(const Duration(hours: 5)),
+    ),
+    AppNotification(
+      id: 3,
+      verb: 'September payslip is ready',
+      unread: false,
+      timestamp: DateTime.now().subtract(const Duration(days: 2)),
+    ),
+    AppNotification(
+      id: 4,
+      verb: 'Onam holiday announced for 24 September',
+      unread: false,
+      timestamp: DateTime.now().subtract(const Duration(days: 4)),
+    ),
+  ],
+);
+
 void main() {
   runApp(
     ProviderScope(
@@ -241,6 +274,8 @@ void main() {
         attendanceOverviewProvider.overrideWith((ref) async => _sampleAttendance),
         leaveOverviewProvider.overrideWith((ref) async => _sampleLeave),
         directoryProvider.overrideWith((ref) async => _sampleDirectory),
+        notificationInboxProvider
+            .overrideWith((ref) async => _sampleNotifications),
         requestInboxProvider.overrideWith((ref) async => _sampleRequests),
         payslipsProvider.overrideWith((ref) async => _samplePayslips),
         payslipProvider.overrideWith(

@@ -24,13 +24,13 @@ import '../../features/home/ui/home_screen.dart';
 import '../../features/punch/ui/punch_screen.dart';
 import '../../features/leave/ui/leave_apply_screen.dart';
 import '../../features/leave/ui/leave_screen.dart';
+import '../../features/notifications/ui/notifications_screen.dart';
 import '../../features/payroll/ui/payslip_detail_screen.dart';
 import '../../features/payroll/ui/payslips_screen.dart';
 import '../../features/requests/ui/requests_screen.dart';
 import '../../features/shell/ui/app_shell.dart';
 import '../scope.dart';
 import '../../shared/widgets/not_in_this_build_screen.dart';
-import '../../shared/widgets/placeholder_screen.dart';
 
 final _rootKey = GlobalKey<NavigatorState>();
 
@@ -99,8 +99,7 @@ GoRouter buildRouter({
                 routes: [
                   GoRoute(
                     path: 'notifications',
-                    builder: (context, state) =>
-                        const PlaceholderScreen(title: 'Notifications'),
+                    builder: (context, state) => const NotificationsScreen(),
                   ),
                 ],
               ),
