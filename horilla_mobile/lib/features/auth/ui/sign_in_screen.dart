@@ -14,6 +14,9 @@ import '../../../shared/widgets/horilla_mark.dart';
 ///
 /// The host field is on the first screen rather than buried in settings
 /// because self-hosted installs are the common case for this product.
+/// Server the host field starts on. See the controller below for why.
+const String kDefaultHost = 'https://hr.demo.horilla.com';
+
 class SignInScreen extends ConsumerStatefulWidget {
   const SignInScreen({super.key, this.onSignedIn});
 
@@ -24,7 +27,11 @@ class SignInScreen extends ConsumerStatefulWidget {
 }
 
 class _SignInScreenState extends ConsumerState<SignInScreen> {
-  final _host = TextEditingController(text: 'https://');
+  // Prefilled with the public demo. An app whose first screen demands a
+  // server address nobody has is the most likely way a store review fails as
+  // "unable to review", and it saves everyone else typing a URL on a phone.
+  // Editable, and the https:// default still applies once it is cleared.
+  final _host = TextEditingController(text: kDefaultHost);
   final _username = TextEditingController();
   final _password = TextEditingController();
 
