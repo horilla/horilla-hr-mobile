@@ -6,62 +6,10 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/app_primitives.dart';
+import '../../../shared/widgets/pressable.dart';
 import '../data/home_models.dart';
 
-/// Worked / Break / Overtime.
-class TodayStats extends StatelessWidget {
-  const TodayStats({super.key, required this.today});
-
-  final TodayTotals today;
-
-  @override
-  Widget build(BuildContext context) {
-    final tiles = [
-      StatTile(label: 'Worked', value: today.worked),
-      StatTile(label: 'Break', value: today.breakTime),
-      StatTile(
-        label: 'Overtime',
-        value: today.overtime,
-        valueColor: today.hasOvertime ? AppColors.success : AppColors.ink,
-      ),
-    ];
-
-    // Three mono durations side by side stop fitting well before the text
-    // scale reaches the ~3x the platforms allow. Past 1.5x they stack, which
-    // is a worse use of space but is legible -- and legible is the point of
-    // someone turning the text up.
-    final stacked = MediaQuery.textScalerOf(context).scale(1) > 1.5;
-
-    return AppCard(
-      child: stacked
-          ? Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                for (var i = 0; i < tiles.length; i++) ...[
-                  if (i > 0) const SizedBox(height: AppSpace.x14),
-                  tiles[i],
-                ],
-              ],
-            )
-          : Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Gaps matter more than they look here. The values are mono
-                // durations that fill their column almost exactly, so with
-                // three equal columns and no spacing they end up touching --
-                // "03:12:4000:30:00" reads as one number, which is how it
-                // looked on the first device build.
-                for (var i = 0; i < tiles.length; i++) ...[
-                  if (i > 0) const SizedBox(width: AppSpace.x12),
-                  Expanded(child: tiles[i]),
-                ],
-              ],
-            ),
-    );
-  }
-}
-
-/// The conditional band under the stats.
+/// The conditional band under the punch hero.
 ///
 /// One band, never two: the design shows a single call to action per person,
 /// and the role resolved server-side is already collapsed to one value.
@@ -81,30 +29,31 @@ class RoleBand extends StatelessWidget {
   Widget build(BuildContext context) {
     final (background, border, ink, text) = switch (role) {
       'hrexec' => (
-          AppColors.ink,
-          AppColors.ink,
-          AppColors.surface,
-          'HR desk · $count ${count == 1 ? 'item' : 'items'}',
-        ),
+        AppColors.ink,
+        AppColors.ink,
+        AppColors.surface,
+        'HR desk · $count ${count == 1 ? 'item' : 'items'}',
+      ),
       'manager' => (
-          AppColors.warningBg,
-          AppColors.warningBorder,
-          AppColors.warningInk,
-          '$count ${count == 1 ? 'request needs' : 'requests need'} you',
-        ),
+        AppColors.warningBg,
+        AppColors.warningBorder,
+        AppColors.warningInk,
+        '$count ${count == 1 ? 'request needs' : 'requests need'} you',
+      ),
       _ => (
-          AppColors.infoBg,
-          AppColors.infoBorder,
-          AppColors.infoInk,
-          'Your onboarding is in progress',
-        ),
+        AppColors.infoBg,
+        AppColors.infoBorder,
+        AppColors.infoInk,
+        'Your onboarding is in progress',
+      ),
     };
 
     return AppCard(
       onTap: onTap,
       background: background,
       borderColor: border,
-      padding: const EdgeInsets.all(AppSpace.x14),
+      shadow: false,
+      radius: 18,
       child: Row(
         children: [
           Expanded(
@@ -120,17 +69,23 @@ class RoleBand extends StatelessWidget {
   }
 }
 
+/// One tinted quick-action tile.
 class QuickAction {
   const QuickAction({
     required this.icon,
     required this.label,
     required this.onTap,
+    this.tone = QuickActionTone.brand,
   });
 
   final IconData icon;
   final String label;
   final VoidCallback onTap;
+  final QuickActionTone tone;
 }
+
+/// The four tints the handoff cycles through for these tiles.
+enum QuickActionTone { brand, warning, info, success }
 
 class QuickActions extends StatelessWidget {
   const QuickActions({super.key, required this.actions});
@@ -141,25 +96,20 @@ class QuickActions extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        // The handoff keeps four across, dropping to 2x2 below 360pt.
+        // Four across, dropping to two below 344pt of content width -- the
+        // handoff's 360pt breakpoint less the screen padding.
         final columns = constraints.maxWidth < 344 ? 2 : 4;
-
-        // Height is derived from the text scale rather than a fixed aspect
-        // ratio. A ratio is a constant, and the label inside these tiles is
-        // not: at 1.3x it needs more room than the tile had, which is the
-        // overflow this replaces.
-        final scaled = MediaQuery.textScalerOf(context).scale(1);
-        final extent = 88 + (scaled - 1) * 46;
-
-        return GridView.count(
-          crossAxisCount: columns,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          mainAxisSpacing: AppSpace.x10,
-          crossAxisSpacing: AppSpace.x10,
-          mainAxisExtent: extent,
+        final gap = AppSpace.x8;
+        final width = (constraints.maxWidth - gap * (columns - 1)) / columns;
+        return Wrap(
+          spacing: gap,
+          runSpacing: AppSpace.x14,
           children: [
-            for (final action in actions) _QuickActionTile(action: action),
+            for (final action in actions)
+              SizedBox(
+                width: width,
+                child: _QuickActionTile(action: action),
+              ),
           ],
         );
       },
@@ -174,35 +124,45 @@ class _QuickActionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppCard(
-      onTap: action.onTap,
-      padding: const EdgeInsets.all(AppSpace.x12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Container(
-            width: 26,
-            height: 26,
-            decoration: BoxDecoration(
-              color: AppColors.brandTint,
-              borderRadius: BorderRadius.circular(AppRadii.iconTile),
+    final (background, ink) = switch (action.tone) {
+      QuickActionTone.brand => (AppColors.brandTint, AppColors.brandStrong),
+      QuickActionTone.warning => (AppColors.warningBg, AppColors.warning),
+      QuickActionTone.info => (AppColors.infoBg, AppColors.info),
+      QuickActionTone.success => (AppColors.successBg, AppColors.success),
+    };
+
+    return Semantics(
+      button: true,
+      label: action.label.replaceAll('\n', ' '),
+      excludeSemantics: true,
+      child: Pressable(
+        onTap: action.onTap,
+        child: Column(
+          children: [
+            Container(
+              width: 62,
+              height: 62,
+              decoration: BoxDecoration(
+                color: background,
+                borderRadius: BorderRadius.circular(AppRadii.iconTile),
+              ),
+              child: Icon(action.icon, size: 24, color: ink),
             ),
-            child: Icon(action.icon, size: 15, color: AppColors.brandStrong),
-          ),
-          Flexible(
-            child: Text(
+            const SizedBox(height: AppSpace.x8),
+            Text(
               action.label,
+              textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
               style: AppText.meta.copyWith(
-                color: AppColors.ink2,
+                fontSize: 11.5,
+                color: AppColors.ink,
                 fontWeight: FontWeight.w600,
                 height: 1.25,
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -216,24 +176,42 @@ class OnLeaveToday extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final n = colleagues.length;
     return AppCard(
       onTap: onTap,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const EyebrowLabel('On leave today'),
-          const SizedBox(height: AppSpace.x12),
           Row(
             children: [
-              for (final colleague in colleagues.take(5))
-                Padding(
-                  padding: const EdgeInsets.only(right: AppSpace.x8),
-                  child: AppAvatar(name: colleague.name, size: 34),
+              Expanded(
+                child: Text(
+                  'On leave today',
+                  style: AppText.cardTitle.copyWith(fontSize: 13),
                 ),
-              if (colleagues.length > 5)
-                Text(
-                  '+${colleagues.length - 5}',
-                  style: AppText.meta.copyWith(fontWeight: FontWeight.w600),
+              ),
+              Text(
+                '$n ${n == 1 ? 'person' : 'people'} →',
+                style: AppText.meta.copyWith(fontSize: 11),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpace.x12),
+          Wrap(
+            spacing: AppSpace.x8,
+            runSpacing: AppSpace.x8,
+            children: [
+              for (final colleague in colleagues.take(6))
+                AppAvatar.toned(name: colleague.name, size: 34),
+              if (n > 6)
+                SizedBox(
+                  height: 34,
+                  child: Center(
+                    child: Text(
+                      '+${n - 6}',
+                      style: AppText.meta.copyWith(fontWeight: FontWeight.w600),
+                    ),
+                  ),
                 ),
             ],
           ),
@@ -257,10 +235,10 @@ class AnnouncementCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const EyebrowLabel('Announcement'),
-          const SizedBox(height: AppSpace.x8),
+          const SizedBox(height: AppSpace.x6),
           Text(
             announcement.title,
-            style: AppText.cardTitle.copyWith(fontSize: 15.5),
+            style: AppText.cardTitle.copyWith(fontSize: 14),
           ),
         ],
       ),

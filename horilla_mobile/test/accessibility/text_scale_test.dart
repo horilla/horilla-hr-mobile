@@ -31,6 +31,8 @@ import 'package:horilla_mobile/l10n/app_localizations.dart';
 import '../features/attendance/attendance_test.dart' as attendance;
 import '../features/home/home_screen_test.dart' as home;
 import '../features/leave/leave_screen_test.dart' as leave;
+import 'package:horilla_mobile/features/punch/ui/punch_screen.dart';
+import 'package:horilla_mobile/features/leave/ui/leave_apply_screen.dart';
 
 const _scales = [1.0, 1.3, 2.0];
 
@@ -58,8 +60,9 @@ Future<void> pumpScaled(
     ],
     supportedLocales: AppL10n.supportedLocales,
     builder: (context, child) => MediaQuery(
-      data: MediaQuery.of(context)
-          .copyWith(textScaler: TextScaler.linear(scale)),
+      data: MediaQuery.of(
+        context,
+      ).copyWith(textScaler: TextScaler.linear(scale)),
       child: child!,
     ),
     routerConfig: GoRouter(
@@ -71,9 +74,7 @@ Future<void> pumpScaled(
     ),
   );
 
-  await tester.pumpWidget(
-    scope?.call(app) ?? ProviderScope(child: app),
-  );
+  await tester.pumpWidget(scope?.call(app) ?? ProviderScope(child: app));
   await tester.pump();
   await tester.pump(const Duration(milliseconds: 60));
 }
@@ -91,11 +92,7 @@ void main() {
   for (final scale in _scales) {
     group('at ${scale}x text scale', () {
       testWidgets('sign in fits', (tester) async {
-        await pumpScaled(
-          tester,
-          screen: const SignInScreen(),
-          scale: scale,
-        );
+        await pumpScaled(tester, screen: const SignInScreen(), scale: scale);
         expectNoOverflow(tester, 'Sign in', scale);
       });
 
@@ -107,7 +104,7 @@ void main() {
           route: '/home',
           scope: (child) => ProviderScope(
             overrides: [
-            homeProvider.overrideWith((ref) async => home.sample()),
+              homeProvider.overrideWith((ref) async => home.sample()),
             ],
             child: child,
           ),
@@ -115,8 +112,9 @@ void main() {
         expectNoOverflow(tester, 'Home', scale);
       });
 
-      testWidgets('home fits with a manager band and colleagues on leave',
-          (tester) async {
+      testWidgets('home fits with a manager band and colleagues on leave', (
+        tester,
+      ) async {
         // The busiest home can be: every optional section present.
         await pumpScaled(
           tester,
@@ -125,20 +123,20 @@ void main() {
           route: '/home',
           scope: (child) => ProviderScope(
             overrides: [
-            homeProvider.overrideWith(
-              (ref) async => home.sample(
-                role: 'manager',
-                unread: 12,
-                onLeave: const [
-                  ColleagueOnLeave(id: 2, name: 'Arun Menon'),
-                  ColleagueOnLeave(id: 3, name: 'Priya Nair'),
-                ],
-                announcement: const AnnouncementSummary(
-                  id: 1,
-                  title: 'Q3 review cycle opens on Monday',
+              homeProvider.overrideWith(
+                (ref) async => home.sample(
+                  role: 'manager',
+                  unread: 12,
+                  onLeave: const [
+                    ColleagueOnLeave(id: 2, name: 'Arun Menon'),
+                    ColleagueOnLeave(id: 3, name: 'Priya Nair'),
+                  ],
+                  announcement: const AnnouncementSummary(
+                    id: 1,
+                    title: 'Q3 review cycle opens on Monday',
+                  ),
                 ),
               ),
-            ),
             ],
             child: child,
           ),
@@ -154,8 +152,9 @@ void main() {
           route: '/time',
           scope: (child) => ProviderScope(
             overrides: [
-            attendanceOverviewProvider
-                .overrideWith((ref) async => attendance.sample()),
+              attendanceOverviewProvider.overrideWith(
+                (ref) async => attendance.sample(),
+              ),
             ],
             child: child,
           ),
@@ -171,13 +170,56 @@ void main() {
           route: '/time/leave',
           scope: (child) => ProviderScope(
             overrides: [
-            leaveOverviewProvider.overrideWith((ref) async => leave.sample()),
+              leaveOverviewProvider.overrideWith((ref) async => leave.sample()),
             ],
             child: child,
           ),
         );
         expectNoOverflow(tester, 'Leave', scale);
       });
+
+      testWidgets('applying for leave fits', (tester) async {
+        // The calendar is a fixed seven columns; its cells cap their own
+        // text scale, and everything around them must still reflow.
+        await pumpScaled(
+          tester,
+          screen: const LeaveApplyScreen(),
+          scale: scale,
+          route: '/time/leave/apply',
+          scope: (child) => ProviderScope(
+            overrides: [
+              leaveOverviewProvider.overrideWith((ref) async => leave.sample()),
+            ],
+            child: child,
+          ),
+        );
+        expectNoOverflow(tester, 'Leave apply', scale);
+      });
+
+      for (final clockingIn in [false, true]) {
+        testWidgets(
+          '${clockingIn ? 'check-in' : 'check-out'} confirmation fits',
+          (tester) async {
+            await pumpScaled(
+              tester,
+              screen: PunchScreen(
+                isClockingIn: clockingIn,
+                // No fence, so no location service is needed to render.
+                geofence: const GeofenceState(enabled: false),
+                today: const TodayTotals(
+                  worked: '06:42:02',
+                  breakTime: '00:32:00',
+                  overtime: '00:00:00',
+                ),
+                clockInTime: '09:02',
+              ),
+              scale: scale,
+              route: '/punch',
+            );
+            expectNoOverflow(tester, 'Punch', scale);
+          },
+        );
+      }
 
       testWidgets('the directory fits', (tester) async {
         await pumpScaled(
@@ -187,22 +229,22 @@ void main() {
           route: '/team',
           scope: (child) => ProviderScope(
             overrides: [
-            directoryProvider.overrideWith(
-              (ref) async => const [
-                DirectoryEntry(
-                  id: 1,
-                  firstName: 'Nisha',
-                  lastName: 'Prakash',
-                  jobPosition: 'Engineering manager',
-                ),
-                DirectoryEntry(
-                  id: 2,
-                  firstName: 'Arun',
-                  lastName: 'Menon',
-                  jobPosition: 'Senior engineer',
-                ),
-              ],
-            ),
+              directoryProvider.overrideWith(
+                (ref) async => const [
+                  DirectoryEntry(
+                    id: 1,
+                    firstName: 'Nisha',
+                    lastName: 'Prakash',
+                    jobPosition: 'Engineering manager',
+                  ),
+                  DirectoryEntry(
+                    id: 2,
+                    firstName: 'Arun',
+                    lastName: 'Menon',
+                    jobPosition: 'Senior engineer',
+                  ),
+                ],
+              ),
             ],
             child: child,
           ),

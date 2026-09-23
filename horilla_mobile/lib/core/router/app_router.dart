@@ -68,9 +68,8 @@ GoRouter buildRouter({
     routes: [
       GoRoute(
         path: '/signin',
-        builder: (context, state) => SignInScreen(
-          onSignedIn: () => context.go('/home'),
-        ),
+        builder: (context, state) =>
+            SignInScreen(onSignedIn: () => context.go('/home')),
       ),
 
       // Tab-bar-hidden, and outside the shell for that reason.
@@ -82,11 +81,12 @@ GoRouter buildRouter({
           // two screens disagree about which way the punch goes.
           final args = state.extra;
           return PunchScreen(
-            isClockingIn:
-                args is PunchArgs ? args.isClockingIn : true,
+            isClockingIn: args is PunchArgs ? args.isClockingIn : true,
             geofence: args is PunchArgs
                 ? args.geofence
                 : const GeofenceState(enabled: false),
+            today: args is PunchArgs ? args.today : TodayTotals.zero,
+            clockInTime: args is PunchArgs ? args.clockInTime : null,
           );
         },
       ),
@@ -169,7 +169,8 @@ GoRouter buildRouter({
                         path: ':id',
                         builder: (context, state) => Modules.payroll
                             ? PayslipDetailScreen(
-                                payslipId: int.tryParse(
+                                payslipId:
+                                    int.tryParse(
                                       state.pathParameters['id'] ?? '',
                                     ) ??
                                     0,

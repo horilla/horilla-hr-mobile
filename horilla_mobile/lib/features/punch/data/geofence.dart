@@ -34,7 +34,8 @@ double distanceInMetres({
   final lat1 = radians(fromLatitude);
   final lat2 = radians(toLatitude);
 
-  final a = math.pow(math.sin(dLat / 2), 2) +
+  final a =
+      math.pow(math.sin(dLat / 2), 2) +
       math.cos(lat1) * math.cos(lat2) * math.pow(math.sin(dLon / 2), 2);
   final c = 2 * math.asin(math.min(1, math.sqrt(a)));
   return _earthRadiusMetres * c;
@@ -42,10 +43,7 @@ double distanceInMetres({
 
 /// Where the caller stands relative to the fence.
 class FencePosition {
-  const FencePosition({
-    required this.distanceFromCentre,
-    required this.radius,
-  });
+  const FencePosition({required this.distanceFromCentre, required this.radius});
 
   final double distanceFromCentre;
   final double radius;
@@ -53,17 +51,25 @@ class FencePosition {
   bool get isInside => distanceFromCentre <= radius;
 
   /// How far outside, in metres. Zero when inside.
-  double get metresOutside =>
-      isInside ? 0 : distanceFromCentre - radius;
+  double get metresOutside => isInside ? 0 : distanceFromCentre - radius;
 
   /// Short human phrase for the punch screen.
   String get description {
     if (isInside) {
-      final remaining = (radius - distanceFromCentre).round();
-      return 'Inside the fence · ${remaining}m from its edge';
+      return 'Inside the fence · ${formatDistance(radius - distanceFromCentre)} '
+          'from its edge';
     }
-    return '${metresOutside.round()}m outside the fence';
+    return '${formatDistance(metresOutside)} outside the fence';
   }
+}
+
+/// "40 m", "1.2 km", "274 km". Metres stop being readable past a kilometre:
+/// "274015m" was the real output on a device a long way from its fence.
+String formatDistance(double metres) {
+  final m = metres < 0 ? 0.0 : metres;
+  if (m < 1000) return '${m.round()} m';
+  if (m < 10000) return '${(m / 1000).toStringAsFixed(1)} km';
+  return '${(m / 1000).round()} km';
 }
 
 FencePosition? evaluateFence({

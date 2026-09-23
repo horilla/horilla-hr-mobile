@@ -8,7 +8,8 @@ import '../../../core/scope.dart';
 import '../../../core/theme/platform_chrome.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../shared/widgets/app_card.dart';
-import '../../../shared/widgets/app_primitives.dart';
+import '../../../shared/widgets/horilla_mark.dart';
+import '../../../shared/widgets/pressable.dart';
 import '../../../shared/widgets/error_state_card.dart';
 import '../../punch/ui/punch_screen.dart';
 import '../data/home_api.dart';
@@ -65,21 +66,20 @@ class _HomeBody extends StatelessWidget {
 
   final HomeData data;
 
+  /// ponytail: always 0 until the home aggregate carries a pending count
+  /// (backend backlog). Wire it here when it does; the band appears on its own.
+  static const _pendingApprovals = 0;
+
   @override
   Widget build(BuildContext context) {
-    final firstName = data.user.fullName.split(' ').first;
-
     return ListView(
       padding: EdgeInsets.zero,
       children: [
-        _HomeAppBar(
-          name: data.user.fullName,
-          unread: data.unreadNotifications,
-        ),
+        _HomeAppBar(name: data.user.fullName, unread: data.unreadNotifications),
         Padding(
           padding: const EdgeInsets.fromLTRB(
             AppSpace.screen,
-            AppSpace.x16,
+            AppSpace.x6,
             AppSpace.screen,
             AppSpace.scrollBottom,
           ),
@@ -89,78 +89,94 @@ class _HomeBody extends StatelessWidget {
               PunchCard(
                 punch: data.punch,
                 geofence: data.geofence,
-                dateLabel: DateFormat('EEEE d MMMM').format(DateTime.now()),
+                today: data.today,
+                dateLabel: DateFormat('EEE d MMM').format(DateTime.now()),
                 onPunch: () => context.push(
                   '/punch',
                   extra: PunchArgs(
                     // Clocked in means the next action is out, and vice versa.
                     isClockingIn: !data.punch.isClockedIn,
                     geofence: data.geofence,
+                    today: data.today,
+                    clockInTime: data.punch.clockInTime,
                   ),
                 ),
-                onOpenAttendance: () => context.go('/time'),
               ),
-              const SizedBox(height: AppSpace.x12),
 
-              TodayStats(today: data.today),
-
-              if (data.capabilities.isManager) ...[
-                const SizedBox(height: AppSpace.x12),
+              // Hidden until the server reports a pending-approvals count. The
+              // band used to render with a hard-wired 0 -- "0 requests need
+              // you" on every manager's home, true or not. The approvals
+              // screen is out of scope for this build anyway.
+              if (data.capabilities.isManager && _pendingApprovals > 0) ...[
+                const SizedBox(height: AppSpace.x14),
                 RoleBand(
                   role: data.capabilities.role,
-                  count: 0,
+                  count: _pendingApprovals,
                   onTap: () => context.go('/team'),
                 ),
               ],
 
-              const SizedBox(height: AppSpace.x20),
-              SectionHeader(title: 'Quick actions', actionLabel: null),
+              const SizedBox(height: 22),
+              Text(
+                'Quick actions',
+                style: AppText.cardTitle.copyWith(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: -0.2,
+                ),
+              ),
               const SizedBox(height: AppSpace.x12),
               QuickActions(
                 // Only destinations this build actually has. An action that
                 // leads to "not available yet" is worse than no action.
                 actions: [
-                  if (Modules.leave)
+                  if (Modules.leave) ...[
                     QuickAction(
                       icon: Icons.event_available_outlined,
-                      label: 'Apply\nleave',
+                      label: 'Apply leave',
+                      onTap: () => context.go('/time/leave/apply'),
+                    ),
+                    // The balances screen's only way in: "Apply leave" goes
+                    // straight to the form, as the handoff draws it.
+                    QuickAction(
+                      icon: Icons.donut_large_outlined,
+                      label: 'Leave balances',
+                      tone: QuickActionTone.success,
                       onTap: () => context.go('/time/leave'),
                     ),
+                  ],
                   if (Modules.attendance)
                     QuickAction(
                       icon: Icons.schedule_outlined,
-                      label: 'My\nattendance',
+                      label: 'Attendance',
+                      tone: QuickActionTone.warning,
                       onTap: () => context.go('/time'),
                     ),
                   if (Modules.employee)
                     QuickAction(
                       icon: Icons.group_outlined,
-                      label: 'Team\ndirectory',
+                      label: 'Directory',
+                      tone: QuickActionTone.info,
                       onTap: () => context.go('/team'),
                     ),
                   if (Modules.payroll)
                     QuickAction(
                       icon: Icons.receipt_long_outlined,
-                      label: 'Pay\nslips',
+                      label: 'Payslips',
+                      tone: QuickActionTone.warning,
                       onTap: () => context.go('/requests/payslips'),
                     ),
                   if (Modules.requests)
                     QuickAction(
-                      icon: Icons.add_circle_outline,
-                      label: 'New\nrequest',
-                      onTap: () => context.go('/requests'),
-                    ),
-                  if (Modules.helpdesk)
-                    QuickAction(
-                      icon: Icons.support_agent_outlined,
-                      label: 'Help\ndesk',
+                      icon: Icons.add,
+                      label: 'New request',
                       onTap: () => context.go('/requests'),
                     ),
                 ],
               ),
 
               if (data.onLeaveToday.isNotEmpty) ...[
-                const SizedBox(height: AppSpace.x20),
+                const SizedBox(height: AppSpace.x16),
                 OnLeaveToday(
                   colleagues: data.onLeaveToday,
                   onTap: () => context.go('/team'),
@@ -171,10 +187,6 @@ class _HomeBody extends StatelessWidget {
                 const SizedBox(height: AppSpace.x12),
                 AnnouncementCard(announcement: data.announcement!),
               ],
-
-              // Greeting is rendered in the app bar; keeping the name here
-              // avoids an unused-variable lint while documenting intent.
-              if (firstName.isEmpty) const SizedBox.shrink(),
             ],
           ),
         ),
@@ -197,31 +209,81 @@ class _HomeAppBar extends StatelessWidget {
       _ => 'Good evening',
     };
 
-    return Container(
-      color: AppColors.surface,
+    return Padding(
       padding: PlatformChrome.appBarPaddingOf(context),
       child: Row(
         children: [
-          GestureDetector(
-            onTap: () => context.go('/me'),
-            child: AppAvatar(name: name.isEmpty ? '?' : name, size: 40),
-          ),
+          const HorillaMarkTile(),
           const SizedBox(width: AppSpace.x12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(greeting, style: AppText.meta),
+                Text(greeting, style: AppText.meta.copyWith(fontSize: 11)),
                 Text(
                   name.isEmpty ? 'Welcome' : name,
-                  style: AppText.cardTitle.copyWith(fontSize: 15.5),
+                  style: AppText.cardTitle.copyWith(
+                    fontSize: 16,
+                    letterSpacing: -0.3,
+                  ),
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
           ),
           _NotificationBell(unread: unread),
+          const SizedBox(width: AppSpace.x4),
+          Semantics(
+            button: true,
+            label: 'My profile',
+            excludeSemantics: true,
+            child: Pressable(
+              onTap: () => context.go('/me'),
+              child: SizedBox(
+                width: kMinHitTarget,
+                height: kMinHitTarget,
+                child: Center(child: _BrandAvatar(name: name)),
+              ),
+            ),
+          ),
         ],
+      ),
+    );
+  }
+}
+
+/// The filled brand circle in the top-right corner. Distinct from
+/// [AppAvatar]'s tinted squircles on purpose: this one is *you*.
+class _BrandAvatar extends StatelessWidget {
+  const _BrandAvatar({required this.name});
+
+  final String name;
+
+  @override
+  Widget build(BuildContext context) {
+    final parts = name.trim().split(RegExp(r'\s+')).where((p) => p.isNotEmpty);
+    final initials = parts.isEmpty
+        ? '?'
+        : parts.length == 1
+        ? parts.first.characters.first.toUpperCase()
+        : (parts.first.characters.first + parts.last.characters.first)
+              .toUpperCase();
+    return Container(
+      width: 38,
+      height: 38,
+      decoration: const BoxDecoration(
+        color: AppColors.brandStrong,
+        shape: BoxShape.circle,
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        initials,
+        style: AppText.cardTitle.copyWith(
+          fontSize: 13,
+          fontWeight: FontWeight.w800,
+          color: AppColors.surface,
+        ),
       ),
     );
   }
@@ -237,33 +299,45 @@ class _NotificationBell extends StatelessWidget {
     return Semantics(
       button: true,
       label: unread > 0 ? 'Notifications, $unread unread' : 'Notifications',
-      child: GestureDetector(
+      excludeSemantics: true,
+      child: Pressable(
         onTap: () => context.go('/home/notifications'),
         child: SizedBox(
           width: kMinHitTarget,
           height: kMinHitTarget,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              const Icon(
-                Icons.notifications_none,
-                size: 22,
-                color: AppColors.ink2,
+          child: Center(
+            child: Container(
+              width: 38,
+              height: 38,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: AppColors.line),
               ),
-              if (unread > 0)
-                Positioned(
-                  top: 10,
-                  right: 10,
-                  child: Container(
-                    width: 7,
-                    height: 7,
-                    decoration: const BoxDecoration(
-                      color: AppColors.danger,
-                      shape: BoxShape.circle,
-                    ),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  const Icon(
+                    Icons.notifications_none,
+                    size: 19,
+                    color: AppColors.ink,
                   ),
-                ),
-            ],
+                  if (unread > 0)
+                    Positioned(
+                      top: 8,
+                      right: 9,
+                      child: Container(
+                        width: 7,
+                        height: 7,
+                        decoration: BoxDecoration(
+                          color: AppColors.brand,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: AppColors.bg, width: 1.5),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
           ),
         ),
       ),
@@ -286,10 +360,10 @@ class _HomeSkeleton extends StatelessWidget {
         AppSpace.scrollBottom,
       ),
       children: const [
-        AppCard.skeleton(height: 200),
-        SizedBox(height: AppSpace.x12),
-        AppCard.skeleton(height: 84),
-        SizedBox(height: AppSpace.x20),
+        AppCard.skeleton(height: 240, radius: AppRadii.hero),
+        SizedBox(height: AppSpace.x28),
+        AppCard.skeleton(height: 90),
+        SizedBox(height: AppSpace.x16),
         AppCard.skeleton(height: 96),
       ],
     );

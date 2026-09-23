@@ -56,17 +56,18 @@ class GeofenceState {
       enabled: true,
       latitude: _toDouble(json['latitude']),
       longitude: _toDouble(json['longitude']),
-      radiusInMeters:
-          json['radius_in_meters'] is int ? json['radius_in_meters'] as int : null,
+      radiusInMeters: json['radius_in_meters'] is int
+          ? json['radius_in_meters'] as int
+          : null,
     );
   }
 
   static double? _toDouble(Object? value) => switch (value) {
-        final double d => d,
-        final int i => i.toDouble(),
-        final String s => double.tryParse(s),
-        _ => null,
-      };
+    final double d => d,
+    final int i => i.toDouble(),
+    final String s => double.tryParse(s),
+    _ => null,
+  };
 }
 
 /// Worked / Break / Overtime, each already formatted `HH:MM:SS`.
@@ -79,14 +80,40 @@ class TodayTotals {
     required this.worked,
     required this.breakTime,
     required this.overtime,
+    this.minimumHour,
   });
 
   final String worked;
   final String breakTime;
   final String overtime;
 
-  static const zero =
-      TodayTotals(worked: '00:00:00', breakTime: '00:00:00', overtime: '00:00:00');
+  /// Today's required hours from the shift, e.g. "08:30", when the server
+  /// sends it. Horilla stores this per attendance row; the home aggregate
+  /// does not return it yet, so the punch ring falls back to 8h and says so.
+  final String? minimumHour;
+
+  static const zero = TodayTotals(
+    worked: '00:00:00',
+    breakTime: '00:00:00',
+    overtime: '00:00:00',
+  );
+
+  /// "HH:MM[:SS]" to seconds; null when it cannot be read.
+  static int? secondsOf(String? value) {
+    if (value == null) return null;
+    final parts = value.trim().split(':').map(int.tryParse).toList();
+    if (parts.isEmpty || parts.any((p) => p == null || p < 0)) return null;
+    final h = parts[0]!;
+    final m = parts.length > 1 ? parts[1]! : 0;
+    final sec = parts.length > 2 ? parts[2]! : 0;
+    return h * 3600 + m * 60 + sec;
+  }
+
+  int get workedSeconds => secondsOf(worked) ?? 0;
+  int? get shiftSeconds {
+    final s = secondsOf(minimumHour);
+    return s == null || s == 0 ? null : s;
+  }
 
   bool get hasOvertime =>
       overtime.isNotEmpty && !RegExp(r'^00:00:0?0?$').hasMatch(overtime);
@@ -95,16 +122,22 @@ class TodayTotals {
     if (json == null) return zero;
     String read(String key) =>
         json[key] is String ? json[key] as String : '00:00:00';
+    final minimum = json['minimum_hour'];
     return TodayTotals(
       worked: read('worked'),
       breakTime: read('break'),
       overtime: read('overtime'),
+      minimumHour: minimum is String && minimum.isNotEmpty ? minimum : null,
     );
   }
 }
 
 class ColleagueOnLeave {
-  const ColleagueOnLeave({required this.id, required this.name, this.leaveType});
+  const ColleagueOnLeave({
+    required this.id,
+    required this.name,
+    this.leaveType,
+  });
 
   final int id;
   final String name;
@@ -170,8 +203,9 @@ class HomeData {
   final AnnouncementSummary? announcement;
 
   static HomeData fromJson(Map<String, dynamic> json) {
-    Map<String, dynamic>? sub(String key) =>
-        json[key] is Map<String, dynamic> ? json[key] as Map<String, dynamic> : null;
+    Map<String, dynamic>? sub(String key) => json[key] is Map<String, dynamic>
+        ? json[key] as Map<String, dynamic>
+        : null;
 
     return HomeData(
       user: SignedInUser.fromJson(sub('employee')),
@@ -181,9 +215,9 @@ class HomeData {
       today: TodayTotals.fromJson(sub('today')),
       onLeaveToday: json['on_leave_today'] is List
           ? (json['on_leave_today'] as List)
-              .map(ColleagueOnLeave.fromJson)
-              .whereType<ColleagueOnLeave>()
-              .toList()
+                .map(ColleagueOnLeave.fromJson)
+                .whereType<ColleagueOnLeave>()
+                .toList()
           : const [],
       unreadNotifications: json['unread_notifications'] is int
           ? json['unread_notifications'] as int

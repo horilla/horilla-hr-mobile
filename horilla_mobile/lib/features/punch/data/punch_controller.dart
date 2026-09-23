@@ -48,7 +48,7 @@ class PunchPreparation {
   String? get blockedReason {
     if (locationFailure != null) return locationFailure!.message;
     if (fence != null && !fence!.isInside) {
-      return 'You are ${fence!.metresOutside.round()}m outside your '
+      return 'You are ${formatDistance(fence!.metresOutside)} outside your '
           'workplace. Move closer to clock '
           '${isClockingIn ? 'in' : 'out'}.';
     }
@@ -127,5 +127,4 @@ class PunchController {
   }
 }
 
-final punchControllerProvider =
-    Provider<PunchController>(PunchController.new);
+final punchControllerProvider = Provider<PunchController>(PunchController.new);

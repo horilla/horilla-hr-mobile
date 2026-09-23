@@ -67,15 +67,18 @@ void main() {
       expect(farNorth, lessThan(atEquator / 1.9));
     });
 
-    test('crossing the date line is a short hop, not a trip round the world', () {
-      final metres = distanceInMetres(
-        fromLatitude: 0,
-        fromLongitude: 179.999,
-        toLatitude: 0,
-        toLongitude: -179.999,
-      );
-      expect(metres, lessThan(500));
-    });
+    test(
+      'crossing the date line is a short hop, not a trip round the world',
+      () {
+        final metres = distanceInMetres(
+          fromLatitude: 0,
+          fromLongitude: 179.999,
+          toLatitude: 0,
+          toLongitude: -179.999,
+        );
+        expect(metres, lessThan(500));
+      },
+    );
   });
 
   group('fence position', () {
@@ -97,11 +100,11 @@ void main() {
       final position = at(140);
       expect(position.isInside, isFalse);
       expect(position.metresOutside, closeTo(40, 0.001));
-      expect(position.description, contains('40m outside'));
+      expect(position.description, contains('40 m outside'));
     });
 
     test('inside reports the distance to the edge, not to the centre', () {
-      expect(at(40).description, contains('60m'));
+      expect(at(40).description, contains('60 m'));
     });
   });
 
@@ -154,6 +157,17 @@ void main() {
         longitude: 76.2673,
       )!;
       expect(position.isInside, isFalse);
+    });
+  });
+
+  group('distance wording', () {
+    test('metres under a kilometre, kilometres beyond', () {
+      expect(formatDistance(40.4), '40 m');
+      expect(formatDistance(999), '999 m');
+      expect(formatDistance(1234), '1.2 km');
+      // The real device reading that prompted this: "274015m".
+      expect(formatDistance(274015), '274 km');
+      expect(formatDistance(-5), '0 m');
     });
   });
 }

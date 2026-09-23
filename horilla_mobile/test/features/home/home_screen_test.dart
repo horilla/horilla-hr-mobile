@@ -18,7 +18,6 @@ import 'package:horilla_mobile/features/auth/data/auth_models.dart';
 import 'package:horilla_mobile/features/home/data/home_api.dart';
 import 'package:horilla_mobile/features/home/data/home_models.dart';
 import 'package:horilla_mobile/features/home/ui/home_screen.dart';
-import 'package:horilla_mobile/features/home/ui/live_clock.dart';
 import 'package:horilla_mobile/l10n/app_localizations.dart';
 import 'package:horilla_mobile/shared/widgets/app_card.dart';
 
@@ -115,10 +114,14 @@ void main() {
     await pumpHome(tester, load: () async => sample());
 
     expect(find.text('Nisha Prakash'), findsOneWidget);
-    expect(find.byType(LiveClock), findsOneWidget);
-    expect(find.text('Checked in at 09:04'), findsOneWidget);
+    // The hero counts worked time, from the server's figure at fetch.
+    expect(find.text('Worked today'), findsOneWidget);
     expect(find.text('03:12:40'), findsOneWidget);
-    expect(find.text('00:30:00'), findsOneWidget);
+    expect(find.text('FIRST IN'), findsOneWidget);
+    expect(find.text('09:04'), findsOneWidget);
+    expect(find.text('30m'), findsOneWidget);
+    // No shift length from the server, so the ring says so.
+    expect(find.textContaining('of 8h'), findsOneWidget);
   });
 
   testWidgets('clocked in offers Check out', (tester) async {
@@ -129,20 +132,23 @@ void main() {
   testWidgets('clocked out offers Check in', (tester) async {
     await pumpHome(tester, load: () async => sample(clockedIn: false));
     expect(find.text('Check in'), findsOneWidget);
-    expect(find.text('Not checked in yet'), findsOneWidget);
+    // Checked in earlier today (the sample has a first-in), now out.
+    expect(find.text('Checked out'), findsOneWidget);
   });
 
-  testWidgets('the geo-fence pill shows when the feature is on',
-      (tester) async {
+  testWidgets('the geo-fence pill shows when the feature is on', (
+    tester,
+  ) async {
     await pumpHome(tester, load: () async => sample());
-    expect(find.text('GEO-FENCED'), findsOneWidget);
+    expect(find.text('Geo-fenced site'), findsOneWidget);
   });
 
-  testWidgets('the geo-fence pill is absent when the feature is off',
-      (tester) async {
+  testWidgets('the geo-fence pill is absent when the feature is off', (
+    tester,
+  ) async {
     // A pill that says nothing is worse than no pill.
     await pumpHome(tester, load: () async => sample(geofence: false));
-    expect(find.text('GEO-FENCED'), findsNothing);
+    expect(find.text('Geo-fenced site'), findsNothing);
   });
 
   testWidgets('a plain employee gets no role band', (tester) async {
@@ -151,23 +157,21 @@ void main() {
     expect(find.textContaining('HR desk'), findsNothing);
   });
 
-  testWidgets('a manager gets the approvals band', (tester) async {
-    await pumpHome(tester, load: () async => sample(role: 'manager'));
-    expect(find.textContaining('need you'), findsOneWidget);
-  });
-
-  testWidgets('an hrexec gets the HR desk band, not the manager one',
-      (tester) async {
-    await pumpHome(tester, load: () async => sample(role: 'hrexec'));
-
-    expect(find.textContaining('HR desk'), findsOneWidget);
-    expect(find.textContaining('need you'), findsNothing);
+  testWidgets('no band claims a count the server has not sent', (tester) async {
+    // The band used to render "0 requests need you" for every manager: the
+    // count was hard-wired. It stays hidden until the home aggregate carries
+    // a real pending-approvals number.
+    for (final role in ['manager', 'hrexec']) {
+      await pumpHome(tester, load: () async => sample(role: role));
+      expect(find.textContaining('need you'), findsNothing, reason: role);
+      expect(find.textContaining('HR desk'), findsNothing, reason: role);
+    }
   });
 
   testWidgets('optional sections are omitted when empty', (tester) async {
     await pumpHome(tester, load: () async => sample());
 
-    expect(find.text('ON LEAVE TODAY'), findsNothing);
+    expect(find.text('On leave today'), findsNothing);
     expect(find.text('ANNOUNCEMENT'), findsNothing);
   });
 
@@ -180,7 +184,8 @@ void main() {
       ),
     );
 
-    expect(find.text('ON LEAVE TODAY'), findsOneWidget);
+    expect(find.text('On leave today'), findsOneWidget);
+    expect(find.text('1 person →'), findsOneWidget);
     expect(find.text('Q3 opens'), findsOneWidget);
   });
 
