@@ -24,6 +24,8 @@ LeaveApplication application({
     );
 
 void main() {
+  _allocationTests();
+
   group('day estimate', () {
     test('a single full day is one day', () {
       expect(application().estimatedDays, 1);
@@ -162,6 +164,48 @@ void main() {
         }),
         isNotNull,
       );
+    });
+  });
+}
+
+/// Allocation requests: asking HR for more days, not for time off.
+void _allocationTests() {
+  group('allocation request', () {
+    LeaveAllocationRequest request({double days = 2, String reason = 'Why'}) =>
+        LeaveAllocationRequest(
+          leaveTypeId: 1,
+          requestedDays: days,
+          reason: reason,
+        );
+
+    test('a valid request carries days and a reason', () {
+      expect(request().isValid, isTrue);
+    });
+
+    test('zero or negative days is not a request', () {
+      expect(request(days: 0).isValid, isFalse);
+      expect(request(days: -1).isValid, isFalse);
+    });
+
+    test('a blank reason is not a reason', () {
+      expect(request(reason: '').isValid, isFalse);
+      expect(request(reason: '   ').isValid, isFalse);
+    });
+
+    test('the payload binds to the caller and trims the reason', () {
+      final json = request(reason: '  Extra project work  ').toJson(42);
+      expect(json['employee_id'], 42);
+      expect(json['leave_type_id'], 1);
+      expect(json['requested_days'], 2);
+      expect(json['description'], 'Extra project work');
+    });
+
+    test('half days survive the round trip as a number', () {
+      // requested_days is a FloatField server-side; sending 2.5 as a string
+      // would be rejected.
+      final json = request(days: 2.5).toJson(1);
+      expect(json['requested_days'], isA<double>());
+      expect(json['requested_days'], 2.5);
     });
   });
 }

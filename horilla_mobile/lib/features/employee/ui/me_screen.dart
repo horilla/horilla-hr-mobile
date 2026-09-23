@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../../core/auth/session.dart';
@@ -7,6 +8,7 @@ import '../../../core/theme/platform_chrome.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/app_primitives.dart';
+import '../data/profile_api.dart';
 
 final _appVersionProvider = FutureProvider<String>((ref) async {
   final info = await PackageInfo.fromPlatform();
@@ -20,6 +22,7 @@ class MeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final session = ref.watch(sessionProvider);
     final version = ref.watch(_appVersionProvider).value;
+    final canEdit = ref.watch(canEditProfileProvider);
 
     return Scaffold(
       backgroundColor: AppColors.bg,
@@ -85,6 +88,27 @@ class MeScreen extends ConsumerWidget {
                     ),
                   ),
                 ],
+
+                const SizedBox(height: AppSpace.x20),
+                const SectionHeader(title: 'Personal'),
+                const SizedBox(height: AppSpace.x12),
+                AppCard(
+                  padding: EdgeInsets.zero,
+                  child: Column(
+                    children: [
+                      _Row(
+                        label: 'Personal information',
+                        // Offered only when the server says self-service
+                        // editing is on. A form that always fails is worse
+                        // than no form.
+                        value: canEdit ? null : 'HR-managed',
+                        onTap: canEdit
+                            ? () => context.push('/me/personal-information')
+                            : null,
+                      ),
+                    ],
+                  ),
+                ),
 
                 const SizedBox(height: AppSpace.x20),
                 const SectionHeader(title: 'Account'),

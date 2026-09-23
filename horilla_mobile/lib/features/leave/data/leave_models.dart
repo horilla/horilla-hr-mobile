@@ -213,3 +213,31 @@ double? _toDouble(Object? value) => switch (value) {
       final String s => double.tryParse(s),
       _ => null,
     };
+
+/// Asking HR for more days of a leave type.
+///
+/// Distinct from applying for leave: this does not book time off, it asks for
+/// the balance itself to be increased. The handoff notes it is HR-approved
+/// rather than manager-approved, which is why the screen says so -- someone
+/// expecting their manager to action it would otherwise wait on the wrong
+/// person.
+class LeaveAllocationRequest {
+  const LeaveAllocationRequest({
+    required this.leaveTypeId,
+    required this.requestedDays,
+    required this.reason,
+  });
+
+  final int leaveTypeId;
+  final double requestedDays;
+  final String reason;
+
+  bool get isValid => requestedDays > 0 && reason.trim().isNotEmpty;
+
+  Map<String, dynamic> toJson(int employeeId) => {
+        'employee_id': employeeId,
+        'leave_type_id': leaveTypeId,
+        'requested_days': requestedDays,
+        'description': reason.trim(),
+      };
+}

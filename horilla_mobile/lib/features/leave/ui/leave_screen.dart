@@ -94,6 +94,12 @@ class _LeaveBody extends StatelessWidget {
           label: 'Apply for leave',
           onPressed: () => context.push('/time/leave/apply'),
         ),
+        const SizedBox(height: AppSpace.x10),
+        AppButton(
+          label: 'Request more days',
+          tone: AppButtonTone.quiet,
+          onPressed: () => context.push('/time/leave/allocation'),
+        ),
 
         const SizedBox(height: AppSpace.x20),
         const SectionHeader(title: 'My requests'),

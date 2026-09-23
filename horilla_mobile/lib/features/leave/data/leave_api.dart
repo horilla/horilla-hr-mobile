@@ -34,6 +34,21 @@ class LeaveApi {
     }
   }
 
+  Future<void> requestAllocation(
+    LeaveAllocationRequest request,
+    int employeeId,
+  ) async {
+    try {
+      await _dio.post<dynamic>(
+        '/leave/user-allocation-request/',
+        data: request.toJson(employeeId),
+      );
+    } on DioException catch (e) {
+      final failure = e.error;
+      throw failure is ApiFailure ? failure : const ApiUnknown();
+    }
+  }
+
   Future<void> apply(LeaveApplication application, int employeeId) async {
     try {
       await _dio.post<dynamic>(

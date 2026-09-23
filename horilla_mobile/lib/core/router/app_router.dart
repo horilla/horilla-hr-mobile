@@ -19,9 +19,11 @@ import '../../features/auth/ui/sign_in_screen.dart';
 import '../../features/attendance/ui/attendance_screen.dart';
 import '../../features/employee/ui/directory_screen.dart';
 import '../../features/employee/ui/me_screen.dart';
+import '../../features/employee/ui/personal_info_screen.dart';
 import '../../features/home/data/home_models.dart';
 import '../../features/home/ui/home_screen.dart';
 import '../../features/punch/ui/punch_screen.dart';
+import '../../features/leave/ui/leave_allocation_screen.dart';
 import '../../features/leave/ui/leave_apply_screen.dart';
 import '../../features/leave/ui/leave_screen.dart';
 import '../../features/notifications/ui/notifications_screen.dart';
@@ -121,6 +123,11 @@ GoRouter buildRouter({
                         path: 'apply',
                         builder: (context, state) => const LeaveApplyScreen(),
                       ),
+                      GoRoute(
+                        path: 'allocation',
+                        builder: (context, state) =>
+                            const LeaveAllocationScreen(),
+                      ),
                     ],
                   ),
                 ],
@@ -176,6 +183,12 @@ GoRouter buildRouter({
               GoRoute(
                 path: '/me',
                 builder: (context, state) => const MeScreen(),
+                routes: [
+                  GoRoute(
+                    path: 'personal-information',
+                    builder: (context, state) => const PersonalInfoScreen(),
+                  ),
+                ],
               ),
             ],
           ),
