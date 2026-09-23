@@ -24,36 +24,43 @@ import 'package:horilla_mobile/shared/widgets/app_card.dart';
 AttendanceOverview sample({
   HourAccount? account,
   List<AttendanceDay>? days,
-}) =>
-    AttendanceOverview(
-      hourAccount: account ??
-          const HourAccount(
-            month: 'September',
-            year: '2026',
-            workedHours: '142:30',
-            pendingHours: '17:30',
-            overtime: '04:15',
-          ),
-      days: Paged<AttendanceDay>(
-        results: days ??
-            [
-              AttendanceDay(
-                id: 1,
-                date: DateTime(2026, 9, 22),
-                clockIn: '09:04',
-                clockOut: '18:12',
-                workedHour: '08:38',
-              ),
-              AttendanceDay(
-                id: 2,
-                date: DateTime(2026, 9, 21),
-                clockIn: '09:11',
-                workedHour: '03:12',
-              ),
-            ],
-        count: 2,
+  int? lateIns = 2,
+  int? earlyOuts = 1,
+}) => AttendanceOverview(
+  // Pinned, so the log's month filter does not depend on today's date.
+  month: DateTime(2026, 9),
+  lateIns: lateIns,
+  earlyOuts: earlyOuts,
+  hourAccount:
+      account ??
+      const HourAccount(
+        month: 'September',
+        year: '2026',
+        workedHours: '142:30',
+        pendingHours: '17:30',
+        overtime: '04:15',
       ),
-    );
+  days: Paged<AttendanceDay>(
+    results:
+        days ??
+        [
+          AttendanceDay(
+            id: 1,
+            date: DateTime(2026, 9, 22),
+            clockIn: '09:04',
+            clockOut: '18:12',
+            workedHour: '08:38',
+          ),
+          AttendanceDay(
+            id: 2,
+            date: DateTime(2026, 9, 21),
+            clockIn: '09:11',
+            workedHour: '03:12',
+          ),
+        ],
+    count: 2,
+  ),
+);
 
 Future<void> pumpAttendance(
   WidgetTester tester, {
@@ -73,9 +80,7 @@ Future<void> pumpAttendance(
 
   await tester.pumpWidget(
     ProviderScope(
-      overrides: [
-        attendanceOverviewProvider.overrideWith((ref) => load()),
-      ],
+      overrides: [attendanceOverviewProvider.overrideWith((ref) => load())],
       child: MaterialApp.router(
         theme: buildAppTheme(),
         localizationsDelegates: const [
@@ -148,6 +153,33 @@ void main() {
       expect(account.progress, 1.0);
     });
 
+    test('a negative duration is unreadable, not displayed', () {
+      // The demo server returns worked_hours "-2:31". It used to be read as
+      // -2h plus 31m and printed as "-2:31 of -1h".
+      const account = HourAccount(
+        month: 'September',
+        year: '2026',
+        workedHours: '-2:31',
+        pendingHours: '00:41',
+        overtime: '00:00',
+      );
+      expect(account.workedLabel, isNull);
+      expect(account.expectedHours, isNull);
+      expect(account.progress, isNull);
+    });
+
+    test('durations format as hours and minutes', () {
+      const account = HourAccount(
+        month: '',
+        year: '',
+        workedHours: '142:05',
+        pendingHours: '17:55',
+        overtime: '04:15',
+      );
+      expect(account.workedLabel, '142h 05m');
+      expect(account.overtimeLabel, '4h 15m');
+    });
+
     test('overtime is reported only when non-zero', () {
       expect(HourAccount.empty.hasOvertime, isFalse);
       expect(
@@ -160,6 +192,45 @@ void main() {
         ).hasOvertime,
         isTrue,
       );
+    });
+  });
+
+  group('months', () {
+    test('the picker offers only months the loaded log covers', () {
+      final overview = AttendanceOverview(
+        hourAccount: HourAccount.empty,
+        month: DateTime(2026, 9),
+        days: Paged<AttendanceDay>(
+          results: [
+            AttendanceDay(id: 1, date: DateTime(2026, 9, 2)),
+            AttendanceDay(id: 2, date: DateTime(2026, 8, 30)),
+            AttendanceDay(id: 3, date: DateTime(2026, 8, 1)),
+          ],
+          count: 3,
+        ),
+      );
+      final months = overview.availableMonths;
+      expect(months, contains(DateTime(2026, 9)));
+      expect(months, contains(DateTime(2026, 8)));
+      expect(months, isNot(contains(DateTime(2026, 7))));
+      // Newest first.
+      expect(months.first.isAfter(months.last), isTrue);
+    });
+
+    test('the log shows only the selected month', () {
+      final overview = AttendanceOverview(
+        hourAccount: HourAccount.empty,
+        month: DateTime(2026, 8),
+        days: Paged<AttendanceDay>(
+          results: [
+            AttendanceDay(id: 1, date: DateTime(2026, 9, 2)),
+            AttendanceDay(id: 2, date: DateTime(2026, 8, 30)),
+          ],
+          count: 2,
+        ),
+      );
+      expect(overview.daysInMonth.map((d) => d.id), [2]);
+      expect(overview.presentDays, 1);
     });
   });
 
@@ -198,10 +269,11 @@ void main() {
     });
 
     test('a page envelope reports whether more remain', () {
-      final page = Paged.fromJson<AttendanceDay>(
-        {'count': 40, 'next': 'http://x/?page=2', 'results': const []},
-        AttendanceDay.fromJson,
-      );
+      final page = Paged.fromJson<AttendanceDay>({
+        'count': 40,
+        'next': 'http://x/?page=2',
+        'results': const [],
+      }, AttendanceDay.fromJson);
       expect(page.count, 40);
       expect(page.hasMore, isTrue);
     });
@@ -211,19 +283,55 @@ void main() {
     testWidgets('renders the hour account and the log', (tester) async {
       await pumpAttendance(tester, load: () async => sample());
 
-      expect(find.text('SEPTEMBER 2026'), findsOneWidget);
-      expect(find.text('142:30'), findsOneWidget);
+      expect(find.text('HOUR ACCOUNT'), findsOneWidget);
+      expect(find.text('142h 30m'), findsOneWidget);
       expect(find.text('of 160h'), findsOneWidget);
-      expect(find.text('+04:15 OT'), findsOneWidget);
-      expect(find.text('09:04 – 18:12'), findsOneWidget);
+      expect(find.text('+4h 15m OT'), findsOneWidget);
+      expect(find.text('09:04 — 18:12'), findsOneWidget);
     });
 
-    testWidgets('an open day is marked rather than shown as finished',
-        (tester) async {
+    testWidgets('counters show what is known and a dash for what is not', (
+      tester,
+    ) async {
+      final handle = tester.ensureSemantics();
+      await pumpAttendance(
+        tester,
+        load: () async => sample(lateIns: null, earlyOuts: 3),
+      );
+
+      // Present is counted from the log: two September rows.
+      expect(find.bySemanticsLabel('Present 2'), findsOneWidget);
+      // A failed lookup is "unknown", never a reassuring zero.
+      expect(find.bySemanticsLabel('Late in —'), findsOneWidget);
+      expect(find.bySemanticsLabel('Early out 3'), findsOneWidget);
+      handle.dispose();
+    });
+
+    testWidgets('an unreadable hour account says so', (tester) async {
+      await pumpAttendance(
+        tester,
+        load: () async => sample(
+          account: const HourAccount(
+            month: 'September',
+            year: '2026',
+            workedHours: '-2:31',
+            pendingHours: '00:41',
+            overtime: '00:00',
+          ),
+        ),
+      );
+
+      expect(find.text('—'), findsWidgets);
+      expect(find.textContaining('no usable hour account'), findsOneWidget);
+      expect(find.textContaining('of -'), findsNothing);
+    });
+
+    testWidgets('an open day is marked rather than shown as finished', (
+      tester,
+    ) async {
       await pumpAttendance(tester, load: () async => sample());
 
-      expect(find.text('09:11 – now'), findsOneWidget);
-      expect(find.text('OPEN'), findsOneWidget);
+      expect(find.text('09:11 — in progress'), findsOneWidget);
     });
 
     testWidgets('an empty log explains itself', (tester) async {

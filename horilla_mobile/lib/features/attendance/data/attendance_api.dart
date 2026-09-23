@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../../core/api/api_failure.dart';
 import '../../../core/auth/session.dart';
@@ -17,26 +18,60 @@ class AttendanceApi {
   /// resources with different lifetimes, and there is no aggregate for them.
   /// They are issued concurrently, so the screen waits for one round trip's
   /// worth of latency rather than two.
-  Future<AttendanceOverview> fetchOverview({int pageSize = 30}) async {
+  Future<AttendanceOverview> fetchOverview({
+    required int employeeId,
+    required DateTime month,
+    int pageSize = 100,
+  }) async {
+    final monthName = DateFormat('MMMM', 'en').format(month);
+    final first = DateTime(month.year, month.month);
+    final last = DateTime(month.year, month.month + 1, 0);
+    final day = DateFormat('yyyy-MM-dd');
+
     try {
       final responses = await Future.wait([
-        _dio.get<dynamic>('/attendance/attendance-hour-account/'),
+        // Scoped to this person and this month. Unscoped, the endpoint
+        // returns every employee's rows the caller may see -- 948 for an
+        // admin on the demo -- and "the first row" was somebody's September
+        // only by ordering luck.
+        _dio.get<dynamic>(
+          '/attendance/attendance-hour-account/',
+          queryParameters: {
+            'employee_id': employeeId,
+            'month': monthName,
+            'year': '${month.year}',
+          },
+        ),
         _dio.get<dynamic>(
           '/attendance/my-attendance/',
-          // Honoured since the server started reading page_size; on an older
-          // release it is ignored and the page is simply shorter.
+          // The list ignores date filters, so fetch a generous page and
+          // narrow client-side; 100 is the server's page-size cap.
           queryParameters: {'page_size': pageSize},
         ),
       ]);
 
+      final (late, early) = await _lateAndEarly(
+        employeeId,
+        day.format(first),
+        day.format(last),
+      );
+
       return AttendanceOverview(
-        hourAccount: _firstHourAccount(responses[0].data),
+        hourAccount: _hourAccountFor(
+          responses[0].data,
+          employeeId: employeeId,
+          month: monthName,
+          year: month.year,
+        ),
         days: responses[1].data is Map<String, dynamic>
             ? Paged.fromJson<AttendanceDay>(
                 responses[1].data as Map<String, dynamic>,
                 AttendanceDay.fromJson,
               )
             : const Paged<AttendanceDay>(results: [], count: 0),
+        month: first,
+        lateIns: late,
+        earlyOuts: early,
       );
     } on DioException catch (e) {
       final failure = e.error;
@@ -85,15 +120,70 @@ class AttendanceApi {
     }
   }
 
-  /// The endpoint returns a paginated list; the current month is the first row.
-  HourAccount _firstHourAccount(Object? body) {
+  /// Late check-ins and early check-outs for the month.
+  ///
+  /// Allowed to fail on its own. The counters are secondary to the hour
+  /// account, and this endpoint is the one most likely to change its access
+  /// rules; a failure here shows "—", not an error over the whole screen.
+  Future<(int?, int?)> _lateAndEarly(
+    int employeeId,
+    String from,
+    String to,
+  ) async {
+    try {
+      final response = await _dio.get<dynamic>(
+        '/attendance/late-come-early-out-view/',
+        queryParameters: {
+          'employee_id': employeeId,
+          'attendance_date__gte': from,
+          'attendance_date__lte': to,
+        },
+      );
+      final body = response.data;
+      if (body is! List) return (null, null);
+      var late = 0, early = 0;
+      for (final row in body) {
+        if (row is! Map) continue;
+        // Filter again locally: if the server ever ignores the parameter,
+        // this still counts only this person.
+        final who = row['employee_id'];
+        if (who is int && who != employeeId) continue;
+        switch (row['type']) {
+          case 'late_come':
+            late++;
+          case 'early_out':
+            early++;
+        }
+      }
+      return (late, early);
+    } on DioException {
+      return (null, null);
+    }
+  }
+
+  /// The row for this person and month -- matched, not assumed to be first.
+  HourAccount _hourAccountFor(
+    Object? body, {
+    required int employeeId,
+    required String month,
+    required int year,
+  }) {
     if (body is! Map<String, dynamic>) return HourAccount.empty;
     final results = body['results'];
-    if (results is! List || results.isEmpty) return HourAccount.empty;
-    final first = results.first;
-    return first is Map<String, dynamic>
-        ? HourAccount.fromJson(first)
-        : HourAccount.empty;
+    if (results is! List) return HourAccount.empty;
+    for (final row in results) {
+      if (row is! Map<String, dynamic>) continue;
+      final who = row['employee_id'];
+      final m = row['month'];
+      final y = row['year'];
+      if ((who is int && who != employeeId) ||
+          (m is String && m.toLowerCase() != month.toLowerCase()) ||
+          (y != null && '$y' != '$year')) {
+        continue;
+      }
+      return HourAccount.fromJson(row);
+    }
+    return HourAccount.empty;
   }
 }
 
@@ -101,6 +191,27 @@ final attendanceApiProvider = Provider<AttendanceApi>(
   (ref) => AttendanceApi(ref.watch(apiClientProvider).dio),
 );
 
+/// The month the attendance screen is showing; the first of that month.
+class AttendanceMonth extends Notifier<DateTime> {
+  @override
+  DateTime build() {
+    final now = DateTime.now();
+    return DateTime(now.year, now.month);
+  }
+
+  void select(DateTime month) => state = DateTime(month.year, month.month);
+}
+
+final attendanceMonthProvider = NotifierProvider<AttendanceMonth, DateTime>(
+  AttendanceMonth.new,
+);
+
 final attendanceOverviewProvider = FutureProvider<AttendanceOverview>((ref) {
-  return ref.watch(attendanceApiProvider).fetchOverview();
+  final employeeId = ref.watch(sessionProvider)?.user.id ?? 0;
+  return ref
+      .watch(attendanceApiProvider)
+      .fetchOverview(
+        employeeId: employeeId,
+        month: ref.watch(attendanceMonthProvider),
+      );
 });

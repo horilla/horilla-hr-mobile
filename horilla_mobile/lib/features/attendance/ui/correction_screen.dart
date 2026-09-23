@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 
 import '../../../core/api/api_failure.dart';
 import '../../../core/auth/session.dart';
-import '../../../core/theme/platform_chrome.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_card.dart';
@@ -13,6 +12,7 @@ import '../../../shared/widgets/app_primitives.dart';
 import '../data/attendance_api.dart';
 import '../data/attendance_models.dart';
 import '../data/correction_models.dart';
+import '../../../shared/widgets/app_top_bar.dart';
 
 /// Asking for a day's times to be corrected.
 ///
@@ -29,8 +29,7 @@ class CorrectionScreen extends ConsumerStatefulWidget {
 
 class _CorrectionScreenState extends ConsumerState<CorrectionScreen> {
   late final _clockIn = TextEditingController(text: widget.day.clockIn ?? '');
-  late final _clockOut =
-      TextEditingController(text: widget.day.clockOut ?? '');
+  late final _clockOut = TextEditingController(text: widget.day.clockOut ?? '');
   final _reason = TextEditingController();
 
   Map<String, dynamic>? _original;
@@ -67,10 +66,10 @@ class _CorrectionScreenState extends ConsumerState<CorrectionScreen> {
   }
 
   int? _idFrom(Object? value) => switch (value) {
-        final int id => id,
-        final Map map => map['id'] is int ? map['id'] as int : null,
-        _ => null,
-      };
+    final int id => id,
+    final Map map => map['id'] is int ? map['id'] as int : null,
+    _ => null,
+  };
 
   Future<void> _submit() async {
     final session = ref.read(sessionProvider);
@@ -127,24 +126,7 @@ class _CorrectionScreenState extends ConsumerState<CorrectionScreen> {
       backgroundColor: AppColors.bg,
       body: Column(
         children: [
-          Container(
-            width: double.infinity,
-            color: AppColors.surface,
-            padding: PlatformChrome.appBarPaddingOf(context),
-            child: Row(
-              children: [
-                GestureDetector(
-                  onTap: () => context.pop(),
-                  child: const SizedBox(
-                    width: kMinHitTarget,
-                    height: 28,
-                    child: Icon(Icons.chevron_left, color: AppColors.ink),
-                  ),
-                ),
-                Text('Request correction', style: AppText.appBarTitle),
-              ],
-            ),
-          ),
+          AppTopBar(title: 'Request correction', onBack: () => context.pop()),
           Expanded(
             child: ListView(
               padding: const EdgeInsets.fromLTRB(
@@ -185,10 +167,7 @@ class _CorrectionScreenState extends ConsumerState<CorrectionScreen> {
                 Row(
                   children: [
                     Expanded(
-                      child: _TimeField(
-                        label: 'Started',
-                        controller: _clockIn,
-                      ),
+                      child: _TimeField(label: 'Started', controller: _clockIn),
                     ),
                     const SizedBox(width: AppSpace.x10),
                     Expanded(
@@ -210,8 +189,9 @@ class _CorrectionScreenState extends ConsumerState<CorrectionScreen> {
                 const EyebrowLabel('Reason'),
                 const SizedBox(height: AppSpace.x10),
                 AppCard(
-                  borderColor:
-                      _reasonError == null ? AppColors.line : AppColors.danger,
+                  borderColor: _reasonError == null
+                      ? AppColors.line
+                      : AppColors.danger,
                   child: TextField(
                     controller: _reason,
                     maxLines: 4,
