@@ -122,24 +122,43 @@ class SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Both children have to be bounded. Unconstrained, a Row lays each Text
+    // out at its natural width and overflows -- which at large text sizes is
+    // exactly what happened, on every screen at once, because this is shared.
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Text(
-          title,
-          style: AppText.cardTitle.copyWith(fontSize: 15.5, height: 1.2),
+        Expanded(
+          child: Text(
+            title,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: AppText.cardTitle.copyWith(fontSize: 15.5, height: 1.2),
+          ),
         ),
-        if (actionLabel != null)
-          GestureDetector(
-            onTap: onAction,
-            child: Text(
-              actionLabel!,
-              style: AppText.meta.copyWith(
-                color: AppColors.brandStrong,
-                fontWeight: FontWeight.w600,
+        if (actionLabel != null) ...[
+          const SizedBox(width: AppSpace.x10),
+          Flexible(
+            child: GestureDetector(
+              onTap: onAction,
+              child: ConstrainedBox(
+                // Never more than a third of the row: the action is
+                // secondary to the heading it sits beside.
+                constraints: const BoxConstraints(maxWidth: 140),
+                child: Text(
+                  actionLabel!,
+                  textAlign: TextAlign.end,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppText.meta.copyWith(
+                    color: AppColors.brandStrong,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
             ),
           ),
+        ],
       ],
     );
   }

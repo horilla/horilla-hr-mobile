@@ -16,22 +16,37 @@ class TodayStats extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppCard(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(child: StatTile(label: 'Worked', value: today.worked)),
-          Expanded(child: StatTile(label: 'Break', value: today.breakTime)),
-          Expanded(
-            child: StatTile(
-              label: 'Overtime',
-              value: today.overtime,
-              valueColor:
-                  today.hasOvertime ? AppColors.success : AppColors.ink,
-            ),
-          ),
-        ],
+    final tiles = [
+      StatTile(label: 'Worked', value: today.worked),
+      StatTile(label: 'Break', value: today.breakTime),
+      StatTile(
+        label: 'Overtime',
+        value: today.overtime,
+        valueColor: today.hasOvertime ? AppColors.success : AppColors.ink,
       ),
+    ];
+
+    // Three mono durations side by side stop fitting well before the text
+    // scale reaches the ~3x the platforms allow. Past 1.5x they stack, which
+    // is a worse use of space but is legible -- and legible is the point of
+    // someone turning the text up.
+    final stacked = MediaQuery.textScalerOf(context).scale(1) > 1.5;
+
+    return AppCard(
+      child: stacked
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                for (var i = 0; i < tiles.length; i++) ...[
+                  if (i > 0) const SizedBox(height: AppSpace.x14),
+                  tiles[i],
+                ],
+              ],
+            )
+          : Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [for (final tile in tiles) Expanded(child: tile)],
+            ),
     );
   }
 }
@@ -118,13 +133,21 @@ class QuickActions extends StatelessWidget {
       builder: (context, constraints) {
         // The handoff keeps four across, dropping to 2x2 below 360pt.
         final columns = constraints.maxWidth < 344 ? 2 : 4;
+
+        // Height is derived from the text scale rather than a fixed aspect
+        // ratio. A ratio is a constant, and the label inside these tiles is
+        // not: at 1.3x it needs more room than the tile had, which is the
+        // overflow this replaces.
+        final scaled = MediaQuery.textScalerOf(context).scale(1);
+        final extent = 88 + (scaled - 1) * 46;
+
         return GridView.count(
           crossAxisCount: columns,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           mainAxisSpacing: AppSpace.x10,
           crossAxisSpacing: AppSpace.x10,
-          childAspectRatio: 0.95,
+          mainAxisExtent: extent,
           children: [
             for (final action in actions) _QuickActionTile(action: action),
           ],
@@ -157,14 +180,16 @@ class _QuickActionTile extends StatelessWidget {
             ),
             child: Icon(action.icon, size: 15, color: AppColors.brandStrong),
           ),
-          Text(
-            action.label,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: AppText.meta.copyWith(
-              color: AppColors.ink2,
-              fontWeight: FontWeight.w600,
-              height: 1.25,
+          Flexible(
+            child: Text(
+              action.label,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: AppText.meta.copyWith(
+                color: AppColors.ink2,
+                fontWeight: FontWeight.w600,
+                height: 1.25,
+              ),
             ),
           ),
         ],

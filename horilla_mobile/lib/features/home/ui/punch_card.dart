@@ -35,15 +35,18 @@ class PunchCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
+          // Wrap rather than Row: at large text the date and the geo-fence
+          // pill together exceed the card, and a Row has nowhere to put the
+          // difference. The pill drops to its own line instead.
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: AppSpace.x8,
+            runSpacing: AppSpace.x8,
             children: [
-              Flexible(
-                child: Text(
-                  dateLabel.toUpperCase(),
-                  style: AppText.eyebrow.copyWith(color: AppColors.onDark2),
-                ),
+              Text(
+                dateLabel.toUpperCase(),
+                style: AppText.eyebrow.copyWith(color: AppColors.onDark2),
               ),
               if (geofence.enabled) const _GeofencePill(),
             ],

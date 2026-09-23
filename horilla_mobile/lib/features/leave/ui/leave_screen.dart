@@ -147,8 +147,12 @@ class _BalanceGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Both dimensions follow the text scale: a fixed 96x116 card cannot hold
+    // a 24pt number and a two-line label once either grows.
+    final scaled = MediaQuery.textScalerOf(context).scale(1);
+
     return SizedBox(
-      height: 96,
+      height: 96 + (scaled - 1) * 76,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: balances.length,
@@ -156,7 +160,7 @@ class _BalanceGrid extends StatelessWidget {
         itemBuilder: (context, index) {
           final balance = balances[index];
           return SizedBox(
-            width: 116,
+            width: 116 + (scaled - 1) * 40,
             child: AppCard(
               padding: const EdgeInsets.all(AppSpace.x14),
               child: Column(
@@ -167,11 +171,14 @@ class _BalanceGrid extends StatelessWidget {
                     formatDays(balance.totalDays),
                     style: AppText.statValue,
                   ),
-                  Text(
-                    balance.type.name,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: AppText.meta.copyWith(fontWeight: FontWeight.w600),
+                  Flexible(
+                    child: Text(
+                      balance.type.name,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style:
+                          AppText.meta.copyWith(fontWeight: FontWeight.w600),
+                    ),
                   ),
                 ],
               ),

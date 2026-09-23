@@ -38,6 +38,9 @@ class _AppButtonState extends State<AppButton> {
       button: true,
       enabled: enabled,
       label: widget.label,
+      // Same reason as the tab bar: otherwise the child Text is announced as
+      // well and the button reads twice.
+      excludeSemantics: true,
       child: GestureDetector(
         onTapDown: enabled ? (_) => setState(() => _pressed = true) : null,
         onTapUp: enabled ? (_) => setState(() => _pressed = false) : null,

@@ -71,6 +71,9 @@ class _NavButton extends StatelessWidget {
       button: true,
       selected: selected,
       label: item.label,
+      // Without this the child Text contributes its own node and the tab is
+      // announced twice -- "Home, Home". The label here is authoritative.
+      excludeSemantics: true,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: onTap,

@@ -125,15 +125,18 @@ class _HourAccountCard extends StatelessWidget {
                 : '${account.month} ${account.year}',
           ),
           const SizedBox(height: AppSpace.x8),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.baseline,
-            textBaseline: TextBaseline.alphabetic,
+          // Wrap rather than Row: at larger text the value, the "of 160h"
+          // caption and the overtime badge stop fitting on one line, and a
+          // Row has nowhere to put the overflow. This lets the badge drop
+          // underneath instead.
+          Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: AppSpace.x8,
+            runSpacing: AppSpace.x6,
             children: [
               Text(account.workedHours, style: AppText.statValue),
-              const SizedBox(width: AppSpace.x8),
               if (expected != null)
                 Text('of $expected', style: AppText.meta),
-              const Spacer(),
               if (account.hasOvertime)
                 Text(
                   '+${account.overtime} OT',
@@ -184,8 +187,13 @@ class _ActivityRow extends StatelessWidget {
       ),
       child: Row(
         children: [
-          SizedBox(
-            width: 44,
+          // Constrained rather than fixed: "MON" at 2x needs more than 44pt,
+          // and a hard width clips it instead of letting the row grow.
+          ConstrainedBox(
+            constraints: BoxConstraints(
+              minWidth: 44,
+              maxWidth: MediaQuery.textScalerOf(context).scale(44).clamp(44, 96),
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
