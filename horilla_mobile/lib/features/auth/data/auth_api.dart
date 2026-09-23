@@ -16,7 +16,16 @@ import 'auth_models.dart';
 ///
 /// v1 installs upgrade via the v1-to-v2 migration tool; that is the path,
 /// and the error this throws says so rather than leaving someone guessing.
-const String kMinimumServerVersion = '2.0.0';
+///
+/// Lowest `/health/` API contract the app can talk to.
+///
+/// `/health/` deliberately does not report the release string. It is
+/// unauthenticated, and published advisories name exact patched versions, so
+/// handing the patch level to anyone who asks turns a scan into a list of
+/// which advisories apply to that host. `product` answers "is this Horilla"
+/// and `api` answers "can I talk to it"; neither narrows an install to a
+/// patch level. The exact version arrives after sign-in, in capabilities.
+const int kMinimumApiContract = 1;
 
 /// Route that exists on v2 and not on v1, used to tell them apart when the
 /// server is too old to report its own version.
@@ -49,20 +58,20 @@ class AuthApi {
       throw const ApiIncompatibleServer();
     }
 
-    final version = body['version'];
-    if (version is String && version.isNotEmpty) {
-      if (!isAtLeast(version, kMinimumServerVersion)) {
+    final contract = body['api'];
+    if (body['product'] == 'horilla' && contract is int) {
+      if (contract < kMinimumApiContract) {
         throw ApiIncompatibleServer(
-          'This server runs Horilla $version. The app needs Horilla '
-          '$kMinimumServerVersion or newer.',
+          'This server speaks Horilla API contract $contract. The app needs '
+          'contract $kMinimumApiContract or newer.',
         );
       }
-      return ServerInfo(version: version);
+      return ServerInfo(apiContract: contract);
     }
 
-    // No version field: the server predates the release that added it. Work
-    // out which side of the v1/v2 line it sits on, because "migrate to v2"
-    // and "update your v2" are very different jobs for whoever runs it.
+    // No product/api pair: the server predates the release that added them.
+    // Work out which side of the v1/v2 line it sits on, because "migrate to
+    // v2" and "update your v2" are very different jobs for whoever runs it.
     final hasVersionedApi = await _hasVersionedApi(host);
     throw ApiIncompatibleServer(
       hasVersionedApi
@@ -132,21 +141,3 @@ class AuthApi {
     }
   }
 }
-
-/// Dotted-version comparison, tolerant of suffixes like `2.2.0-rc1`.
-bool isAtLeast(String version, String minimum) {
-  final actual = _parts(version);
-  final required = _parts(minimum);
-  for (var i = 0; i < required.length; i++) {
-    final a = i < actual.length ? actual[i] : 0;
-    final b = required[i];
-    if (a > b) return true;
-    if (a < b) return false;
-  }
-  return true;
-}
-
-List<int> _parts(String version) => version
-    .split('.')
-    .map((part) => int.tryParse(RegExp(r'^\d+').stringMatch(part) ?? '') ?? 0)
-    .toList();

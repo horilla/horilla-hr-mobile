@@ -11,50 +11,41 @@
 library;
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:horilla_mobile/features/auth/data/auth_api.dart';
 import 'package:horilla_mobile/features/auth/data/auth_models.dart';
 
 void main() {
-  group('version comparison', () {
-    test('v2 releases clear the minimum', () {
-      for (final version in ['2.0.0', '2.1.7', '2.2.0', '3.0.0']) {
-        expect(isAtLeast(version, kMinimumServerVersion), isTrue,
-            reason: '$version is v2 or later');
-      }
-    });
-
-    test('every v1 release is refused', () {
-      for (final version in ['1.3', '1.3.2', '1.6.0', '1.6.1']) {
-        expect(isAtLeast(version, kMinimumServerVersion), isFalse,
-            reason: '$version is v1');
-      }
-    });
-
-    test('a release-candidate suffix does not break the comparison', () {
-      expect(isAtLeast('2.0.0-rc1', '2.0.0'), isTrue);
-      expect(isAtLeast('2.1.0-beta.1', '2.0.0'), isTrue);
-    });
-
-    test('a short version string is padded, not misread', () {
-      expect(isAtLeast('2', '2.0.0'), isTrue);
-      expect(isAtLeast('1', '2.0.0'), isFalse);
-    });
-  });
-
   group('server identification', () {
-    test('a Horilla health response with a version is accepted', () {
-      final info = ServerInfo.fromJson({'status': 'ok', 'version': '2.2.0'});
+    // /health/ reports `product` and `api`, never the release string: it is
+    // unauthenticated, and advisories name exact patched versions, so a patch
+    // level would turn a scan into a list of applicable advisories.
+    test('a Horilla health response carrying the contract is accepted', () {
+      final info =
+          ServerInfo.fromJson({'status': 'ok', 'product': 'horilla', 'api': 1});
       expect(info, isNotNull);
-      expect(info!.version, '2.2.0');
+      expect(info!.apiContract, 1);
     });
 
-    test('a health response without a version is not enough', () {
-      // Every Horilla before the version field looks like this -- all of v1
+    test('a newer contract is still accepted', () {
+      expect(ServerInfo.fromJson({'status': 'ok', 'product': 'horilla', 'api': 2})!
+          .apiContract, 2);
+    });
+
+    test('a health response without the contract is not enough', () {
+      // Every Horilla before the contract fields looks like this -- all of v1
       // and early v2. The caller distinguishes them with a route probe.
       expect(ServerInfo.fromJson({'status': 'ok'}), isNull);
+      expect(ServerInfo.fromJson({'status': 'ok', 'product': 'horilla'}), isNull);
+    });
+
+    test('a release string is not mistaken for a contract', () {
+      // The field this once read. A server sending it is not newer, it is
+      // something else answering on /health/.
+      expect(ServerInfo.fromJson({'status': 'ok', 'version': '2.2.0'}), isNull);
     });
 
     test('something that is not Horilla is rejected', () {
+      expect(ServerInfo.fromJson({'status': 'ok', 'product': 'other', 'api': 1}),
+          isNull);
       expect(ServerInfo.fromJson({'status': 'healthy'}), isNull);
       expect(ServerInfo.fromJson({'ok': true}), isNull);
       expect(ServerInfo.fromJson(const {}), isNull);

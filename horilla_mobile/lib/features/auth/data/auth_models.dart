@@ -8,18 +8,20 @@ library;
 
 /// What the server says it is. Returned unauthenticated by `/health/`.
 class ServerInfo {
-  const ServerInfo({required this.version});
+  const ServerInfo({required this.apiContract});
 
-  final String version;
+  /// The `/health/` API contract number, not a release string. See
+  /// [kMinimumApiContract] for why the server does not report its version.
+  final int apiContract;
 
   static ServerInfo? fromJson(Map<String, dynamic> json) {
-    // `status` identifies this as a Horilla health endpoint; `version` was
-    // added for exactly this probe. Without both, assume it is some other
-    // server that happens to answer on /health/.
-    if (json['status'] != 'ok') return null;
-    final version = json['version'];
-    if (version is! String || version.isEmpty) return null;
-    return ServerInfo(version: version);
+    // `status` marks this as a health endpoint, `product` says which product,
+    // and `api` is the contract to check against. Without all three, assume
+    // some other server that happens to answer on /health/.
+    if (json['status'] != 'ok' || json['product'] != 'horilla') return null;
+    final contract = json['api'];
+    if (contract is! int) return null;
+    return ServerInfo(apiContract: contract);
   }
 }
 
