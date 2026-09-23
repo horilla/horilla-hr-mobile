@@ -49,6 +49,15 @@ class _PunchScreenState extends ConsumerState<PunchScreen> {
   bool _submitting = false;
   String? _error;
 
+  /// Set the instant the server confirms the punch, cleared only by leaving
+  /// the screen. While it holds, the screen shows an unmistakable success
+  /// state instead of popping immediately -- an instant, silent return to
+  /// Home is easy to read as "the hold didn't register," and holding again
+  /// then gets a real, correct "already checked out" from the server. This
+  /// is that bug, fixed at the one place it can be: make success visible
+  /// before the screen changes, not after.
+  String? _confirmedAt;
+
   @override
   void initState() {
     super.initState();
@@ -84,7 +93,14 @@ class _PunchScreenState extends ConsumerState<PunchScreen> {
           .show(
             widget.isClockingIn ? 'Checked in at $at' : 'Checked out at $at',
           );
+      if (!mounted) return;
+      setState(() => _confirmedAt = at);
+      // A beat to actually see it, not a threshold tuned against anything --
+      // long enough to register as a deliberate pause, short enough that it
+      // never feels like the app is stuck.
+      await Future<void>.delayed(const Duration(milliseconds: 900));
       if (mounted) context.pop(true);
+      return;
     } on ApiFailure catch (failure) {
       // Stays on screen, in words, until acted on: the punch did not
       // register, and a toast that scrolls away is how people go home
@@ -101,114 +117,124 @@ class _PunchScreenState extends ConsumerState<PunchScreen> {
     final verb = widget.isClockingIn ? 'Check in' : 'Check out';
     final ready = (preparation?.canSubmit ?? false) && !_submitting;
     final worked = widget.today.workedSeconds;
+    final confirmedAt = _confirmedAt;
 
     return Scaffold(
       backgroundColor: AppColors.ink,
       body: Column(
         children: [
           AppTopBar(title: verb, onDark: true, onBack: () => context.pop()),
-          Expanded(
-            child: ListView(
-              padding: EdgeInsets.fromLTRB(
-                AppSpace.x20,
-                AppSpace.x10,
-                AppSpace.x20,
-                MediaQuery.paddingOf(context).bottom + AppSpace.x20,
+          if (confirmedAt != null)
+            Expanded(
+              child: _ConfirmedView(
+                isClockingIn: widget.isClockingIn,
+                at: confirmedAt,
               ),
-              children: [
-                _LocationPanel(preparation: preparation),
+            )
+          else
+            Expanded(
+              child: ListView(
+                padding: EdgeInsets.fromLTRB(
+                  AppSpace.x20,
+                  AppSpace.x10,
+                  AppSpace.x20,
+                  MediaQuery.paddingOf(context).bottom + AppSpace.x20,
+                ),
+                children: [
+                  _LocationPanel(preparation: preparation),
 
-                if (preparation?.blockedReason != null) ...[
-                  const SizedBox(height: AppSpace.x12),
-                  _Banner(
-                    text: preparation!.blockedReason!,
-                    background: AppColors.warningBg,
-                    ink: AppColors.warningInk,
-                  ),
-                ],
-
-                const SizedBox(height: AppSpace.x14),
-                _Summary(
-                  rows: [
-                    if (!widget.isClockingIn)
-                      ('Checked in', widget.clockInTime ?? '—'),
-                    if (!widget.isClockingIn)
-                      ('Worked so far', formatHm(worked)),
-                    (
-                      'Break',
-                      formatShort(
-                        TodayTotals.secondsOf(widget.today.breakTime) ?? 0,
-                      ),
+                  if (preparation?.blockedReason != null) ...[
+                    const SizedBox(height: AppSpace.x12),
+                    _Banner(
+                      text: preparation!.blockedReason!,
+                      background: AppColors.warningBg,
+                      ink: AppColors.warningInk,
                     ),
-                    ('Location check', _fenceLabel(preparation)),
                   ],
-                ),
 
-                const SizedBox(height: AppSpace.x16),
-                Text(
-                  widget.isClockingIn
-                      ? 'Your punch is recorded by the server, which checks '
-                            'your location again when it arrives.'
-                      : 'Punching out records ${formatHm(worked)} against your '
-                            'hour account. Biometric device records reconcile '
-                            'with it later.',
-                  style: AppText.body.copyWith(
-                    fontSize: 12.5,
-                    color: AppColors.onDark2,
-                  ),
-                ),
-
-                if (_error != null) ...[
                   const SizedBox(height: AppSpace.x14),
-                  _Banner(
-                    text: "Your punch did not register. ${_error!}",
-                    background: AppColors.dangerBg,
-                    ink: AppColors.danger,
+                  _Summary(
+                    rows: [
+                      if (!widget.isClockingIn)
+                        ('Checked in', widget.clockInTime ?? '—'),
+                      if (!widget.isClockingIn)
+                        ('Worked so far', formatHm(worked)),
+                      (
+                        'Break',
+                        formatShort(
+                          TodayTotals.secondsOf(widget.today.breakTime) ?? 0,
+                        ),
+                      ),
+                      ('Location check', _fenceLabel(preparation)),
+                    ],
                   ),
-                ],
 
-                const SizedBox(height: AppSpace.x20),
-                if (widget.isClockingIn)
-                  AppButton(
-                    label: _submitting ? 'Recording…' : 'Check in',
-                    tone: AppButtonTone.onDark,
-                    onPressed: ready ? _submit : null,
-                  )
-                else ...[
-                  HoldToConfirmButton(
-                    label: _submitting ? 'Recording…' : 'Hold to check out',
-                    holdingLabel: 'Keep holding…',
-                    enabled: ready,
-                    onConfirmed: _submit,
-                  ),
-                  const SizedBox(height: AppSpace.x12),
+                  const SizedBox(height: AppSpace.x16),
                   Text(
-                    'Press and hold for a second — prevents accidental '
-                    'punches',
-                    textAlign: TextAlign.center,
-                    style: AppText.meta.copyWith(color: AppColors.onDark2),
+                    widget.isClockingIn
+                        ? 'Your punch is recorded by the server, which checks '
+                              'your location again when it arrives.'
+                        : 'Punching out records ${formatHm(worked)} against your '
+                              'hour account. Biometric device records reconcile '
+                              'with it later.',
+                    style: AppText.body.copyWith(
+                      fontSize: 12.5,
+                      color: AppColors.onDark2,
+                    ),
                   ),
-                ],
-                const SizedBox(height: AppSpace.x4),
-                Center(
-                  child: Semantics(
-                    button: true,
-                    label: 'Not now',
-                    excludeSemantics: true,
-                    child: Pressable(
-                      onTap: () => context.pop(),
-                      child: SizedBox(
-                        height: kMinHitTarget,
-                        child: Center(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: AppSpace.x16,
-                            ),
-                            child: Text(
-                              'Not now',
-                              style: AppText.body.copyWith(
-                                fontSize: 14,
-                                color: AppColors.onDark2,
+
+                  if (_error != null) ...[
+                    const SizedBox(height: AppSpace.x14),
+                    _Banner(
+                      text: "Your punch did not register. ${_error!}",
+                      background: AppColors.dangerBg,
+                      ink: AppColors.danger,
+                    ),
+                  ],
+
+                  const SizedBox(height: AppSpace.x20),
+                  if (widget.isClockingIn)
+                    AppButton(
+                      label: _submitting ? 'Recording…' : 'Check in',
+                      tone: AppButtonTone.onDark,
+                      onPressed: ready ? _submit : null,
+                    )
+                  else ...[
+                    HoldToConfirmButton(
+                      label: _submitting ? 'Recording…' : 'Hold to check out',
+                      holdingLabel: 'Keep holding…',
+                      enabled: ready,
+                      onConfirmed: _submit,
+                    ),
+                    const SizedBox(height: AppSpace.x12),
+                    Text(
+                      'Press and hold for a second — prevents accidental '
+                      'punches',
+                      textAlign: TextAlign.center,
+                      style: AppText.meta.copyWith(color: AppColors.onDark2),
+                    ),
+                  ],
+                  const SizedBox(height: AppSpace.x4),
+                  Center(
+                    child: Semantics(
+                      button: true,
+                      label: 'Not now',
+                      excludeSemantics: true,
+                      child: Pressable(
+                        onTap: () => context.pop(),
+                        child: SizedBox(
+                          height: kMinHitTarget,
+                          child: Center(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: AppSpace.x16,
+                              ),
+                              child: Text(
+                                'Not now',
+                                style: AppText.body.copyWith(
+                                  fontSize: 14,
+                                  color: AppColors.onDark2,
+                                ),
                               ),
                             ),
                           ),
@@ -216,10 +242,9 @@ class _PunchScreenState extends ConsumerState<PunchScreen> {
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
         ],
       ),
     );
@@ -231,6 +256,63 @@ class _PunchScreenState extends ConsumerState<PunchScreen> {
     final fence = preparation.fence;
     if (fence == null) return 'Location needed';
     return fence.isInside ? 'Inside the fence' : 'Outside the fence';
+  }
+}
+
+/// Replaces the whole screen the instant the server confirms the punch.
+///
+/// The bug this exists for: an instant, silent pop back to Home after a
+/// completed hold reads as "nothing happened," and holding again then gets a
+/// correct -- but confusing -- "already checked out" from the server, because
+/// by then it genuinely is. A large checkmark and the exact time is not
+/// something a screen reader or a glance can misread as a no-op, and there is
+/// no button left on screen to press again.
+class _ConfirmedView extends StatelessWidget {
+  const _ConfirmedView({required this.isClockingIn, required this.at});
+
+  final bool isClockingIn;
+  final String at;
+
+  @override
+  Widget build(BuildContext context) {
+    final label = isClockingIn ? 'Checked in' : 'Checked out';
+    return Semantics(
+      liveRegion: true,
+      label: '$label at $at',
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 72,
+              height: 72,
+              decoration: const BoxDecoration(
+                color: AppColors.successDot,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.check, size: 36, color: AppColors.ink),
+            ),
+            const SizedBox(height: AppSpace.x20),
+            Text(
+              label,
+              style: AppText.cardTitle.copyWith(
+                fontSize: 20,
+                fontWeight: FontWeight.w800,
+                color: AppColors.surface,
+              ),
+            ),
+            const SizedBox(height: AppSpace.x6),
+            Text(
+              'at $at',
+              style: AppText.mono.copyWith(
+                fontSize: 14,
+                color: AppColors.onDark2,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
