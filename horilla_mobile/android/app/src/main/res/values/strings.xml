@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Overridden for debug builds (see app/build.gradle.kts) so a dev
+         build is distinguishable on the launcher from the real app. -->
+    <string name="app_name">Horilla</string>
+</resources>

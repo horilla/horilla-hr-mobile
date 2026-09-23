@@ -45,7 +45,17 @@ class TodayStats extends StatelessWidget {
             )
           : Row(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [for (final tile in tiles) Expanded(child: tile)],
+              children: [
+                // Gaps matter more than they look here. The values are mono
+                // durations that fill their column almost exactly, so with
+                // three equal columns and no spacing they end up touching --
+                // "03:12:4000:30:00" reads as one number, which is how it
+                // looked on the first device build.
+                for (var i = 0; i < tiles.length; i++) ...[
+                  if (i > 0) const SizedBox(width: AppSpace.x12),
+                  Expanded(child: tiles[i]),
+                ],
+              ],
             ),
     );
   }

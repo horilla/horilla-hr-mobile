@@ -38,6 +38,16 @@ android {
         getByName("release") {
             isShrinkResources = true // This requires isMinifyEnabled = true
         }
+        getByName("debug") {
+            // Debug builds install alongside the released app instead of
+            // replacing it. Same package id would mean uninstalling the real
+            // app from a tester's phone -- and a debug build that looks
+            // identical to production on the launcher is its own hazard.
+            applicationIdSuffix = ".dev"
+            versionNameSuffix = "-dev"
+            // The launcher name comes from src/debug/res rather than a
+            // resValue, which AGP 9 gates behind a build feature.
+        }
     }
 }
 

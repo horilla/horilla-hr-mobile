@@ -26,7 +26,7 @@ class AttendanceScreen extends ConsumerWidget {
           Container(
             width: double.infinity,
             color: AppColors.surface,
-            padding: PlatformChrome.appBarPadding,
+            padding: PlatformChrome.appBarPaddingOf(context),
             child: Text('Attendance', style: AppText.appBarTitle),
           ),
           Expanded(

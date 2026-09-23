@@ -199,7 +199,7 @@ class _HomeAppBar extends StatelessWidget {
 
     return Container(
       color: AppColors.surface,
-      padding: PlatformChrome.appBarPadding,
+      padding: PlatformChrome.appBarPaddingOf(context),
       child: Row(
         children: [
           GestureDetector(

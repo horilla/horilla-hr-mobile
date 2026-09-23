@@ -108,7 +108,7 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
           Container(
             width: double.infinity,
             color: AppColors.surface,
-            padding: PlatformChrome.appBarPadding,
+            padding: PlatformChrome.appBarPaddingOf(context),
             child: Row(
               children: [
                 GestureDetector(

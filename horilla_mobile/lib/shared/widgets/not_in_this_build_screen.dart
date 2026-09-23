@@ -27,7 +27,7 @@ class NotInThisBuildScreen extends StatelessWidget {
           Container(
             width: double.infinity,
             color: AppColors.surface,
-            padding: PlatformChrome.appBarPadding,
+            padding: PlatformChrome.appBarPaddingOf(context),
             child: Row(
               children: [
                 if (context.canPop())

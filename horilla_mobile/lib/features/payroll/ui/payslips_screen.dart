@@ -27,7 +27,7 @@ class PayslipsScreen extends ConsumerWidget {
           Container(
             width: double.infinity,
             color: AppColors.surface,
-            padding: PlatformChrome.appBarPadding,
+            padding: PlatformChrome.appBarPaddingOf(context),
             child: Row(
               children: [
                 GestureDetector(

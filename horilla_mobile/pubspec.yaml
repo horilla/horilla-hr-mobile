@@ -2,10 +2,13 @@ name: horilla_mobile
 description: Horilla HR — your workday, in your pocket.
 publish_to: 'none'
 
-# Kept in step with android/app/build.gradle.kts. The Play listing already
-# exists, so versionCode must only ever increase; check the Play Console for
-# the live number before a release rather than trusting either file.
-version: 2.0.0+12
+# versionCode must only ever increase. A device in the field was found
+# running versionCode 16 (v1.0.5, sideloaded 2026-09-09) -- higher than
+# either the old gradle file (9) or the old pubspec (11) claimed, so neither
+# was a reliable record. 17 clears the highest version actually observed.
+# Confirm against the Play Console before the first store upload; a device
+# sample is a floor, not proof of the maximum.
+version: 2.0.0+17
 
 environment:
   sdk: ^3.9.0

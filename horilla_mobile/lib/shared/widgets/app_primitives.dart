@@ -101,7 +101,23 @@ class StatTile extends StatelessWidget {
       children: [
         EyebrowLabel(label),
         const SizedBox(height: AppSpace.x6),
-        Text(value, style: AppText.statValue.copyWith(color: valueColor)),
+        // Shrink rather than collide.
+        //
+        // Three mono durations sit side by side here, and "03:12:40" at 24pt
+        // is wider than a third of a 393pt screen. Digits with no spaces
+        // cannot wrap, so a plain Text paints straight over its neighbour --
+        // which is not a RenderFlex overflow and so passes every overflow
+        // test while looking broken on the device it was found on.
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.centerLeft,
+          child: Text(
+            value,
+            maxLines: 1,
+            softWrap: false,
+            style: AppText.statValue.copyWith(color: valueColor),
+          ),
+        ),
       ],
     );
   }

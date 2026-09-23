@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Debug-only overrides. Keeps a development build visibly distinct on the
+     launcher from the released app, which sits beside it under a different
+     application id. -->
+<resources>
+    <string name="app_name">Horilla dev</string>
+</resources>
