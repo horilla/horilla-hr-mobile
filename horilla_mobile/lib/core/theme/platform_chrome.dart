@@ -1,43 +1,32 @@
-/// The six values where the design differs by platform.
+/// Where the design still differs by platform.
 ///
-/// Referenced by three widgets only -- AppScaffold, AppBottomNav and the punch
-/// button. Nothing else in the app knows what it is running on. The design
-/// differs in values, not in structure, so forking widget trees per platform
-/// would be a lot of duplication to express a handful of numbers.
+/// v1 differed in six values (tab bar treatment, card radii, the Android
+/// punch-button shadow). v2 unified the chrome -- one floating tab bar, one
+/// card style -- so what is left here is the one thing that is genuinely a
+/// platform fact rather than a design choice: where the system bars sit.
 library;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-
-import 'tokens.dart';
 
 abstract final class PlatformChrome {
   static bool get isIOS => defaultTargetPlatform == TargetPlatform.iOS;
 
   /// App bar padding, including room for the status bar.
   ///
-  /// The handoff's iOS figure (56 top) already includes the status bar. On
-  /// Android it does not -- the bar is in flow and the app has to add the
-  /// inset itself, which is why this takes a context. Without it the greeting
-  /// and avatar are drawn underneath the clock and signal icons, which is
-  /// exactly what happened on a real device and what no browser preview
-  /// would ever show.
+  /// Takes a context because on Android the status bar is in flow and the
+  /// app has to add the inset itself. Without it the title is drawn under the
+  /// clock and signal icons -- which is what happened on a real device, and
+  /// what no browser preview of the handoff would ever show.
   static EdgeInsets appBarPaddingOf(BuildContext context) {
     final statusBar = MediaQuery.paddingOf(context).top;
-    return isIOS
-        ? EdgeInsets.fromLTRB(20, statusBar + 12, 20, 14)
-        : EdgeInsets.fromLTRB(18, statusBar + 12, 18, 12);
+    return EdgeInsets.fromLTRB(20, statusBar + 12, 20, 10);
   }
 
-  /// iOS leaves room for the home indicator.
-  static EdgeInsets get tabBarPadding => isIOS
-      ? const EdgeInsets.fromLTRB(8, 9, 8, 30)
-      : const EdgeInsets.fromLTRB(8, 9, 8, 9);
-
-  static double get cardRadius =>
-      isIOS ? AppRadii.card : AppRadii.cardAndroid;
-
-  /// Android's punch button is the one place the design uses a shadow.
-  static List<BoxShadow> get punchButtonShadow =>
-      isIOS ? const [] : AppElevation.punchButtonAndroid;
+  /// Space under the floating tab bar: the home indicator on iOS, the
+  /// gesture bar on Android, and never less than a finger's clearance.
+  static double tabBarBottomOf(BuildContext context) {
+    final inset = MediaQuery.paddingOf(context).bottom;
+    return inset > 0 ? inset + 6 : 16;
+  }
 }

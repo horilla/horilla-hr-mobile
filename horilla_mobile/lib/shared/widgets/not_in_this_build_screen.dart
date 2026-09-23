@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/theme/platform_chrome.dart';
 import '../../core/theme/tokens.dart';
 import 'app_card.dart';
 import 'app_primitives.dart';
+import 'app_top_bar.dart';
 
 /// Reached only if something deep-links into a module this build has switched
 /// off (see `core/scope.dart`).
@@ -24,24 +24,9 @@ class NotInThisBuildScreen extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: double.infinity,
-            color: AppColors.surface,
-            padding: PlatformChrome.appBarPaddingOf(context),
-            child: Row(
-              children: [
-                if (context.canPop())
-                  GestureDetector(
-                    onTap: () => context.pop(),
-                    child: const SizedBox(
-                      width: kMinHitTarget,
-                      height: 28,
-                      child: Icon(Icons.chevron_left, color: AppColors.ink),
-                    ),
-                  ),
-                Text(title, style: AppText.appBarTitle),
-              ],
-            ),
+          AppTopBar(
+            title: title,
+            onBack: context.canPop() ? () => context.pop() : null,
           ),
           Padding(
             padding: const EdgeInsets.all(AppSpace.screen),

@@ -21,40 +21,26 @@ class StatusChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (background, foreground, border) = switch (tone) {
-      StatusTone.neutral => (AppColors.bg2, AppColors.ink3, AppColors.line),
-      StatusTone.success => (
-          const Color(0xFFE7F3ED),
-          AppColors.success,
-          const Color(0xFFC6E2D5)
-        ),
-      StatusTone.warning => (
-          AppColors.warningBg,
-          AppColors.warningInk,
-          AppColors.warningBorder
-        ),
-      StatusTone.danger => (
-          AppColors.dangerBg,
-          AppColors.danger,
-          AppColors.dangerBorder
-        ),
-      StatusTone.info => (AppColors.infoBg, AppColors.infoInk, AppColors.infoBorder),
-      StatusTone.brand => (
-          AppColors.brandTint,
-          AppColors.brandTintInk,
-          AppColors.brandTintBorder
-        ),
+    // v2 chips are a fill and an ink, no border: colour-coded so the state
+    // reads before the word does -- pending amber, approved green, rejected
+    // red.
+    final (background, foreground) = switch (tone) {
+      StatusTone.neutral => (AppColors.bg2, AppColors.ink3),
+      StatusTone.success => (AppColors.successBg, AppColors.success),
+      StatusTone.warning => (AppColors.warningBg, AppColors.warningInk),
+      StatusTone.danger => (AppColors.dangerBg, AppColors.danger),
+      StatusTone.info => (AppColors.infoBg, AppColors.infoInk),
+      StatusTone.brand => (AppColors.brandTint, AppColors.brandTintInk),
     };
 
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: AppSpace.x8,
-        vertical: AppSpace.x4,
+        horizontal: AppSpace.x10,
+        vertical: 5,
       ),
       decoration: BoxDecoration(
         color: background,
         borderRadius: BorderRadius.circular(AppRadii.chip),
-        border: Border.all(color: border),
       ),
       child: Text(
         label.toUpperCase(),
@@ -73,11 +59,11 @@ class EyebrowLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Text(
-        text.toUpperCase(),
-        style: color == null
-            ? AppText.eyebrow
-            : AppText.eyebrow.copyWith(color: color),
-      );
+    text.toUpperCase(),
+    style: color == null
+        ? AppText.eyebrow
+        : AppText.eyebrow.copyWith(color: color),
+  );
 }
 
 /// One cell of the home screen's 3-up Worked / Break / OT grid.
@@ -180,7 +166,7 @@ class SectionHeader extends StatelessWidget {
   }
 }
 
-/// Initials tile. The design uses initials rather than photos in v1.
+/// Initials tile. The design uses initials rather than photos.
 class AppAvatar extends StatelessWidget {
   const AppAvatar({
     super.key,
@@ -189,6 +175,31 @@ class AppAvatar extends StatelessWidget {
     this.background = AppColors.brandTint,
     this.foreground = AppColors.brandTintInk,
   });
+
+  /// Tinted by name, cycling the handoff's four avatar tints.
+  ///
+  /// Derived from the name rather than list position, so the same person is
+  /// the same colour on every screen they appear on.
+  factory AppAvatar.toned({Key? key, required String name, double size = 40}) {
+    const tones = [
+      (AppColors.brandTint, AppColors.brandStrong),
+      (AppColors.warningBg, AppColors.warningInk),
+      (AppColors.infoBg, AppColors.infoInk),
+      (AppColors.successBg, AppColors.success),
+    ];
+    final hash = name.codeUnits.fold<int>(
+      0,
+      (h, c) => (h * 31 + c) & 0x7fffffff,
+    );
+    final (bg, fg) = tones[hash % tones.length];
+    return AppAvatar(
+      key: key,
+      name: name,
+      size: size,
+      background: bg,
+      foreground: fg,
+    );
+  }
 
   final String name;
   final double size;
@@ -218,6 +229,7 @@ class AppAvatar extends StatelessWidget {
         style: AppText.cardTitle.copyWith(
           color: foreground,
           fontSize: size * (15 / 40),
+          fontWeight: FontWeight.w800,
         ),
       ),
     );

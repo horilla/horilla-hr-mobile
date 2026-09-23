@@ -1,4 +1,4 @@
-/// Design tokens, transcribed from the Horilla Mobile design handoff.
+/// Design tokens, transcribed from the Horilla Mobile design handoff (v2).
 ///
 /// Plain `static const` rather than a ThemeExtension: there is one brand and
 /// no dark mode, so the only thing an extension would buy -- swapping token
@@ -54,6 +54,22 @@ abstract final class AppColors {
 
   /// Read status dot on the notifications screen.
   static const readDot = Color(0xFFDEDEDC);
+
+  // v2 additions.
+
+  /// Card border. Lighter than [line]: v2 cards carry a soft shadow, so the
+  /// border only has to separate white from the #F7F7F6 background.
+  static const cardBorder = Color(0xFFEDEDEB);
+
+  /// Approved / resolved status chip fill.
+  static const successBg = Color(0xFFE4F2EA);
+
+  /// The toast's Undo action -- a light brand tone readable on ink.
+  static const toastAction = Color(0xFFFF8A73);
+
+  /// Inset tiles and dividers on ink surfaces.
+  static const onDarkTile = Color(0x12FFFFFF); // rgba(255,255,255,0.07)
+  static const onDarkLine = Color(0x24FFFFFF); // rgba(255,255,255,0.14)
 }
 
 /// The handoff's spacing scale. Values outside it are a design question, not
@@ -77,14 +93,16 @@ abstract final class AppSpace {
   static const scrollBottom = x28;
 }
 
+/// v2 radii: every surface four points rounder than v1.
 abstract final class AppRadii {
   static const chip = 20.0;
   static const pill = 9999.0;
-  static const button = 14.0; // handoff range 13-16
-  static const card = 18.0; // handoff range 16-18
-  static const hero = 22.0; // handoff range 20-22
-  static const cardAndroid = 24.0; // handoff range 20-28
-  static const iconTile = 10.0; // handoff range 8-12
+  static const button = 18.0;
+  static const field = 16.0;
+  static const card = 22.0;
+  static const hero = 28.0;
+  static const tile = 16.0; // inset tiles inside a card
+  static const iconTile = 21.0; // the 62pt quick-action tiles
   static const avatar = 14.0; // squircle; handoff range 11-22
 }
 
@@ -123,10 +141,15 @@ abstract final class AppText {
     letterSpacing: -0.8,
   );
 
+  /// v2 app bar title: large, heavy, tight. Bars blend into the background,
+  /// so the title's weight is what separates them from the content.
   static const appBarTitle = TextStyle(
     fontFamily: _ui,
-    fontSize: 16,
-    fontWeight: FontWeight.w700,
+    fontSize: 22,
+    fontWeight: FontWeight.w800,
+    letterSpacing: -0.5,
+    height: 1.2,
+    color: AppColors.ink,
   );
 
   static const cardTitle = TextStyle(
@@ -180,17 +203,78 @@ abstract final class AppText {
   );
 }
 
-/// Flat by design: borders, not shadows. The Android punch button is the one
-/// documented exception in the handoff.
-abstract final class AppElevation {
-  static const punchButtonAndroid = [
+/// v2 shadows. v1 was flat; v2 lifts cards with a soft two-layer shadow and
+/// gives the primary button and floating chrome their own.
+///
+/// Values are the handoff's CSS box-shadows. Negative spread is what keeps
+/// the large blurs from reading as a grey halo.
+abstract final class AppShadows {
+  /// `0 1px 2px rgba(28,28,28,.04), 0 8px 24px -12px rgba(28,28,28,.10)`
+  static const card = [
+    BoxShadow(color: Color(0x0A1C1C1C), offset: Offset(0, 1), blurRadius: 2),
     BoxShadow(
-      color: Color(0x40C43D28), // rgba(196,61,40,0.25)
-      offset: Offset(0, 2),
-      blurRadius: 6,
+      color: Color(0x1A1C1C1C),
+      offset: Offset(0, 8),
+      blurRadius: 24,
+      spreadRadius: -12,
+    ),
+  ];
+
+  /// `0 12px 24px -12px rgba(196,61,40,.7)` -- primary buttons only.
+  static const brandButton = [
+    BoxShadow(
+      color: Color(0xB3C43D28),
+      offset: Offset(0, 12),
+      blurRadius: 24,
+      spreadRadius: -12,
+    ),
+  ];
+
+  /// The ink punch hero.
+  static const hero = [
+    BoxShadow(
+      color: Color(0x8C1C1C1C),
+      offset: Offset(0, 18),
+      blurRadius: 40,
+      spreadRadius: -18,
+    ),
+  ];
+
+  /// Floating tab bar.
+  static const tabBar = [
+    BoxShadow(
+      color: Color(0x801C1C1C),
+      offset: Offset(0, 12),
+      blurRadius: 30,
+      spreadRadius: -12,
+    ),
+  ];
+
+  /// Toast pill.
+  static const toast = [
+    BoxShadow(
+      color: Color(0x991C1C1C),
+      offset: Offset(0, 16),
+      blurRadius: 36,
+      spreadRadius: -14,
+    ),
+  ];
+
+  /// Small floating controls: the back button, the logo tile.
+  static const floating = [
+    BoxShadow(color: Color(0x0F1C1C1C), offset: Offset(0, 1), blurRadius: 2),
+    BoxShadow(
+      color: Color(0x331C1C1C),
+      offset: Offset(0, 6),
+      blurRadius: 16,
+      spreadRadius: -8,
     ),
   ];
 }
+
+/// v2 press feedback: every tappable element scales to this on press.
+const double kPressScale = 0.97;
+const Duration kPressDuration = Duration(milliseconds: 150);
 
 /// Minimum tappable size, in logical pixels. The handoff requires every
 /// tappable row or button to clear this.

@@ -9,6 +9,7 @@ import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/tokens.dart';
 import 'shared/widgets/horilla_mark.dart';
+import 'shared/widgets/toast.dart';
 
 /// Restores any stored session before the first frame.
 ///
@@ -47,8 +48,7 @@ class _AppRouterState extends ConsumerState<_AppRouter> {
   /// Bridges Riverpod's session state to go_router's refreshListenable.
   final _sessionChanged = ValueNotifier<int>(0);
   late final _router = buildRouter(
-    initialLocation:
-        ref.read(sessionProvider) == null ? '/signin' : '/home',
+    initialLocation: ref.read(sessionProvider) == null ? '/signin' : '/home',
     isSignedIn: () => ref.read(sessionProvider) != null,
     refreshOn: _sessionChanged,
   );
@@ -75,6 +75,9 @@ class _AppRouterState extends ConsumerState<_AppRouter> {
       ],
       supportedLocales: AppL10n.supportedLocales,
       routerConfig: _router,
+      // One host for the whole app, so a toast raised on one screen survives
+      // the navigation that usually follows it.
+      builder: (context, child) => ToastHost(child: child!),
     );
   }
 }
@@ -87,8 +90,9 @@ class _Splash extends StatelessWidget {
     return const MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        backgroundColor: AppColors.ink,
-        body: Center(child: HorillaMark()),
+        // Light, like the v2 sign-in it hands over to.
+        backgroundColor: AppColors.surface,
+        body: Center(child: HorillaMark(size: 72)),
       ),
     );
   }

@@ -1,25 +1,26 @@
 import 'package:flutter/material.dart';
 
-import '../../core/theme/platform_chrome.dart';
 import '../../core/theme/tokens.dart';
+import 'pressable.dart';
 
-/// The design's card: a bordered surface, never an elevated one.
+/// The design's card: a white surface with a light border and a soft shadow.
 ///
-/// Not Material's [Card]. M3 gives Card a tonal elevation tint, and this
-/// design is explicitly flat with borders -- overriding that is more work
-/// than a Container.
+/// Not Material's [Card]. M3 gives Card a tonal elevation tint that fights
+/// this palette, and a Container with the handoff's exact shadow is less work
+/// than overriding it.
 ///
-/// Cards that navigate lift their border to brandStrong on press, which is
-/// the handoff's press language.
-class AppCard extends StatefulWidget {
+/// Cards that navigate scale on press -- v2's press language, shared with
+/// every other tappable element through [Pressable].
+class AppCard extends StatelessWidget {
   const AppCard({
     super.key,
     required this.child,
     this.onTap,
     this.padding = const EdgeInsets.all(AppSpace.x16),
     this.background = AppColors.surface,
-    this.borderColor = AppColors.line,
-    this.radius,
+    this.borderColor = AppColors.cardBorder,
+    this.radius = AppRadii.card,
+    this.shadow = true,
   }) : _skeletonHeight = null;
 
   /// Skeleton variant, sharing this card's geometry.
@@ -37,57 +38,42 @@ class AppCard extends StatefulWidget {
     super.key,
     double height = 96,
     this.padding = const EdgeInsets.all(AppSpace.x16),
-    this.radius,
-  })  : child = const _SkeletonBody(),
-        onTap = null,
-        background = AppColors.surface,
-        borderColor = AppColors.line,
-        _skeletonHeight = height;
+    this.radius = AppRadii.card,
+  }) : child = const _SkeletonBody(),
+       onTap = null,
+       background = AppColors.surface,
+       borderColor = AppColors.cardBorder,
+       shadow = true,
+       _skeletonHeight = height;
 
   final Widget child;
   final VoidCallback? onTap;
   final EdgeInsets padding;
   final Color background;
   final Color borderColor;
-  final double? radius;
+  final double radius;
+
+  /// Off for cards on a non-white surface (an ink hero, a tinted band), where
+  /// the soft shadow reads as dirt rather than lift.
+  final bool shadow;
   final double? _skeletonHeight;
 
   @override
-  State<AppCard> createState() => _AppCardState();
-}
-
-class _AppCardState extends State<AppCard> {
-  bool _pressed = false;
-
-  @override
   Widget build(BuildContext context) {
-    final tappable = widget.onTap != null;
-
-    final card = AnimatedContainer(
-      duration: const Duration(milliseconds: 120),
-      curve: Curves.easeOut,
-      constraints: BoxConstraints(minHeight: widget._skeletonHeight ?? 0),
-      width: double.infinity,
-      padding: widget.padding,
-      decoration: BoxDecoration(
-        color: widget.background,
-        borderRadius:
-            BorderRadius.circular(widget.radius ?? PlatformChrome.cardRadius),
-        border: Border.all(
-          color: _pressed && tappable ? AppColors.brandStrong : widget.borderColor,
+    return Pressable(
+      onTap: onTap,
+      child: Container(
+        constraints: BoxConstraints(minHeight: _skeletonHeight ?? 0),
+        width: double.infinity,
+        padding: padding,
+        decoration: BoxDecoration(
+          color: background,
+          borderRadius: BorderRadius.circular(radius),
+          border: Border.all(color: borderColor),
+          boxShadow: shadow ? AppShadows.card : null,
         ),
+        child: child,
       ),
-      child: widget.child,
-    );
-
-    if (!tappable) return card;
-
-    return GestureDetector(
-      onTapDown: (_) => setState(() => _pressed = true),
-      onTapUp: (_) => setState(() => _pressed = false),
-      onTapCancel: () => setState(() => _pressed = false),
-      onTap: widget.onTap,
-      child: card,
     );
   }
 }

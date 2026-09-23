@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/platform_chrome.dart';
 import '../../core/theme/tokens.dart';
+import 'pressable.dart';
 
-/// The five-tab bar, hand-built.
+/// The v2 floating tab bar: a dark pill hovering above the content.
 ///
-/// Not Material's NavigationBar: M3 applies a tonal surface tint to it, and
-/// the two platforms want different active treatments -- iOS a 16x2.5 bar
-/// under the label, Android a filled tonal pill behind the icon. Bending
-/// NavigationBar into both is more work than drawing a Row.
+/// The active tab grows (1.9x the others), fills red and shows its label;
+/// the rest are icon-only. Hand-built rather than Material's NavigationBar,
+/// which has neither a floating form nor variable-width items.
 class AppBottomNav extends StatelessWidget {
   const AppBottomNav({
     super.key,
@@ -21,25 +21,53 @@ class AppBottomNav extends StatelessWidget {
   final ValueChanged<int> onSelected;
   final List<AppNavItem> items;
 
+  static const _gap = 4.0;
+  static const _activeFlex = 1.9;
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
-        border: Border(top: BorderSide(color: AppColors.line)),
+      color: AppColors.bg,
+      padding: EdgeInsets.fromLTRB(
+        14,
+        8,
+        14,
+        PlatformChrome.tabBarBottomOf(context),
       ),
-      padding: PlatformChrome.tabBarPadding,
-      child: Row(
-        children: [
-          for (var i = 0; i < items.length; i++)
-            Expanded(
-              child: _NavButton(
-                item: items[i],
-                selected: i == currentIndex,
-                onTap: () => onSelected(i),
-              ),
-            ),
-        ],
+      child: Container(
+        padding: const EdgeInsets.all(6),
+        decoration: BoxDecoration(
+          color: AppColors.ink,
+          borderRadius: BorderRadius.circular(25),
+          boxShadow: AppShadows.tabBar,
+        ),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            // Widths are computed rather than Expanded(flex:) because flex is
+            // an int and cannot animate; the handoff eases the width change
+            // over 280 ms.
+            final n = items.length;
+            final unit =
+                (constraints.maxWidth - _gap * (n - 1)) / (n - 1 + _activeFlex);
+            return Row(
+              children: [
+                for (var i = 0; i < n; i++) ...[
+                  if (i > 0) const SizedBox(width: _gap),
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 280),
+                    curve: const Cubic(0.2, 0.8, 0.2, 1),
+                    width: i == currentIndex ? unit * _activeFlex : unit,
+                    child: _NavButton(
+                      item: items[i],
+                      selected: i == currentIndex,
+                      onTap: () => onSelected(i),
+                    ),
+                  ),
+                ],
+              ],
+            );
+          },
+        ),
       ),
     );
   }
@@ -65,60 +93,52 @@ class _NavButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = selected ? AppColors.brandStrong : AppColors.ink4;
+    final fg = selected ? AppColors.surface : AppColors.ink4;
 
     return Semantics(
       button: true,
       selected: selected,
       label: item.label,
-      // Without this the child Text contributes its own node and the tab is
-      // announced twice -- "Home, Home". The label here is authoritative.
+      // The label is authoritative. Inactive tabs show no text at all, so
+      // without this a screen reader would find four unlabelled icons.
       excludeSemantics: true,
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
+      child: Pressable(
         onTap: onTap,
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: kMinHitTarget),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 280),
+          curve: const Cubic(0.2, 0.8, 0.2, 1),
+          height: 50,
+          decoration: BoxDecoration(
+            // brandStrong, not the prototype's lighter brand red: the label
+            // is 12.5pt white text, which needs 4.5:1 and #E54F38 gives 3.8.
+            color: selected ? AppColors.brandStrong : Colors.transparent,
+            borderRadius: BorderRadius.circular(19),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Android fills a tonal pill behind the icon; iOS does not.
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpace.x12,
-                  vertical: AppSpace.x4,
-                ),
-                decoration: BoxDecoration(
-                  color: !PlatformChrome.isIOS && selected
-                      ? AppColors.brandTint
-                      : Colors.transparent,
-                  borderRadius: BorderRadius.circular(AppRadii.chip),
-                ),
-                child: Icon(item.icon, size: 20, color: color),
-              ),
-              const SizedBox(height: AppSpace.x4),
-              Text(
-                item.label,
-                style: AppText.tabLabel.copyWith(
-                  color: color,
-                  fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
-                ),
-              ),
-              // iOS marks the active tab with a bar under the label.
-              const SizedBox(height: 3),
-              SizedBox(
-                height: 2.5,
-                width: 16,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: PlatformChrome.isIOS && selected
-                        ? AppColors.brandStrong
-                        : Colors.transparent,
-                    borderRadius: BorderRadius.circular(2),
+              Icon(item.icon, size: 20, color: fg),
+              if (selected) ...[
+                const SizedBox(width: 7),
+                Flexible(
+                  child: Text(
+                    item.label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    // Capped: at 2x text the label would otherwise push the
+                    // icon out of a pill whose width is fixed by the row.
+                    textScaler: MediaQuery.textScalerOf(
+                      context,
+                    ).clamp(maxScaleFactor: 1.3),
+                    style: AppText.tabLabel.copyWith(
+                      color: AppColors.surface,
+                      fontSize: 12.5,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
-              ),
+              ],
             ],
           ),
         ),
