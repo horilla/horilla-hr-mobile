@@ -49,12 +49,32 @@ class LeaveApi {
     }
   }
 
-  Future<void> apply(LeaveApplication application, int employeeId) async {
+  /// Books the leave. Returns the new request's id, for Undo; null if the
+  /// server did not say.
+  Future<int?> apply(LeaveApplication application, int employeeId) async {
     try {
-      await _dio.post<dynamic>(
+      final response = await _dio.post<dynamic>(
         '/leave/user-request/',
         data: application.toJson(employeeId),
       );
+      final body = response.data;
+      final id = body is Map ? body['id'] : null;
+      return id is int ? id : null;
+    } on DioException catch (e) {
+      final failure = e.error;
+      throw failure is ApiFailure ? failure : const ApiUnknown();
+    }
+  }
+
+  /// Withdraws a request that is still awaiting approval -- the toast's Undo.
+  ///
+  /// The server only allows this while the status is "requested", which is
+  /// always true inside the few seconds Undo is on screen. The approver was
+  /// already notified when the request was created, and that notification is
+  /// not recalled.
+  Future<void> withdraw(int requestId) async {
+    try {
+      await _dio.delete<dynamic>('/leave/user-request/$requestId/');
     } on DioException catch (e) {
       final failure = e.error;
       throw failure is ApiFailure ? failure : const ApiUnknown();
@@ -77,15 +97,14 @@ class LeaveApi {
   List<Holiday> _upcoming(List<Holiday> holidays) {
     final today = DateTime.now();
     final cutoff = DateTime(today.year, today.month, today.day);
-    return holidays
-        .where((h) => !h.startDate.isBefore(cutoff))
-        .toList()
+    return holidays.where((h) => !h.startDate.isBefore(cutoff)).toList()
       ..sort((a, b) => a.startDate.compareTo(b.startDate));
   }
 }
 
-final leaveApiProvider =
-    Provider<LeaveApi>((ref) => LeaveApi(ref.watch(apiClientProvider).dio));
+final leaveApiProvider = Provider<LeaveApi>(
+  (ref) => LeaveApi(ref.watch(apiClientProvider).dio),
+);
 
 final leaveOverviewProvider = FutureProvider<LeaveOverview>((ref) {
   return ref.watch(leaveApiProvider).fetchOverview();

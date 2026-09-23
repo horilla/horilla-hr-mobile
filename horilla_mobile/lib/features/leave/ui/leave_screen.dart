@@ -1,14 +1,16 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/api/api_failure.dart';
-import '../../../core/theme/platform_chrome.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/app_primitives.dart';
+import '../../../shared/widgets/app_top_bar.dart';
 import '../../../shared/widgets/error_state_card.dart';
 import '../data/leave_api.dart';
 import '../data/leave_models.dart';
@@ -24,23 +26,10 @@ class LeaveScreen extends ConsumerWidget {
       backgroundColor: AppColors.bg,
       body: Column(
         children: [
-          Container(
-            width: double.infinity,
-            color: AppColors.surface,
-            padding: PlatformChrome.appBarPaddingOf(context),
-            child: Row(
-              children: [
-                GestureDetector(
-                  onTap: () => context.go('/time'),
-                  child: const SizedBox(
-                    width: kMinHitTarget,
-                    height: 28,
-                    child: Icon(Icons.chevron_left, color: AppColors.ink),
-                  ),
-                ),
-                Text('Leave', style: AppText.appBarTitle),
-              ],
-            ),
+          AppTopBar(
+            title: 'Leave',
+            onBack: () =>
+                context.canPop() ? context.pop() : context.go('/time'),
           ),
           Expanded(
             child: RefreshIndicator(
@@ -76,10 +65,15 @@ class _LeaveBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final carried = data.balances.fold<double>(
+      0,
+      (sum, b) => sum + b.carryforwardDays,
+    );
+
     return ListView(
       padding: const EdgeInsets.fromLTRB(
         AppSpace.screen,
-        AppSpace.x18,
+        AppSpace.x6,
         AppSpace.screen,
         AppSpace.scrollBottom,
       ),
@@ -88,41 +82,59 @@ class _LeaveBody extends StatelessWidget {
           const _NoBalances()
         else
           _BalanceGrid(balances: data.balances),
+        if (carried > 0) ...[
+          const SizedBox(height: AppSpace.x10),
+          Text(
+            'Includes ${formatDays(carried)} carried-forward '
+            '${carried == 1 ? 'day' : 'days'}, shown lighter on each ring.',
+            style: AppText.meta,
+          ),
+        ],
 
         const SizedBox(height: AppSpace.x16),
         AppButton(
           label: 'Apply for leave',
           onPressed: () => context.push('/time/leave/apply'),
         ),
-        const SizedBox(height: AppSpace.x10),
-        AppButton(
-          label: 'Request more days',
-          tone: AppButtonTone.quiet,
-          onPressed: () => context.push('/time/leave/allocation'),
+        const SizedBox(height: AppSpace.x12),
+        AppCard(
+          onTap: () => context.push('/time/leave/allocation'),
+          padding: const EdgeInsets.all(AppSpace.x16),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Allocation request',
+                      style: AppText.cardTitle.copyWith(fontSize: 14),
+                    ),
+                    const SizedBox(height: 2),
+                    Text('Ask HR for extra days', style: AppText.meta),
+                  ],
+                ),
+              ),
+              const Icon(Icons.chevron_right, color: AppColors.ink4),
+            ],
+          ),
         ),
 
         const SizedBox(height: AppSpace.x20),
-        const SectionHeader(title: 'My requests'),
-        const SizedBox(height: AppSpace.x12),
+        _Heading('My requests'),
+        const SizedBox(height: AppSpace.x10),
         if (data.requests.isEmpty)
           const _EmptyRequests()
         else
-          AppCard(
-            padding: EdgeInsets.zero,
-            child: Column(
-              children: [
-                for (var i = 0; i < data.requests.length; i++) ...[
-                  if (i > 0) const Divider(height: 1, color: AppColors.line2),
-                  _RequestRow(request: data.requests[i]),
-                ],
-              ],
-            ),
-          ),
+          for (final request in data.requests) ...[
+            _RequestCard(request: request),
+            const SizedBox(height: AppSpace.x10),
+          ],
 
         if (data.holidays.isNotEmpty) ...[
-          const SizedBox(height: AppSpace.x20),
-          const SectionHeader(title: 'Upcoming holidays'),
-          const SizedBox(height: AppSpace.x12),
+          const SizedBox(height: AppSpace.x10),
+          _Heading('Upcoming holidays'),
+          const SizedBox(height: AppSpace.x10),
           AppCard(
             padding: EdgeInsets.zero,
             child: Column(
@@ -140,6 +152,29 @@ class _LeaveBody extends StatelessWidget {
   }
 }
 
+class _Heading extends StatelessWidget {
+  const _Heading(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    header: true,
+    child: Text(
+      text,
+      style: AppText.cardTitle.copyWith(fontSize: 13.5, color: AppColors.ink2),
+    ),
+  );
+}
+
+/// Colour per leave type, cycled in the handoff's order.
+Color leaveTypeColor(int index) => const [
+  AppColors.brandStrong,
+  AppColors.info,
+  AppColors.success,
+  AppColors.warning,
+][index % 4];
+
 class _BalanceGrid extends StatelessWidget {
   const _BalanceGrid({required this.balances});
 
@@ -147,68 +182,167 @@ class _BalanceGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Both dimensions follow the text scale: a fixed 96x116 card cannot hold
-    // a 24pt number and a two-line label once either grows.
-    final scaled = MediaQuery.textScalerOf(context).scale(1);
-
-    return SizedBox(
-      height: 96 + (scaled - 1) * 76,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemCount: balances.length,
-        separatorBuilder: (_, _) => const SizedBox(width: AppSpace.x10),
-        itemBuilder: (context, index) {
-          final balance = balances[index];
-          return SizedBox(
-            width: 116 + (scaled - 1) * 40,
-            child: AppCard(
-              padding: const EdgeInsets.all(AppSpace.x14),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    formatDays(balance.totalDays),
-                    style: AppText.statValue,
-                  ),
-                  Flexible(
-                    child: Text(
-                      balance.type.name,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style:
-                          AppText.meta.copyWith(fontWeight: FontWeight.w600),
-                    ),
-                  ),
-                ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Three across; two once text is large enough that three cannot hold
+        // a label.
+        final scaled = MediaQuery.textScalerOf(context).scale(1);
+        final columns = scaled > 1.4 ? 2 : 3;
+        const gap = AppSpace.x10;
+        final width = (constraints.maxWidth - gap * (columns - 1)) / columns;
+        return Wrap(
+          spacing: gap,
+          runSpacing: gap,
+          children: [
+            for (var i = 0; i < balances.length; i++)
+              SizedBox(
+                width: width,
+                child: _BalanceCard(
+                  balance: balances[i],
+                  color: leaveTypeColor(i),
+                ),
               ),
-            ),
-          );
-        },
-      ),
+          ],
+        );
+      },
     );
   }
 }
 
-class _RequestRow extends StatelessWidget {
-  const _RequestRow({required this.request});
+class _BalanceCard extends StatelessWidget {
+  const _BalanceCard({required this.balance, required this.color});
+
+  final LeaveBalance balance;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    final total = balance.totalDays;
+    final carried = balance.carryforwardDays;
+    // The ring is the days you hold, split fresh / carried. It is not
+    // "used of allocated": the server does not send the annual allocation,
+    // and a ring pretending to know it would be a made-up number.
+    final carriedShare = total <= 0 ? 0.0 : (carried / total).clamp(0.0, 1.0);
+
+    return Semantics(
+      // Its own node, so each balance is a separate screen-reader stop
+      // rather than being merged with its neighbours.
+      container: true,
+      label:
+          '${balance.type.name}: ${formatDays(total)} '
+          '${total == 1 ? 'day' : 'days'} available'
+          '${carried > 0 ? ', ${formatDays(carried)} carried forward' : ''}',
+      excludeSemantics: true,
+      child: AppCard(
+        padding: const EdgeInsets.fromLTRB(10, 16, 10, 14),
+        child: Column(
+          children: [
+            SizedBox(
+              width: 64,
+              height: 64,
+              child: CustomPaint(
+                painter: _DonutPainter(
+                  color: total <= 0 ? AppColors.line : color,
+                  carriedShare: carriedShare,
+                ),
+                child: Center(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Text(
+                        formatDays(total),
+                        style: AppText.mono.copyWith(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.ink,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: AppSpace.x10),
+            Text(
+              _shortName(balance.type.name),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: AppText.cardTitle.copyWith(fontSize: 13),
+            ),
+            Text(
+              carried > 0 ? '+${formatDays(carried)} carried' : 'days left',
+              textAlign: TextAlign.center,
+              style: AppText.mono.copyWith(fontSize: 10, color: AppColors.ink4),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// "Casual Leave" -> "Casual": the card already says it is leave.
+  static String _shortName(String name) {
+    final trimmed = name.replaceAll(
+      RegExp(r'\s+leave$', caseSensitive: false),
+      '',
+    );
+    return trimmed.isEmpty ? name : trimmed;
+  }
+}
+
+class _DonutPainter extends CustomPainter {
+  const _DonutPainter({required this.color, required this.carriedShare});
+
+  final Color color;
+  final double carriedShare;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    const stroke = 6.0;
+    final arc = (Offset.zero & size).deflate(stroke / 2);
+    final fresh = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = stroke
+      ..color = color;
+    const start = -math.pi / 2;
+    final freshSweep = math.pi * 2 * (1 - carriedShare);
+    canvas.drawArc(arc, start, freshSweep, false, fresh);
+    if (carriedShare > 0) {
+      canvas.drawArc(
+        arc,
+        start + freshSweep,
+        math.pi * 2 * carriedShare,
+        false,
+        fresh..color = color.withValues(alpha: 0.35),
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(_DonutPainter old) =>
+      old.color != color || old.carriedShare != carriedShare;
+}
+
+class _RequestCard extends StatelessWidget {
+  const _RequestCard({required this.request});
 
   final LeaveRequestSummary request;
 
   @override
   Widget build(BuildContext context) {
-    final range = request.endDate == null ||
+    final range =
+        request.endDate == null ||
             request.endDate!.isAtSameMomentAs(request.startDate)
         ? DateFormat('d MMM').format(request.startDate)
         : '${DateFormat('d MMM').format(request.startDate)} – '
-            '${DateFormat('d MMM').format(request.endDate!)}';
+              '${DateFormat('d MMM').format(request.endDate!)}';
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpace.x16,
-        vertical: AppSpace.x12,
-      ),
+    return AppCard(
+      padding: const EdgeInsets.all(AppSpace.x16),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
             child: Column(
@@ -216,17 +350,21 @@ class _RequestRow extends StatelessWidget {
               children: [
                 Text(
                   request.type?.name ?? 'Leave',
-                  style: AppText.cardTitle.copyWith(fontSize: 14),
+                  style: AppText.cardTitle.copyWith(fontSize: 14.5),
                 ),
                 const SizedBox(height: AppSpace.x4),
                 Text(
                   '$range · ${formatDays(request.requestedDays)} '
                   '${request.requestedDays == 1 ? 'day' : 'days'}',
-                  style: AppText.meta,
+                  style: AppText.body.copyWith(
+                    fontSize: 12.5,
+                    color: AppColors.ink2,
+                  ),
                 ),
               ],
             ),
           ),
+          const SizedBox(width: AppSpace.x8),
           StatusChip(request.status.label, tone: _tone(request.status)),
         ],
       ),
@@ -234,11 +372,11 @@ class _RequestRow extends StatelessWidget {
   }
 
   StatusTone _tone(LeaveStatus status) => switch (status) {
-        LeaveStatus.approved => StatusTone.success,
-        LeaveStatus.rejected => StatusTone.danger,
-        LeaveStatus.cancelled => StatusTone.neutral,
-        LeaveStatus.requested => StatusTone.warning,
-      };
+    LeaveStatus.approved => StatusTone.success,
+    LeaveStatus.rejected => StatusTone.danger,
+    LeaveStatus.cancelled => StatusTone.neutral,
+    LeaveStatus.requested => StatusTone.warning,
+  };
 }
 
 class _HolidayRow extends StatelessWidget {
@@ -249,16 +387,16 @@ class _HolidayRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpace.x16,
-        vertical: AppSpace.x12,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
       child: Row(
         children: [
           Expanded(
             child: Text(
               holiday.name,
-              style: AppText.cardTitle.copyWith(fontSize: 14),
+              style: AppText.cardTitle.copyWith(
+                fontSize: 13.5,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
           Text(
@@ -319,12 +457,14 @@ class _LeaveSkeleton extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.fromLTRB(
         AppSpace.screen,
-        AppSpace.x18,
+        AppSpace.x6,
         AppSpace.screen,
         AppSpace.scrollBottom,
       ),
       children: const [
-        AppCard.skeleton(height: 96),
+        AppCard.skeleton(height: 136),
+        SizedBox(height: AppSpace.x16),
+        AppCard.skeleton(height: 56),
         SizedBox(height: AppSpace.x20),
         AppCard.skeleton(height: 160),
       ],

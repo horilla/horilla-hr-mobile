@@ -20,44 +20,46 @@ LeaveOverview sample({
   List<LeaveBalance>? balances,
   List<LeaveRequestSummary>? requests,
   List<Holiday>? holidays,
-}) =>
-    LeaveOverview(
-      balances: balances ??
-          const [
-            LeaveBalance(
-              id: 1,
-              type: LeaveType(id: 1, name: 'Casual'),
-              availableDays: 6.5,
-              carryforwardDays: 2,
-            ),
-            LeaveBalance(
-              id: 2,
-              type: LeaveType(id: 2, name: 'Sick'),
-              availableDays: 4,
-              carryforwardDays: 0,
-            ),
-          ],
-      requests: requests ??
-          [
-            LeaveRequestSummary(
-              id: 1,
-              type: const LeaveType(id: 1, name: 'Casual'),
-              startDate: DateTime(2026, 10, 2),
-              endDate: DateTime(2026, 10, 3),
-              status: LeaveStatus.requested,
-              requestedDays: 2,
-            ),
-            LeaveRequestSummary(
-              id: 2,
-              type: const LeaveType(id: 2, name: 'Sick'),
-              startDate: DateTime(2026, 9, 10),
-              status: LeaveStatus.approved,
-              requestedDays: 1,
-            ),
-          ],
-      holidays: holidays ??
-          [Holiday(id: 1, name: 'Onam', startDate: DateTime(2026, 9, 24))],
-    );
+}) => LeaveOverview(
+  balances:
+      balances ??
+      const [
+        LeaveBalance(
+          id: 1,
+          type: LeaveType(id: 1, name: 'Casual'),
+          availableDays: 6.5,
+          carryforwardDays: 2,
+        ),
+        LeaveBalance(
+          id: 2,
+          type: LeaveType(id: 2, name: 'Sick'),
+          availableDays: 4,
+          carryforwardDays: 0,
+        ),
+      ],
+  requests:
+      requests ??
+      [
+        LeaveRequestSummary(
+          id: 1,
+          type: const LeaveType(id: 1, name: 'Casual'),
+          startDate: DateTime(2026, 10, 2),
+          endDate: DateTime(2026, 10, 3),
+          status: LeaveStatus.requested,
+          requestedDays: 2,
+        ),
+        LeaveRequestSummary(
+          id: 2,
+          type: const LeaveType(id: 2, name: 'Sick'),
+          startDate: DateTime(2026, 9, 10),
+          status: LeaveStatus.approved,
+          requestedDays: 1,
+        ),
+      ],
+  holidays:
+      holidays ??
+      [Holiday(id: 1, name: 'Onam', startDate: DateTime(2026, 9, 24))],
+);
 
 Future<void> pumpLeave(
   WidgetTester tester, {
@@ -105,24 +107,25 @@ void main() {
     expect(find.text('Onam'), findsOneWidget);
   });
 
-  testWidgets('a status is shown per request, in its own tone',
-      (tester) async {
+  testWidgets('a status is shown per request, in its own tone', (tester) async {
     await pumpLeave(tester, load: () async => sample());
 
     expect(find.text('PENDING'), findsOneWidget);
     expect(find.text('APPROVED'), findsOneWidget);
   });
 
-  testWidgets('a single-day request shows one date, not a range',
-      (tester) async {
+  testWidgets('a single-day request shows one date, not a range', (
+    tester,
+  ) async {
     await pumpLeave(tester, load: () async => sample());
 
     expect(find.text('2 Oct – 3 Oct · 2 days'), findsOneWidget);
     expect(find.text('10 Sep · 1 day'), findsOneWidget);
   });
 
-  testWidgets('no balances is explained rather than left blank',
-      (tester) async {
+  testWidgets('no balances is explained rather than left blank', (
+    tester,
+  ) async {
     await pumpLeave(tester, load: () async => sample(balances: []));
 
     expect(find.text('NO LEAVE ASSIGNED'), findsOneWidget);
@@ -134,8 +137,9 @@ void main() {
     expect(find.text('You have not requested any leave.'), findsOneWidget);
   });
 
-  testWidgets('the holidays section disappears when there are none',
-      (tester) async {
+  testWidgets('the holidays section disappears when there are none', (
+    tester,
+  ) async {
     await pumpLeave(tester, load: () async => sample(holidays: []));
 
     expect(find.text('Upcoming holidays'), findsNothing);
