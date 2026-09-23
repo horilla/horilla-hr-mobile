@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -17,25 +19,32 @@ android {
     }
 
 
-    kotlinOptions {
-        jvmTarget = "17"
-    }
-
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.cybrosys.horilla_project"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = 21
+        minSdk = flutter.minSdkVersion
         targetSdk = 35
-        versionCode = 9
-        versionName = "1.0.3"
+        // From pubspec (version: 2.0.0+12) rather than hardcoded: these had
+        // drifted to 1.0.3/9 while pubspec said 1.0.10+11, and a release
+        // needs one source of truth. versionCode must only ever increase --
+        // check the Play Console before the first upload.
+        versionCode = flutter.versionCode
+        versionName = flutter.versionName
     }
 
     buildTypes {
         getByName("release") {
             isShrinkResources = true // This requires isMinifyEnabled = true
         }
+    }
+}
+
+// Kotlin 2.x removed the kotlinOptions DSL that the inherited config used.
+kotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_17
     }
 }
 

@@ -38,6 +38,14 @@ dependencies:
   intl: ^0.20.2
   package_info_plus: ^8.3.1
 
+# path_provider_android 2.3.x pulls in `jni`, which adds a CMake/NDK native
+# build to every Android build. Nothing here needs JNI -- it arrives
+# transitively through cached_network_image's cache manager -- and the 2.2.x
+# line is pure Java, so pinning it removes the native toolchain from the
+# build entirely. Revisit if a direct dependency ever genuinely needs JNI.
+dependency_overrides:
+  path_provider_android: ">=2.2.0 <2.3.0"
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

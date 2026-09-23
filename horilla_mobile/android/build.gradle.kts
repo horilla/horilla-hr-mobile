@@ -24,9 +24,13 @@ tasks.register<Delete>("clean") {
     delete(rootProject.layout.buildDirectory)
 }
 
-// ✅ Force Kotlin to use JVM 17
+// Pin every module's Kotlin target, including plugins that would otherwise
+// default lower and fail to link against the app's Java 17 output.
+// compilerOptions rather than kotlinOptions: Kotlin 2.x removed the latter.
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions.jvmTarget = "17"
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+    }
 }
 
 

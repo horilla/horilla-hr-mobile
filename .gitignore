@@ -11,3 +11,4 @@ horilla_mobile/build/
 horilla_mobile/.flutter-plugins
 horilla_mobile/.flutter-plugins-dependencies
 horilla_mobile/lib/l10n/app_localizations*.dart
+horilla_mobile/android/local.properties
