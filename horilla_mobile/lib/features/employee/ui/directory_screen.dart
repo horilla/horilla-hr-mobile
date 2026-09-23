@@ -4,11 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/api/api_failure.dart';
-import '../../../core/theme/platform_chrome.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/app_primitives.dart';
+import '../../../shared/widgets/app_top_bar.dart';
 import '../../../shared/widgets/error_state_card.dart';
+import '../../../shared/widgets/pressable.dart';
 import '../data/employee_api.dart';
 import '../data/employee_models.dart';
 import 'profile_sheet.dart';
@@ -48,50 +49,42 @@ class _DirectoryScreenState extends ConsumerState<DirectoryScreen> {
       backgroundColor: AppColors.bg,
       body: Column(
         children: [
-          Container(
-            width: double.infinity,
-            color: AppColors.surface,
-            padding: PlatformChrome.appBarPaddingOf(context),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Team', style: AppText.appBarTitle),
-                const SizedBox(height: AppSpace.x12),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpace.x12,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.bg2,
-                    borderRadius: BorderRadius.circular(13),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.search,
-                        size: 18,
-                        color: AppColors.ink4,
-                      ),
-                      const SizedBox(width: AppSpace.x8),
-                      Expanded(
-                        child: TextField(
-                          controller: _controller,
-                          onChanged: _onChanged,
-                          style: AppText.body,
-                          decoration: const InputDecoration(
-                            isDense: true,
-                            border: InputBorder.none,
-                            hintText: 'Search people',
-                            contentPadding: EdgeInsets.symmetric(
-                              vertical: AppSpace.x12,
-                            ),
-                          ),
+          const AppTopBar(title: 'Directory'),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpace.screen,
+              AppSpace.x6,
+              AppSpace.screen,
+              AppSpace.x4,
+            ),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpace.x16),
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(AppRadii.field),
+                boxShadow: AppShadows.card,
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.search, size: 20, color: AppColors.ink4),
+                  const SizedBox(width: AppSpace.x10),
+                  Expanded(
+                    child: TextField(
+                      controller: _controller,
+                      onChanged: _onChanged,
+                      style: AppText.body.copyWith(fontSize: 14),
+                      decoration: const InputDecoration(
+                        isDense: true,
+                        border: InputBorder.none,
+                        hintText: 'Search by name',
+                        contentPadding: EdgeInsets.symmetric(
+                          vertical: AppSpace.x16,
                         ),
                       ),
-                    ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           Expanded(
@@ -143,7 +136,18 @@ class _DirectoryList extends StatelessWidget {
         padding: const EdgeInsets.all(AppSpace.screen),
         children: [
           AppCard(
-            child: Text('No one matched that search.', style: AppText.body),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const EyebrowLabel('No matches'),
+                const SizedBox(height: AppSpace.x6),
+                Text(
+                  'No one matched that search. Check the spelling, or try '
+                  'a first or last name on its own.',
+                  style: AppText.body,
+                ),
+              ],
+            ),
           ),
         ],
       );
@@ -157,7 +161,9 @@ class _DirectoryList extends StatelessWidget {
         AppSpace.scrollBottom,
       ),
       children: [
-        EyebrowLabel('${people.length} ${people.length == 1 ? 'person' : 'people'}'),
+        EyebrowLabel(
+          '${people.length} ${people.length == 1 ? 'person' : 'people'}',
+        ),
         const SizedBox(height: AppSpace.x12),
         // A directory of one usually means the server is scoping this person
         // to themselves, not that they work alone -- worth saying so rather
@@ -198,35 +204,42 @@ class _PersonRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: () => showProfileSheet(context, person),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpace.x16,
-          vertical: AppSpace.x12,
-        ),
-        child: Row(
-          children: [
-            AppAvatar(name: person.fullName, size: 38),
-            const SizedBox(width: AppSpace.x12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    person.fullName,
-                    style: AppText.cardTitle.copyWith(fontSize: 14),
-                  ),
-                  if (person.jobPosition != null) ...[
-                    const SizedBox(height: AppSpace.x4),
-                    Text(person.jobPosition!, style: AppText.meta),
+    return Semantics(
+      button: true,
+      label:
+          '${person.fullName}'
+          '${person.jobPosition == null ? '' : ', ${person.jobPosition}'}',
+      excludeSemantics: true,
+      child: Pressable(
+        scale: 0.99,
+        onTap: () => showProfileSheet(context, person),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpace.x16,
+            vertical: 13,
+          ),
+          child: Row(
+            children: [
+              AppAvatar.toned(name: person.fullName, size: 38),
+              const SizedBox(width: AppSpace.x12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      person.fullName,
+                      style: AppText.cardTitle.copyWith(fontSize: 14.5),
+                    ),
+                    if (person.jobPosition != null) ...[
+                      const SizedBox(height: 2),
+                      Text(person.jobPosition!, style: AppText.meta),
+                    ],
                   ],
-                ],
+                ),
               ),
-            ),
-            const Icon(Icons.chevron_right, size: 18, color: AppColors.ink4),
-          ],
+              const Icon(Icons.chevron_right, size: 18, color: AppColors.ink4),
+            ],
+          ),
         ),
       ),
     );

@@ -41,8 +41,9 @@ Future<void> pump(WidgetTester tester, Widget child) async {
 }
 
 void main() {
-  testWidgets('the tab bar announces each tab and which is selected',
-      (tester) async {
+  testWidgets('the tab bar announces each tab and which is selected', (
+    tester,
+  ) async {
     await pump(
       tester,
       AppBottomNav(
@@ -83,23 +84,29 @@ void main() {
       ),
     );
 
+    // Measured through the semantics node, which is the tappable area, and
+    // in both dimensions: v2's inactive tabs are icon-only and narrower than
+    // the active one, so width is now the constraint most likely to slip.
+    final handle = tester.ensureSemantics();
     for (final label in ['Home', 'Time', 'Team', 'Me']) {
-      final size = tester.getSize(
-        find.ancestor(
-          of: find.text(label),
-          matching: find.byType(ConstrainedBox),
-        ).first,
+      final rect = tester.getRect(find.bySemanticsLabel(label));
+      expect(
+        rect.height,
+        greaterThanOrEqualTo(kMinHitTarget),
+        reason: '$label tab is only ${rect.height}pt tall',
       );
       expect(
-        size.height,
+        rect.width,
         greaterThanOrEqualTo(kMinHitTarget),
-        reason: '$label tab is only ${size.height}pt tall',
+        reason: '$label tab is only ${rect.width}pt wide',
       );
     }
+    handle.dispose();
   });
 
-  testWidgets('a button announces its label and its disabled state',
-      (tester) async {
+  testWidgets('a button announces its label and its disabled state', (
+    tester,
+  ) async {
     await pump(
       tester,
       const Column(
@@ -124,8 +131,9 @@ void main() {
     handle.dispose();
   });
 
-  testWidgets('buttons clear the 44pt minimum even with short labels',
-      (tester) async {
+  testWidgets('buttons clear the 44pt minimum even with short labels', (
+    tester,
+  ) async {
     await pump(tester, const AppButton(label: 'OK'));
 
     expect(

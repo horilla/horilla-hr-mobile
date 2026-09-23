@@ -4,12 +4,12 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/api/api_failure.dart';
 import '../../../core/auth/session.dart';
-import '../../../core/theme/platform_chrome.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/app_primitives.dart';
 import '../data/profile_api.dart';
+import '../../../shared/widgets/app_top_bar.dart';
 
 /// Editing your own contact and emergency details.
 ///
@@ -21,8 +21,7 @@ class PersonalInfoScreen extends ConsumerStatefulWidget {
   const PersonalInfoScreen({super.key});
 
   @override
-  ConsumerState<PersonalInfoScreen> createState() =>
-      _PersonalInfoScreenState();
+  ConsumerState<PersonalInfoScreen> createState() => _PersonalInfoScreenState();
 }
 
 class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
@@ -45,16 +44,15 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
   }
 
   PersonalInfo get _edited => PersonalInfo(
-        phone: _fields['phone']?.text ?? '',
-        address: _fields['address']?.text ?? '',
-        city: _fields['city']?.text ?? '',
-        state: _fields['state']?.text ?? '',
-        zip: _fields['zip']?.text ?? '',
-        emergencyContactName: _fields['emergency_contact_name']?.text ?? '',
-        emergencyContact: _fields['emergency_contact']?.text ?? '',
-        emergencyContactRelation:
-            _fields['emergency_contact_relation']?.text ?? '',
-      );
+    phone: _fields['phone']?.text ?? '',
+    address: _fields['address']?.text ?? '',
+    city: _fields['city']?.text ?? '',
+    state: _fields['state']?.text ?? '',
+    zip: _fields['zip']?.text ?? '',
+    emergencyContactName: _fields['emergency_contact_name']?.text ?? '',
+    emergencyContact: _fields['emergency_contact']?.text ?? '',
+    emergencyContactRelation: _fields['emergency_contact_relation']?.text ?? '',
+  );
 
   Future<void> _save() async {
     final original = _original;
@@ -105,44 +103,27 @@ class _PersonalInfoScreenState extends ConsumerState<PersonalInfoScreen> {
       backgroundColor: AppColors.bg,
       body: Column(
         children: [
-          Container(
-            width: double.infinity,
-            color: AppColors.surface,
-            padding: PlatformChrome.appBarPaddingOf(context),
-            child: Row(
-              children: [
-                GestureDetector(
-                  onTap: () => context.pop(),
-                  child: const SizedBox(
-                    width: kMinHitTarget,
-                    height: 28,
-                    child: Icon(Icons.chevron_left, color: AppColors.ink),
-                  ),
-                ),
-                Text('Personal information', style: AppText.appBarTitle),
-              ],
-            ),
-          ),
+          AppTopBar(title: 'Personal information', onBack: () => context.pop()),
           Expanded(
             child: switch (info) {
               AsyncValue(:final value?) => _form(value),
               AsyncValue(:final error?) => ListView(
-                  padding: const EdgeInsets.all(AppSpace.screen),
-                  children: [
-                    AppCard(
-                      child: Text(
-                        error is ApiFailure
-                            ? error.message
-                            : 'Could not load your details.',
-                        style: AppText.body,
-                      ),
+                padding: const EdgeInsets.all(AppSpace.screen),
+                children: [
+                  AppCard(
+                    child: Text(
+                      error is ApiFailure
+                          ? error.message
+                          : 'Could not load your details.',
+                      style: AppText.body,
                     ),
-                  ],
-                ),
+                  ),
+                ],
+              ),
               _ => ListView(
-                  padding: const EdgeInsets.all(AppSpace.screen),
-                  children: const [AppCard.skeleton(height: 240)],
-                ),
+                padding: const EdgeInsets.all(AppSpace.screen),
+                children: const [AppCard.skeleton(height: 240)],
+              ),
             },
           ),
         ],

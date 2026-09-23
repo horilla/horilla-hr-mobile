@@ -9,6 +9,7 @@ import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_inset_field.dart';
 import '../../../shared/widgets/horilla_mark.dart';
+import '../../../shared/widgets/pressable.dart';
 
 /// Screen 1 of the handoff.
 ///
@@ -78,7 +79,9 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
     });
 
     try {
-      await ref.read(sessionProvider.notifier).signIn(
+      await ref
+          .read(sessionProvider.notifier)
+          .signIn(
             rawHost: _host.text,
             username: _username.text,
             password: _password.text,
@@ -117,125 +120,186 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
     }
   }
 
+  /// The server field is tucked behind the footer, as v2 draws it -- it is
+  /// prefilled, and most people never change it. It opens by itself whenever
+  /// there is something about the server to say.
+  bool _editingServer = false;
+
+  bool get _showServer => _editingServer || _hostError != null || _isCleartext;
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppL10n.of(context);
+    final hostLabel = Uri.tryParse(normaliseHost(_host.text).host)?.host;
 
     return Scaffold(
-      backgroundColor: AppColors.ink,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(
-            AppSpace.x20,
-            AppSpace.x28,
-            AppSpace.x20,
-            AppSpace.scrollBottom,
+      backgroundColor: AppColors.surface,
+      body: Stack(
+        children: [
+          // The soft brand disc in the top corner.
+          Positioned(
+            top: -150,
+            right: -120,
+            child: IgnorePointer(
+              child: Container(
+                width: 300,
+                height: 300,
+                decoration: const BoxDecoration(
+                  color: AppColors.brandTint,
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: AppSpace.x28),
-              const HorillaMark(),
-              const SizedBox(height: AppSpace.x28),
-              Text(
-                l10n.signInHeadline,
-                style: AppText.cardTitle.copyWith(
-                  fontSize: 30,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: -0.8,
-                  height: 1.15,
-                  color: AppColors.surface,
-                ),
+          SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpace.x28 - 2,
+                AppSpace.x28,
+                AppSpace.x28 - 2,
+                AppSpace.scrollBottom,
               ),
-              const SizedBox(height: AppSpace.x12),
-              Text(
-                l10n.signInSubcopy,
-                style: AppText.body.copyWith(
-                  fontSize: 14,
-                  color: AppColors.onDark2,
-                ),
-              ),
-              const SizedBox(height: AppSpace.x28),
-
-              if (_formError != null) ...[
-                _ErrorBanner(message: _formError!),
-                const SizedBox(height: AppSpace.x14),
-              ],
-
-              AppInsetField(
-                label: l10n.signInServerLabel,
-                controller: _host,
-                onDark: true,
-                keyboardType: TextInputType.url,
-                hintText: l10n.signInServerHint,
-                errorText: _hostError,
-              ),
-              if (_isCleartext) ...[
-                const SizedBox(height: AppSpace.x8),
-                _CleartextWarning(message: l10n.signInCleartextWarning),
-              ],
-              const SizedBox(height: AppSpace.x12),
-              AppInsetField(
-                label: l10n.signInUsernameLabel,
-                controller: _username,
-                onDark: true,
-                errorText: _usernameError,
-                autofillHints: const [AutofillHints.username],
-              ),
-              const SizedBox(height: AppSpace.x12),
-              AppInsetField(
-                label: l10n.signInPasswordLabel,
-                controller: _password,
-                onDark: true,
-                obscureText: true,
-                errorText: _passwordError,
-                autofillHints: const [AutofillHints.password],
-              ),
-
-              const SizedBox(height: AppSpace.x20),
-              AppButton(
-                label: _busy ? l10n.signInBusy : l10n.signInAction,
-                tone: AppButtonTone.onDark,
-                onPressed: _busy ? null : _submit,
-              ),
-
-              const SizedBox(height: AppSpace.x18),
-              Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Expanded(child: Divider(color: Color(0x33FFFFFF))),
-                  Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: AppSpace.x12),
-                    child: Text(
-                      l10n.signInOr,
-                      style: AppText.meta.copyWith(color: AppColors.onDark2),
+                  const SizedBox(height: AppSpace.x20),
+                  const HorillaLockup(),
+                  const SizedBox(height: 44),
+                  Text(
+                    l10n.signInHeadline,
+                    style: AppText.appBarTitle.copyWith(
+                      fontSize: 34,
+                      letterSpacing: -1.2,
+                      height: 1.1,
                     ),
                   ),
-                  const Expanded(child: Divider(color: Color(0x33FFFFFF))),
+                  const SizedBox(height: AppSpace.x12),
+                  Text(
+                    l10n.signInSubcopy,
+                    style: AppText.body.copyWith(
+                      fontSize: 14.5,
+                      color: AppColors.ink3,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpace.x28),
+
+                  if (_formError != null) ...[
+                    _ErrorBanner(message: _formError!),
+                    const SizedBox(height: AppSpace.x14),
+                  ],
+
+                  if (_showServer) ...[
+                    AppInsetField(
+                      label: l10n.signInServerLabel,
+                      controller: _host,
+                      keyboardType: TextInputType.url,
+                      hintText: l10n.signInServerHint,
+                      errorText: _hostError,
+                    ),
+                    if (_isCleartext) ...[
+                      const SizedBox(height: AppSpace.x8),
+                      _CleartextWarning(message: l10n.signInCleartextWarning),
+                    ],
+                    const SizedBox(height: AppSpace.x12),
+                  ],
+                  AppInsetField(
+                    label: l10n.signInUsernameLabel,
+                    controller: _username,
+                    errorText: _usernameError,
+                    autofillHints: const [AutofillHints.username],
+                  ),
+                  const SizedBox(height: AppSpace.x12),
+                  AppInsetField(
+                    label: l10n.signInPasswordLabel,
+                    controller: _password,
+                    obscureText: true,
+                    errorText: _passwordError,
+                    autofillHints: const [AutofillHints.password],
+                  ),
+
+                  const SizedBox(height: AppSpace.x20),
+                  AppButton(
+                    label: _busy ? l10n.signInBusy : l10n.signInAction,
+                    onPressed: _busy ? null : _submit,
+                  ),
+
+                  const SizedBox(height: AppSpace.x18),
+                  Row(
+                    children: [
+                      const Expanded(child: Divider(color: AppColors.line2)),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpace.x12,
+                        ),
+                        child: Text(
+                          l10n.signInOr,
+                          style: AppText.meta.copyWith(color: AppColors.ink4),
+                        ),
+                      ),
+                      const Expanded(child: Divider(color: AppColors.line2)),
+                    ],
+                  ),
+                  const SizedBox(height: AppSpace.x18),
+
+                  // Disabled deliberately: there is no SAML or SSO anywhere in
+                  // the Horilla backend, so a live-looking button would
+                  // promise something that does not exist.
+                  AppButton(
+                    label: l10n.signInSso,
+                    tone: AppButtonTone.quiet,
+                    icon: Icons.shield_outlined,
+                    onPressed: null,
+                  ),
+
+                  const SizedBox(height: 40),
+                  Center(
+                    child: Semantics(
+                      button: true,
+                      label: 'Server ${hostLabel ?? 'not set'}, change server',
+                      excludeSemantics: true,
+                      child: Pressable(
+                        onTap: () =>
+                            setState(() => _editingServer = !_editingServer),
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(
+                            minHeight: kMinHitTarget,
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 7,
+                                height: 7,
+                                decoration: BoxDecoration(
+                                  color: _isCleartext
+                                      ? AppColors.warning
+                                      : AppColors.success,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                              const SizedBox(width: AppSpace.x8),
+                              Flexible(
+                                child: Text(
+                                  '${hostLabel ?? l10n.signInFooter} · '
+                                  '${l10n.signInServerChange}',
+                                  overflow: TextOverflow.ellipsis,
+                                  style: AppText.mono.copyWith(
+                                    fontSize: 11.5,
+                                    color: AppColors.ink3,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
-              const SizedBox(height: AppSpace.x18),
-
-              // Disabled deliberately: there is no SAML or SSO anywhere in the
-              // Horilla backend, so a live-looking button would promise
-              // something that does not exist.
-              AppButton(
-                label: l10n.signInSso,
-                tone: AppButtonTone.outlinedOnDark,
-                onPressed: null,
-              ),
-
-              const SizedBox(height: AppSpace.x28),
-              Center(
-                child: Text(
-                  l10n.signInFooter,
-                  style:
-                      AppText.mono.copyWith(fontSize: 11, color: AppColors.ink4),
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

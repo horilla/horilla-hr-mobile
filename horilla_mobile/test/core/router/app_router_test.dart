@@ -64,38 +64,47 @@ void main() {
     // bar must not advertise modules this build cannot open. Driven from
     // Modules rather than hardcoded, so flipping a flag updates the test with
     // the app instead of against it.
+    final handle = tester.ensureSemantics();
     await pumpAt(tester, '/home');
 
     expect(find.byType(AppBottomNav), findsOneWidget);
 
+    // By semantics label, not visible text: the v2 bar shows a label only on
+    // the active tab, so a text search would miss every inactive one.
     for (final branch in AppShell.branches) {
-      final label = find.descendant(
+      final tab = find.descendant(
         of: find.byType(AppBottomNav),
-        matching: find.text(branch.label),
+        matching: find.bySemanticsLabel(branch.label),
       );
       expect(
-        label,
+        tab,
         branch.enabled ? findsOneWidget : findsNothing,
         reason: '${branch.label} enabled=${branch.enabled}',
       );
     }
+    handle.dispose();
   });
 
   testWidgets('a switched-off module is not reachable by tab', (tester) async {
+    final handle = tester.ensureSemantics();
     await pumpAt(tester, '/home');
 
     expect(Modules.requests, isFalse, reason: 'guards the assertion below');
+    // A text search would pass vacuously now that inactive tabs show no
+    // text; the semantics label is present on every tab that exists.
     expect(
       find.descendant(
         of: find.byType(AppBottomNav),
-        matching: find.text('Requests'),
+        matching: find.bySemanticsLabel('Requests'),
       ),
       findsNothing,
     );
+    handle.dispose();
   });
 
-  testWidgets('deep-linking into a switched-off module explains itself',
-      (tester) async {
+  testWidgets('deep-linking into a switched-off module explains itself', (
+    tester,
+  ) async {
     // A push notification from a server whose modules do not match the app is
     // exactly how someone lands here; it must not be a blank screen.
     await pumpAt(tester, '/requests');
@@ -103,8 +112,9 @@ void main() {
     expect(find.text('NOT AVAILABLE YET'), findsOneWidget);
   });
 
-  testWidgets('a detail screen inside a branch keeps its tab bar',
-      (tester) async {
+  testWidgets('a detail screen inside a branch keeps its tab bar', (
+    tester,
+  ) async {
     // /time/leave is a child of the Time branch. The handoff's rule is that
     // this keeps Time selected rather than looking like a separate screen.
     await pumpAt(tester, '/time/leave');
@@ -114,16 +124,18 @@ void main() {
   });
 
   testWidgets('tapping a tab switches branch', (tester) async {
+    final handle = tester.ensureSemantics();
     await pumpAt(tester, '/home');
 
     await tester.tap(
       find.descendant(
         of: find.byType(AppBottomNav),
-        matching: find.text('Time'),
+        matching: find.bySemanticsLabel('Time'),
       ),
     );
     await settleRoute(tester);
 
-    expect(find.text('Attendance'), findsWidgets);
+    expect(find.text('My attendance'), findsWidgets);
+    handle.dispose();
   });
 }

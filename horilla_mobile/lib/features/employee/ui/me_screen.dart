@@ -4,10 +4,11 @@ import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../../core/auth/session.dart';
-import '../../../core/theme/platform_chrome.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/app_primitives.dart';
+import '../../../shared/widgets/app_top_bar.dart';
+import '../../../shared/widgets/pressable.dart';
 import '../data/profile_api.dart';
 
 final _appVersionProvider = FutureProvider<String>((ref) async {
@@ -28,28 +29,29 @@ class MeScreen extends ConsumerWidget {
       backgroundColor: AppColors.bg,
       body: Column(
         children: [
-          Container(
-            width: double.infinity,
-            color: AppColors.surface,
-            padding: PlatformChrome.appBarPaddingOf(context),
-            child: Text('Me', style: AppText.appBarTitle),
+          AppTopBar(
+            title: 'Me',
+            trailing: canEdit
+                ? TopBarAction(
+                    label: 'Edit',
+                    onTap: () => context.push('/me/personal-information'),
+                  )
+                : null,
           ),
           Expanded(
             child: ListView(
               padding: const EdgeInsets.fromLTRB(
                 AppSpace.screen,
-                AppSpace.x18,
+                AppSpace.x6,
                 AppSpace.screen,
                 AppSpace.scrollBottom,
               ),
               children: [
                 AppCard(
+                  padding: const EdgeInsets.all(18),
                   child: Row(
                     children: [
-                      AppAvatar(
-                        name: session?.user.fullName ?? '?',
-                        size: 56,
-                      ),
+                      AppAvatar(name: session?.user.fullName ?? '?', size: 56),
                       const SizedBox(width: AppSpace.x14),
                       Expanded(
                         child: Column(
@@ -57,7 +59,10 @@ class MeScreen extends ConsumerWidget {
                           children: [
                             Text(
                               session?.user.fullName ?? 'Signed out',
-                              style: AppText.cardTitle.copyWith(fontSize: 16),
+                              style: AppText.appBarTitle.copyWith(
+                                fontSize: 18,
+                                letterSpacing: -0.3,
+                              ),
                             ),
                             const SizedBox(height: AppSpace.x4),
                             Text(
@@ -89,9 +94,7 @@ class MeScreen extends ConsumerWidget {
                   ),
                 ],
 
-                const SizedBox(height: AppSpace.x20),
-                const SectionHeader(title: 'Personal'),
-                const SizedBox(height: AppSpace.x12),
+                const SizedBox(height: AppSpace.x14),
                 AppCard(
                   padding: EdgeInsets.zero,
                   child: Column(
@@ -101,25 +104,20 @@ class MeScreen extends ConsumerWidget {
                         // Offered only when the server says self-service
                         // editing is on. A form that always fails is worse
                         // than no form.
-                        value: canEdit ? null : 'HR-managed',
+                        value: canEdit ? null : 'HR-owned',
                         onTap: canEdit
                             ? () => context.push('/me/personal-information')
                             : null,
                       ),
-                    ],
-                  ),
-                ),
-
-                const SizedBox(height: AppSpace.x20),
-                const SectionHeader(title: 'Account'),
-                const SizedBox(height: AppSpace.x12),
-                AppCard(
-                  padding: EdgeInsets.zero,
-                  child: Column(
-                    children: [
+                      const Divider(height: 1, color: AppColors.line2),
+                      _Row(
+                        label: 'Notifications',
+                        onTap: () => context.go('/home/notifications'),
+                      ),
+                      const Divider(height: 1, color: AppColors.line2),
                       _Row(
                         label: 'Server',
-                        value: session?.host ?? '—',
+                        value: _hostOnly(session?.host) ?? '—',
                       ),
                       const Divider(height: 1, color: AppColors.line2),
                       _Row(
@@ -154,7 +152,10 @@ class MeScreen extends ConsumerWidget {
                 const SizedBox(height: AppSpace.x20),
                 Center(
                   child: Text(
-                    version == null ? 'Horilla HR' : 'Horilla HR · $version',
+                    // The host is already a row above; the footer names only
+                    // the app and its build.
+                    ['Horilla HR', ?version].join(' · '),
+                    textAlign: TextAlign.center,
                     style: AppText.mono.copyWith(
                       fontSize: 11,
                       color: AppColors.ink4,
@@ -169,20 +170,19 @@ class MeScreen extends ConsumerWidget {
     );
   }
 
+  /// "https://hr.acme.com" -> "hr.acme.com", for the footer caption.
+  static String? _hostOnly(String? host) =>
+      host == null ? null : Uri.tryParse(host)?.host;
+
   String _roleLabel(String? role) => switch (role) {
-        'hrexec' => 'HR executive',
-        'manager' => 'Manager',
-        _ => 'Employee',
-      };
+    'hrexec' => 'HR executive',
+    'manager' => 'Manager',
+    _ => 'Employee',
+  };
 }
 
 class _Row extends StatelessWidget {
-  const _Row({
-    required this.label,
-    this.value,
-    this.valueColor,
-    this.onTap,
-  });
+  const _Row({required this.label, this.value, this.valueColor, this.onTap});
 
   final String label;
   final String? value;
@@ -191,43 +191,49 @@ class _Row extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: onTap,
-      child: Container(
-        constraints: const BoxConstraints(minHeight: kMinHitTarget),
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpace.x16,
-          vertical: AppSpace.x14,
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                label,
-                style: AppText.cardTitle.copyWith(
-                  fontSize: 14,
-                  color: valueColor ?? AppColors.ink,
+    final row = Container(
+      constraints: const BoxConstraints(minHeight: 56),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 18,
+        vertical: AppSpace.x14,
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              label,
+              style: AppText.body.copyWith(
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+                color: valueColor ?? AppColors.ink,
+              ),
+            ),
+          ),
+          if (value != null)
+            Flexible(
+              // Align, or the value sits at the start of its half of the row:
+              // an Expanded label and a Flexible value split the width evenly.
+              child: Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: Text(
+                  value!,
+                  textAlign: TextAlign.end,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppText.meta.copyWith(fontSize: 13),
                 ),
               ),
             ),
-            if (value != null)
-              Flexible(
-                child: Text(
-                  value!,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppText.meta,
-                ),
-              ),
-            if (onTap != null && value == null)
-              const Icon(
-                Icons.chevron_right,
-                size: 18,
-                color: AppColors.ink4,
-              ),
-          ],
-        ),
+          if (onTap != null && value == null)
+            const Icon(Icons.chevron_right, size: 18, color: AppColors.ink4),
+        ],
       ),
+    );
+    if (onTap == null) return row;
+    return Semantics(
+      button: true,
+      label: label,
+      excludeSemantics: true,
+      child: Pressable(scale: 0.99, onTap: onTap, child: row),
     );
   }
 }

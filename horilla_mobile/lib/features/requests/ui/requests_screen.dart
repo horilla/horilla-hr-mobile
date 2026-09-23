@@ -3,12 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-import '../../../core/theme/platform_chrome.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/app_primitives.dart';
 import '../data/request_models.dart';
 import '../data/requests_api.dart';
+import '../../../shared/widgets/app_top_bar.dart';
 
 enum _Filter { all, pending, closed }
 
@@ -30,34 +30,21 @@ class _RequestsScreenState extends ConsumerState<RequestsScreen> {
       backgroundColor: AppColors.bg,
       body: Column(
         children: [
-          Container(
-            width: double.infinity,
-            color: AppColors.surface,
-            padding: PlatformChrome.appBarPaddingOf(context),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text('Requests', style: AppText.appBarTitle),
-                ),
-                GestureDetector(
-                  onTap: () => context.push('/requests/payslips'),
-                  child: Text(
-                    'Payslips',
-                    style: AppText.meta.copyWith(
-                      color: AppColors.brandStrong,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ],
+          AppTopBar(
+            title: 'Requests',
+            trailing: TopBarAction(
+              label: 'Payslips',
+              onTap: () => context.push('/requests/payslips'),
             ),
           ),
           Expanded(
             child: RefreshIndicator(
               color: AppColors.brandStrong,
               onRefresh: () async => ref.refresh(requestInboxProvider.future),
-              child: _body(inbox.value ?? RequestInbox.empty,
-                  loading: inbox.value == null),
+              child: _body(
+                inbox.value ?? RequestInbox.empty,
+                loading: inbox.value == null,
+              ),
             ),
           ),
         ],
@@ -171,11 +158,11 @@ class _RequestRow extends StatelessWidget {
   }
 
   StatusTone _tone(RequestState state) => switch (state) {
-        RequestState.approved => StatusTone.success,
-        RequestState.rejected => StatusTone.danger,
-        RequestState.cancelled => StatusTone.neutral,
-        RequestState.pending => StatusTone.warning,
-      };
+    RequestState.approved => StatusTone.success,
+    RequestState.rejected => StatusTone.danger,
+    RequestState.cancelled => StatusTone.neutral,
+    RequestState.pending => StatusTone.warning,
+  };
 }
 
 class _FilterChip extends StatelessWidget {

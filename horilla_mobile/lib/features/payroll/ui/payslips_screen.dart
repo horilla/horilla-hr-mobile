@@ -4,13 +4,13 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/api/api_failure.dart';
-import '../../../core/theme/platform_chrome.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/app_primitives.dart';
 import '../../../shared/widgets/error_state_card.dart';
 import '../data/payroll_api.dart';
 import '../data/payroll_models.dart';
+import '../../../shared/widgets/app_top_bar.dart';
 
 class PayslipsScreen extends ConsumerWidget {
   const PayslipsScreen({super.key});
@@ -24,24 +24,7 @@ class PayslipsScreen extends ConsumerWidget {
       backgroundColor: AppColors.bg,
       body: Column(
         children: [
-          Container(
-            width: double.infinity,
-            color: AppColors.surface,
-            padding: PlatformChrome.appBarPaddingOf(context),
-            child: Row(
-              children: [
-                GestureDetector(
-                  onTap: () => context.pop(),
-                  child: const SizedBox(
-                    width: kMinHitTarget,
-                    height: 28,
-                    child: Icon(Icons.chevron_left, color: AppColors.ink),
-                  ),
-                ),
-                Text('Payslips', style: AppText.appBarTitle),
-              ],
-            ),
-          ),
+          AppTopBar(title: 'Payroll', onBack: () => context.pop()),
           Expanded(
             child: RefreshIndicator(
               color: AppColors.brandStrong,
