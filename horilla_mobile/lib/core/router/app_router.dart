@@ -19,7 +19,9 @@ import '../../features/auth/ui/sign_in_screen.dart';
 import '../../features/attendance/ui/attendance_screen.dart';
 import '../../features/employee/ui/directory_screen.dart';
 import '../../features/employee/ui/me_screen.dart';
+import '../../features/home/data/home_models.dart';
 import '../../features/home/ui/home_screen.dart';
+import '../../features/punch/ui/punch_screen.dart';
 import '../../features/leave/ui/leave_apply_screen.dart';
 import '../../features/leave/ui/leave_screen.dart';
 import '../../features/payroll/ui/payslip_detail_screen.dart';
@@ -70,8 +72,19 @@ GoRouter buildRouter({
       // Tab-bar-hidden, and outside the shell for that reason.
       GoRoute(
         path: '/punch',
-        builder: (context, state) =>
-            const PlaceholderScreen(title: 'Check out', dark: true),
+        builder: (context, state) {
+          // Passed as extra rather than re-fetched: home already knows the
+          // punch state and the fence, and a second fetch here would let the
+          // two screens disagree about which way the punch goes.
+          final args = state.extra;
+          return PunchScreen(
+            isClockingIn:
+                args is PunchArgs ? args.isClockingIn : true,
+            geofence: args is PunchArgs
+                ? args.geofence
+                : const GeofenceState(enabled: false),
+          );
+        },
       ),
 
       StatefulShellRoute.indexedStack(

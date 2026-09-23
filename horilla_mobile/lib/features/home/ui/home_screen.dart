@@ -10,6 +10,7 @@ import '../../../core/theme/tokens.dart';
 import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/app_primitives.dart';
 import '../../../shared/widgets/error_state_card.dart';
+import '../../punch/ui/punch_screen.dart';
 import '../data/home_api.dart';
 import '../data/home_models.dart';
 import 'home_sections.dart';
@@ -89,7 +90,14 @@ class _HomeBody extends StatelessWidget {
                 punch: data.punch,
                 geofence: data.geofence,
                 dateLabel: DateFormat('EEEE d MMMM').format(DateTime.now()),
-                onPunch: () => context.push('/punch'),
+                onPunch: () => context.push(
+                  '/punch',
+                  extra: PunchArgs(
+                    // Clocked in means the next action is out, and vice versa.
+                    isClockingIn: !data.punch.isClockedIn,
+                    geofence: data.geofence,
+                  ),
+                ),
                 onOpenAttendance: () => context.go('/time'),
               ),
               const SizedBox(height: AppSpace.x12),
