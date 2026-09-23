@@ -79,10 +79,11 @@ class _AttendanceBody extends StatelessWidget {
       children: [
         _HourAccountCard(account: data.hourAccount),
         const SizedBox(height: AppSpace.x20),
-        SectionHeader(
+        const SectionHeader(
           title: 'Activity',
-          actionLabel: 'Request correction',
-          onAction: () => context.go('/requests'),
+          // No action here: a correction needs a day, so it is raised by
+          // tapping the day itself rather than from a header that would have
+          // to ask which one.
         ),
         const SizedBox(height: AppSpace.x12),
         if (days.isEmpty)
@@ -173,7 +174,10 @@ class _ActivityRow extends StatelessWidget {
         ? '—'
         : '${day.clockIn} – ${day.clockOut ?? 'now'}';
 
-    return Padding(
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () => context.push('/time/correction', extra: day),
+      child: Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpace.x16,
         vertical: AppSpace.x12,
@@ -216,6 +220,7 @@ class _ActivityRow extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }

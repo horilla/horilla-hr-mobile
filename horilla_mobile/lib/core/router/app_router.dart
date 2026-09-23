@@ -16,7 +16,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/auth/ui/sign_in_screen.dart';
+import '../../features/attendance/data/attendance_models.dart';
 import '../../features/attendance/ui/attendance_screen.dart';
+import '../../features/attendance/ui/correction_screen.dart';
 import '../../features/employee/ui/directory_screen.dart';
 import '../../features/employee/ui/me_screen.dart';
 import '../../features/employee/ui/personal_info_screen.dart';
@@ -113,6 +115,18 @@ GoRouter buildRouter({
                 path: '/time',
                 builder: (context, state) => const AttendanceScreen(),
                 routes: [
+                  GoRoute(
+                    path: 'correction',
+                    builder: (context, state) {
+                      // The day comes from the row that was tapped; there is
+                      // no useful screen here without one.
+                      final day = state.extra;
+                      if (day is! AttendanceDay) {
+                        return const AttendanceScreen();
+                      }
+                      return CorrectionScreen(day: day);
+                    },
+                  ),
                   GoRoute(
                     path: 'leave',
                     builder: (context, state) => const LeaveScreen(),

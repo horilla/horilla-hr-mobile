@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/api/api_failure.dart';
 import '../../../core/auth/session.dart';
 import 'attendance_models.dart';
+import 'correction_models.dart';
 
 class AttendanceApi {
   AttendanceApi(this._dio);
@@ -39,6 +40,47 @@ class AttendanceApi {
       );
     } on DioException catch (e) {
       final failure = e.error;
+      throw failure is ApiFailure ? failure : const ApiUnknown();
+    }
+  }
+
+  /// Fetches one day in full, so a correction form can carry back the fields
+  /// the server's form requires but the list payload does not include.
+  Future<Map<String, dynamic>> fetchDay(int attendanceId) async {
+    try {
+      final response = await _dio.get<dynamic>(
+        '/attendance/my-attendance-detailed/$attendanceId/',
+      );
+      final body = response.data;
+      return body is Map<String, dynamic> ? body : const {};
+    } on DioException catch (e) {
+      final failure = e.error;
+      throw failure is ApiFailure ? failure : const ApiUnknown();
+    }
+  }
+
+  /// Submits a correction for an existing attendance day.
+  ///
+  /// This endpoint answers oddly and the mapping has to account for it: a
+  /// *validation* failure comes back as 404, not 400 (see
+  /// AttendanceRequestView.post). Left unhandled, a rejected correction would
+  /// tell the person "that is no longer available", sending them to look for
+  /// a missing record instead of at the field they got wrong.
+  Future<void> requestCorrection(AttendanceCorrection correction) async {
+    try {
+      await _dio.put<dynamic>(
+        '/attendance/attendance-request/${correction.attendanceId}',
+        data: correction.toJson(),
+      );
+    } on DioException catch (e) {
+      final failure = e.error;
+      if (failure is ApiNotFound) {
+        throw const ApiValidation(
+          {},
+          'The server rejected this correction. Check the times and try '
+          'again.',
+        );
+      }
       throw failure is ApiFailure ? failure : const ApiUnknown();
     }
   }
