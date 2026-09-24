@@ -84,8 +84,38 @@ class BiometricEnabledController extends Notifier<bool> {
   }
 }
 
+/// Decides which `resumed` events are a real return from the background.
+///
+/// Resume alone is not enough to re-lock on: presenting the native biometric
+/// prompt itself drives the app through `resumed` as its system UI
+/// dismisses, without the app ever reaching `paused` -- so re-locking on
+/// every `resumed` re-locks the instant a correct Face ID pass unlocks it,
+/// an immediate, unbreakable loop. Only a `resumed` that was preceded by
+/// real backgrounding (`paused`/`detached`) counts; pulled out as its own
+/// class so this exact regression has a test that needs no widget, no
+/// camera, and no biometric hardware.
+@visibleForTesting
+class ResumeGate {
+  bool _wasBackgrounded = false;
+
+  /// Returns true exactly on a `resumed` that follows `paused`/`detached`.
+  bool record(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.detached) {
+      _wasBackgrounded = true;
+      return false;
+    }
+    if (state == AppLifecycleState.resumed && _wasBackgrounded) {
+      _wasBackgrounded = false;
+      return true;
+    }
+    return false;
+  }
+}
+
 /// Wraps the whole signed-in app. Locks on first build and on every
-/// foreground resume when the toggle is on.
+/// foreground resume that follows genuine backgrounding, when the toggle is
+/// on.
 ///
 /// ponytail: no grace period after backgrounding -- a phone call or a quick
 /// app switch re-locks it same as a real cold start. Add a short grace
@@ -103,6 +133,7 @@ class BiometricGate extends ConsumerStatefulWidget {
 class _BiometricGateState extends ConsumerState<BiometricGate>
     with WidgetsBindingObserver {
   bool _locked = false;
+  final _resumeGate = ResumeGate();
 
   @override
   void initState() {
@@ -119,7 +150,7 @@ class _BiometricGateState extends ConsumerState<BiometricGate>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) _maybeLock();
+    if (_resumeGate.record(state)) _maybeLock();
   }
 
   void _maybeLock() {

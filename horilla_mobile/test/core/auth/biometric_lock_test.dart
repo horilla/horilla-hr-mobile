@@ -3,6 +3,7 @@
 /// on restore, and that toggling it both updates state and persists.
 library;
 
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:horilla_mobile/core/auth/biometric_lock.dart';
@@ -40,5 +41,43 @@ void main() {
 
     expect(container.read(biometricEnabledProvider), isTrue);
     expect(await BiometricStore().read(), isTrue);
+  });
+
+  group('ResumeGate', () {
+    // The actual bug: passing Face ID dismisses the native prompt, which
+    // drives the app through `resumed` without ever reaching `paused` --
+    // re-locking on that `resumed` re-locks the instant a correct pass
+    // unlocks it, an infinite loop reported live on a real device.
+    test('a resumed with no preceding paused does not count', () {
+      final gate = ResumeGate();
+      expect(gate.record(AppLifecycleState.inactive), isFalse);
+      expect(gate.record(AppLifecycleState.resumed), isFalse);
+    });
+
+    test('a resumed that follows real backgrounding does count', () {
+      final gate = ResumeGate();
+      expect(gate.record(AppLifecycleState.paused), isFalse);
+      expect(gate.record(AppLifecycleState.resumed), isTrue);
+    });
+
+    test('detached counts as backgrounding too', () {
+      final gate = ResumeGate();
+      expect(gate.record(AppLifecycleState.detached), isFalse);
+      expect(gate.record(AppLifecycleState.resumed), isTrue);
+    });
+
+    test('an inactive dip in the middle does not lose the paused flag', () {
+      final gate = ResumeGate();
+      expect(gate.record(AppLifecycleState.paused), isFalse);
+      expect(gate.record(AppLifecycleState.inactive), isFalse);
+      expect(gate.record(AppLifecycleState.resumed), isTrue);
+    });
+
+    test('a second resumed without a new paused does not double-count', () {
+      final gate = ResumeGate();
+      gate.record(AppLifecycleState.paused);
+      expect(gate.record(AppLifecycleState.resumed), isTrue);
+      expect(gate.record(AppLifecycleState.resumed), isFalse);
+    });
   });
 }
