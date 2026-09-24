@@ -11,6 +11,8 @@
 /// absence.
 library;
 
+import 'dart:ui' show SemanticsAction;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -129,8 +131,16 @@ void main() {
   testWidgets(
     'a completed check-out shows a confirmed state before the screen changes',
     (tester) async {
+      final semantics = tester.ensureSemantics();
       final fake = _FakePunchController();
+      try {
       await _pumpPunch(tester, fake);
+
+      // A sighted press must not be a tap action. On the phone that action
+      // fired as soon as the finger went down, clocking out before the bar
+      // finished, and the bar's own confirm then got "Already clocked-out".
+      final node = tester.getSemantics(find.byType(HoldToConfirmButton));
+      expect(node.getSemanticsData().hasAction(SemanticsAction.tap), isFalse);
 
       // Press and hold: completion is time-based on the animation, not on
       // the gesture ending, so advancing past holdFor is the hold.
@@ -159,6 +169,9 @@ void main() {
 
       // No further submit happened on the way out.
       expect(fake.submitCalls, 1);
+      } finally {
+        semantics.dispose();
+      }
     },
   );
 }

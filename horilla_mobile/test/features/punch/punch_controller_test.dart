@@ -6,8 +6,13 @@
 /// the part that decides whether someone is allowed to clock in.
 library;
 
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:horilla_mobile/core/api/api_client.dart';
+import 'package:horilla_mobile/core/api/api_failure.dart';
+import 'package:horilla_mobile/core/auth/session.dart';
+import 'package:horilla_mobile/core/auth/token_store.dart';
 import 'package:horilla_mobile/features/home/data/home_models.dart';
 import 'package:horilla_mobile/features/punch/data/location_service.dart';
 import 'package:horilla_mobile/features/punch/data/punch_controller.dart';
@@ -182,4 +187,100 @@ void main() {
     expect(preparation.fence, isNull);
     expect(preparation.canSubmit, isTrue);
   });
+
+  test('a clock-out the server saved, then rejected, still counts', () async {
+    final adapter = _ScriptedAdapter(
+      clockedInAfter: false,
+    );
+    final container = _submitContainer(adapter);
+    addTearDown(container.dispose);
+
+    await container.read(punchControllerProvider).submit(
+          const PunchPreparation(isClockingIn: false),
+        );
+
+    expect(adapter.clockOuts, 1);
+  });
+
+  test('already clocked-out while still in is still an error', () async {
+    final adapter = _ScriptedAdapter(clockedInAfter: true);
+    final container = _submitContainer(adapter);
+    addTearDown(container.dispose);
+
+    expect(
+      () => container.read(punchControllerProvider).submit(
+            const PunchPreparation(isClockingIn: false),
+          ),
+      throwsA(
+        isA<ApiUnknown>().having(
+          (e) => e.message,
+          'message',
+          'Already clocked-out',
+        ),
+      ),
+    );
+  });
+}
+
+class _MemoryTokens implements TokenStore {
+  @override
+  Future<void> clear() async {}
+
+  @override
+  Future<StoredSession?> read() async => null;
+
+  @override
+  Future<void> write(StoredSession session) async {}
+}
+
+ProviderContainer _submitContainer(_ScriptedAdapter adapter) {
+  final dio = Dio();
+  dio.httpClientAdapter = adapter;
+  return ProviderContainer(
+    overrides: [
+      apiClientProvider.overrideWithValue(
+        ApiClient(
+          tokenStore: _MemoryTokens(),
+          onSessionLost: () {},
+          dio: dio,
+        ),
+      ),
+    ],
+  );
+}
+
+/// Clock-out answers the lie the web view produces; home says whether the
+/// punch is actually still open.
+class _ScriptedAdapter implements HttpClientAdapter {
+  _ScriptedAdapter({required this.clockedInAfter});
+
+  final bool clockedInAfter;
+  int clockOuts = 0;
+
+  @override
+  void close({bool force = false}) {}
+
+  @override
+  Future<ResponseBody> fetch(
+    RequestOptions options,
+    Stream<List<int>>? requestStream,
+    Future<void>? cancelFuture,
+  ) async {
+    final headers = {
+      Headers.contentTypeHeader: [Headers.jsonContentType],
+    };
+    if (options.uri.path.contains('clock-out')) {
+      clockOuts++;
+      return ResponseBody.fromString(
+        '{"message":"Already clocked-out"}',
+        400,
+        headers: headers,
+      );
+    }
+    return ResponseBody.fromString(
+      '{"punch":{"is_clocked_in":$clockedInAfter}}',
+      200,
+      headers: headers,
+    );
+  }
 }

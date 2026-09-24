@@ -118,12 +118,34 @@ class PunchController {
       );
     } on DioException catch (e) {
       final failure = e.error;
-      throw failure is ApiFailure ? failure : const ApiUnknown();
+      final apiFailure = failure is ApiFailure ? failure : const ApiUnknown();
+      // Clock-out's API calls the web view. That view writes the punch, then
+      // renders an HTML fragment on a request that has no cookies, and the
+      // render throws. The API reports that throw as 400 "Already clocked-out"
+      // even though the punch was just saved — which is the banner people see
+      // when the hold finishes. Whether they are still clocked in is the fact.
+      final savedDespiteError = !preparation.isClockingIn &&
+          apiFailure.message == 'Already clocked-out' &&
+          !await _stillClockedIn();
+      if (!savedDespiteError) throw apiFailure;
     }
 
     // Home and attendance both show punch state; neither is right any more.
     _ref.invalidate(homeProvider);
     _ref.invalidate(attendanceOverviewProvider);
+  }
+
+  /// True when a fresh home read still has an open punch.
+  ///
+  /// A failed read stays "still in": claiming a checkout we could not confirm
+  /// is worse than leaving the error on screen.
+  Future<bool> _stillClockedIn() async {
+    try {
+      final home = await _ref.read(homeApiProvider).fetch();
+      return home.punch.isClockedIn;
+    } on ApiFailure {
+      return true;
+    }
   }
 }
 

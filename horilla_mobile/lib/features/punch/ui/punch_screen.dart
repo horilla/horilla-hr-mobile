@@ -78,7 +78,14 @@ class _PunchScreenState extends ConsumerState<PunchScreen> {
 
   Future<void> _submit() async {
     final preparation = _preparation;
-    if (preparation == null || !preparation.canSubmit || _submitting) return;
+    // _confirmedAt: the punch already landed. A late second call from the
+    // same hold must not surface "Already clocked-out" over the success.
+    if (preparation == null ||
+        !preparation.canSubmit ||
+        _submitting ||
+        _confirmedAt != null) {
+      return;
+    }
 
     setState(() {
       _submitting = true;
@@ -104,8 +111,11 @@ class _PunchScreenState extends ConsumerState<PunchScreen> {
     } on ApiFailure catch (failure) {
       // Stays on screen, in words, until acted on: the punch did not
       // register, and a toast that scrolls away is how people go home
-      // believing it did.
-      if (mounted) setState(() => _error = failure.message);
+      // believing it did. A success that already landed wins over a late
+      // "already clocked out" from a second call on the same hold.
+      if (mounted && _confirmedAt == null) {
+        setState(() => _error = failure.message);
+      }
     } finally {
       if (mounted) setState(() => _submitting = false);
     }

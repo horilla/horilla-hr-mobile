@@ -37,11 +37,23 @@ class _HoldToConfirmButtonState extends State<HoldToConfirmButton>
   late final AnimationController _progress =
       AnimationController(vsync: this, duration: widget.holdFor)
         ..addStatusListener((status) {
-          if (status == AnimationStatus.completed) {
-            _progress.value = 0;
-            widget.onConfirmed();
-          }
+          if (status == AnimationStatus.completed) _confirm();
         });
+
+  /// One press, one confirm. A second call from the same press — the
+  /// accessibility click a device sends alongside the finger, then the bar
+  /// finishing — is what checked out early and then failed with
+  /// "Already clocked-out".
+  bool _fired = false;
+
+  @override
+  void didUpdateWidget(HoldToConfirmButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // The parent disables the button for the request and re-enables it only
+    // after a failure. That re-enable is the retry; a success removes the
+    // button entirely.
+    if (widget.enabled && !oldWidget.enabled) _fired = false;
+  }
 
   @override
   void dispose() {
@@ -50,7 +62,7 @@ class _HoldToConfirmButtonState extends State<HoldToConfirmButton>
   }
 
   void _start() {
-    if (widget.enabled) _progress.forward(from: 0);
+    if (widget.enabled && !_fired) _progress.forward(from: 0);
   }
 
   void _cancel() {
@@ -59,14 +71,25 @@ class _HoldToConfirmButtonState extends State<HoldToConfirmButton>
     if (_progress.isAnimating) _progress.value = 0;
   }
 
+  void _confirm() {
+    if (_fired || !widget.enabled) return;
+    _fired = true;
+    _progress.value = 0;
+    widget.onConfirmed();
+  }
+
   @override
   Widget build(BuildContext context) {
+    // A finger uses the hold. A screen reader cannot hold, so it gets a
+    // plain activate — and only then. Leaving the tap action on for everyone
+    // made the press itself check out, and the completed bar check out again.
+    final screenReader = MediaQuery.accessibleNavigationOf(context);
     return Semantics(
       button: true,
       enabled: widget.enabled,
       label: widget.label,
       excludeSemantics: true,
-      onTap: widget.enabled ? widget.onConfirmed : null,
+      onTap: screenReader && widget.enabled && !_fired ? _confirm : null,
       child: GestureDetector(
         onTapDown: (_) => _start(),
         onTapUp: (_) => _cancel(),
