@@ -22,6 +22,8 @@ import '../../features/attendance/ui/correction_screen.dart';
 import '../../features/employee/ui/directory_screen.dart';
 import '../../features/employee/ui/me_screen.dart';
 import '../../features/employee/ui/personal_info_screen.dart';
+import '../../features/facedetection/ui/face_enrolment_screen.dart';
+import '../../features/facedetection/ui/face_presence_gate.dart';
 import '../../features/home/data/home_models.dart';
 import '../../features/home/ui/home_screen.dart';
 import '../../features/punch/ui/punch_screen.dart';
@@ -92,6 +94,12 @@ GoRouter buildRouter({
             clockInTime: args is PunchArgs ? args.clockInTime : null,
           );
         },
+        routes: [
+          GoRoute(
+            path: 'face-check',
+            builder: (context, state) => const FacePresenceGate(),
+          ),
+        ],
       ),
 
       StatefulShellRoute.indexedStack(
@@ -228,6 +236,10 @@ GoRouter buildRouter({
                   GoRoute(
                     path: 'personal-information',
                     builder: (context, state) => const PersonalInfoScreen(),
+                  ),
+                  GoRoute(
+                    path: 'face-enrolment',
+                    builder: (context, state) => const FaceEnrolmentScreen(),
                   ),
                 ],
               ),

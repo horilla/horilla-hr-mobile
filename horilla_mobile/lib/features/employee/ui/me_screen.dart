@@ -118,6 +118,13 @@ class MeScreen extends ConsumerWidget {
                         label: 'Notifications',
                         onTap: () => context.go('/home/notifications'),
                       ),
+                      if (session != null && session.faceDetectionEnabled) ...[
+                        const Divider(height: 1, color: AppColors.line2),
+                        _Row(
+                          label: 'Face ID enrolment',
+                          onTap: () => context.push('/me/face-enrolment'),
+                        ),
+                      ],
                       if (biometricAvailable) ...[
                         const Divider(height: 1, color: AppColors.line2),
                         _SwitchRow(

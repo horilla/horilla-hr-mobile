@@ -37,6 +37,10 @@ dependencies:
 
   local_auth: ^2.3.0          # biometric re-entry gate, not an auth factor
   geolocator: ^14.0.2         # coordinates sent with a punch
+  camera: ^0.11.2             # face enrolment photo, and the punch-time presence gate
+  google_mlkit_face_detection: ^0.13.1 # on-device only -- detects a face is
+                                        # present, never whose (no server-side
+                                        # matching exists)
   cached_network_image: ^3.4.1
   intl: ^0.20.2
   package_info_plus: ^8.3.1
@@ -53,6 +57,9 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  # Only for InMemorySharedPreferencesAsync in tests -- shared_preferences
+  # itself already depends on this transitively.
+  shared_preferences_platform_interface: ^2.4.2
 
 flutter:
   uses-material-design: true

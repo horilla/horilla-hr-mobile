@@ -10,7 +10,10 @@ plugins {
 android {
     namespace = "com.cybrosys.horilla_project"
     compileSdk = 36
-    ndkVersion = "27.0.12077973"
+    // camera_android_camerax, google_mlkit_* and several other plugins all
+    // require this NDK; the flutter tool prints the exact version to pin
+    // whenever a build mixes an older one in.
+    ndkVersion = "28.2.13676358"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/api/api_failure.dart';
+import '../../../core/auth/session.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_top_bar.dart';
@@ -74,6 +75,20 @@ class _PunchScreenState extends ConsumerState<PunchScreen> {
         .read(punchControllerProvider)
         .prepare(isClockingIn: widget.isClockingIn, geofence: widget.geofence);
     if (mounted) setState(() => _preparation = preparation);
+  }
+
+  /// Runs the presence check first when the server has face detection on
+  /// for this company -- a liveness-style nudge, not a security control (see
+  /// FacePresenceGate). Camera failure or a declined permission still lets
+  /// the punch through via that screen's own skip button, so hardware never
+  /// blocks the one action this whole screen exists for.
+  Future<void> _confirmThenSubmit() async {
+    final session = ref.read(sessionProvider);
+    if (session != null && session.faceDetectionEnabled) {
+      final confirmed = await context.push<bool>('/punch/face-check');
+      if (confirmed != true) return;
+    }
+    await _submit();
   }
 
   Future<void> _submit() async {
@@ -207,14 +222,14 @@ class _PunchScreenState extends ConsumerState<PunchScreen> {
                     AppButton(
                       label: _submitting ? 'Recording…' : 'Check in',
                       tone: AppButtonTone.onDark,
-                      onPressed: ready ? _submit : null,
+                      onPressed: ready ? _confirmThenSubmit : null,
                     )
                   else ...[
                     HoldToConfirmButton(
                       label: _submitting ? 'Recording…' : 'Hold to check out',
                       holdingLabel: 'Keep holding…',
                       enabled: ready,
-                      onConfirmed: _submit,
+                      onConfirmed: _confirmThenSubmit,
                     ),
                     const SizedBox(height: AppSpace.x12),
                     Text(
