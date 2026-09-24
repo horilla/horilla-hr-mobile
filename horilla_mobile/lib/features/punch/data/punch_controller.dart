@@ -104,7 +104,7 @@ class PunchController {
         : '/attendance/clock-out/';
 
     try {
-      await dio.post<dynamic>(
+      final response = await dio.post<dynamic>(
         path,
         data: {
           // Sent when there is a fence; the server re-checks them and is the
@@ -116,6 +116,13 @@ class PunchController {
           },
         },
       );
+      // Clock-in answers 200 with {"error": "..."} when the employee has no
+      // work information. That is a refusal, not a saved punch.
+      final body = response.data;
+      final refused = body is Map ? body['error'] : null;
+      if (refused is String && refused.trim().isNotEmpty) {
+        throw ApiUnknown(refused.trim());
+      }
     } on DioException catch (e) {
       final failure = e.error;
       final apiFailure = failure is ApiFailure ? failure : const ApiUnknown();

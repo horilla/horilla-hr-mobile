@@ -6,6 +6,8 @@
 /// the part that decides whether someone is allowed to clock in.
 library;
 
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -202,6 +204,28 @@ void main() {
     expect(adapter.clockOuts, 1);
   });
 
+  test('a 200 body with an error is not a saved punch', () async {
+    final adapter = _ScriptedAdapter(
+      clockedInAfter: false,
+      clockInError: "You Don't have work information filled",
+    );
+    final container = _submitContainer(adapter);
+    addTearDown(container.dispose);
+
+    expect(
+      () => container.read(punchControllerProvider).submit(
+            const PunchPreparation(isClockingIn: true),
+          ),
+      throwsA(
+        isA<ApiUnknown>().having(
+          (e) => e.message,
+          'message',
+          "You Don't have work information filled",
+        ),
+      ),
+    );
+  });
+
   test('already clocked-out while still in is still an error', () async {
     final adapter = _ScriptedAdapter(clockedInAfter: true);
     final container = _submitContainer(adapter);
@@ -252,9 +276,10 @@ ProviderContainer _submitContainer(_ScriptedAdapter adapter) {
 /// Clock-out answers the lie the web view produces; home says whether the
 /// punch is actually still open.
 class _ScriptedAdapter implements HttpClientAdapter {
-  _ScriptedAdapter({required this.clockedInAfter});
+  _ScriptedAdapter({required this.clockedInAfter, this.clockInError});
 
   final bool clockedInAfter;
+  final String? clockInError;
   int clockOuts = 0;
 
   @override
@@ -269,6 +294,13 @@ class _ScriptedAdapter implements HttpClientAdapter {
     final headers = {
       Headers.contentTypeHeader: [Headers.jsonContentType],
     };
+    if (clockInError != null && options.uri.path.contains('clock-in')) {
+      return ResponseBody.fromString(
+        '{"error":${jsonEncode(clockInError)}}',
+        200,
+        headers: headers,
+      );
+    }
     if (options.uri.path.contains('clock-out')) {
       clockOuts++;
       return ResponseBody.fromString(
