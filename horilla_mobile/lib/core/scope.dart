@@ -1,10 +1,11 @@
 /// Which modules this build ships.
 ///
 /// Scope was deliberately narrowed (2026-09) to the three modules the product
-/// needs solid first: **attendance, leave and employee management**. Payroll
-/// and the general requests inbox are built and tested but switched off,
-/// because a half-attended module in the tab bar invites use before it is
-/// ready.
+/// needs solid first: **attendance, leave and employee management**. Payslips
+/// are on: the list and the detail are the next piece of that daily loop.
+/// The requests inbox stays off — its create screens (shift, asset,
+/// reimbursement) are not built, and a tab you cannot add to invites use
+/// before it is ready. Payslips are opened from Home, not from that tab.
 ///
 /// This is a flag rather than commented-out code on purpose. Commented code
 /// stops compiling, drifts from the APIs around it and is miserable to
@@ -28,8 +29,8 @@ abstract final class Modules {
 
   // --- deferred -----------------------------------------------------------
 
-  /// Payslips and payslip detail. Built; see features/payroll.
-  static const payroll = false;
+  /// Payslips and payslip detail. Opened from Home.
+  static const payroll = true;
 
   /// The merged shift / work-type / asset / reimbursement inbox.
   /// Built; see features/requests.

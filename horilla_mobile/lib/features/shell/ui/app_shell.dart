@@ -50,10 +50,10 @@ class AppShell extends StatelessWidget {
         // The bar counts its own tabs; the shell counts all branches. Mapping
         // between the two here is what lets a module be switched off without
         // renumbering every branch in the router.
-        currentIndex: visible.indexOf(navigationShell.currentIndex).clamp(
-              0,
-              visible.length - 1,
-            ),
+        // -1 when the screen lives on a branch with no tab (payslips, while
+        // the Requests tab is still off). Clamping that to 0 would light
+        // Home while the person is looking at a payslip.
+        currentIndex: visible.indexOf(navigationShell.currentIndex),
         items: visibleItems,
         onSelected: (tabIndex) {
           final branchIndex = visible[tabIndex];

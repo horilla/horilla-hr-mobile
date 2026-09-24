@@ -21,12 +21,18 @@ class PayslipDetailScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final payslip = ref.watch(payslipProvider(payslipId));
     final symbol = ref.watch(currencySymbolProvider);
+    final loaded = payslip.value;
 
     return Scaffold(
       backgroundColor: AppColors.bg,
       body: Column(
         children: [
-          AppTopBar(title: 'Payslip', onBack: () => context.pop()),
+          AppTopBar(
+            title: loaded == null
+                ? 'Payslip'
+                : DateFormat('MMMM yyyy').format(loaded.summary.endDate),
+            onBack: () => context.pop(),
+          ),
           Expanded(child: _body(ref, payslip, symbol)),
         ],
       ),
@@ -74,17 +80,22 @@ class _DetailBody extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              EyebrowLabel(
-                '${DateFormat('d MMM').format(summary.startDate)} – '
-                '${DateFormat('d MMM yyyy').format(summary.endDate)}',
-              ),
+              const EyebrowLabel('Net pay'),
               const SizedBox(height: AppSpace.x10),
               Text(
                 Money(summary.netPay, symbol: symbol).formatted,
                 style: AppText.heroNumber,
               ),
-              const SizedBox(height: AppSpace.x6),
-              Text('Net pay', style: AppText.meta),
+              if (summary.daysLine != null || summary.bankLast4 != null) ...[
+                const SizedBox(height: AppSpace.x6),
+                Text(
+                  [
+                    if (summary.daysLine != null) summary.daysLine!,
+                    if (summary.bankLast4 != null) '••${summary.bankLast4}',
+                  ].join(' · '),
+                  style: AppText.meta,
+                ),
+              ],
             ],
           ),
         ),

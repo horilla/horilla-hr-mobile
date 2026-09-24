@@ -150,6 +150,42 @@ void main() {
       expect(detail.summary.netPay, 86420.0);
     });
 
+    test('paid days, LOP and the bank mask come from the payload', () {
+      final summary = PayslipSummary.fromJson(
+        body(
+          payHead: {'paid_days': 21, 'unpaid_days': 0},
+        )..['bank_account_check_number'] = 'HDFC00004821',
+      )!;
+
+      expect(summary.daysLine, 'Paid days 21 · LOP 0');
+      expect(summary.bankLast4, '4821');
+    });
+
+    test('a short account number is not masked into a guess', () {
+      final summary = PayslipSummary.fromJson(
+        body()..['bank_account_check_number'] = '12',
+      )!;
+      expect(summary.bankLast4, isNull);
+      expect(summary.daysLine, isNull);
+    });
+
+    test('tax and net deduction buckets are part of the one list', () {
+      final detail = PayslipDetail.fromJson(
+        body(
+          payHead: {
+            'tax_deductions': [
+              {'title': 'Federal tax', 'amount': 9260},
+            ],
+            'net_deductions': [
+              {'title': 'Loan', 'amount': 1000},
+            ],
+          },
+        ),
+      )!;
+
+      expect(detail.deductions.map((d) => d.title), ['Federal tax', 'Loan']);
+    });
+
     test('a malformed component is skipped, not rendered blank', () {
       final detail = PayslipDetail.fromJson(
         body(

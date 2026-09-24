@@ -24,7 +24,11 @@ class PayslipsScreen extends ConsumerWidget {
       backgroundColor: AppColors.bg,
       body: Column(
         children: [
-          AppTopBar(title: 'Payroll', onBack: () => context.pop()),
+          AppTopBar(
+            title: 'Payroll',
+            onBack: () =>
+                context.canPop() ? context.pop() : context.go('/home'),
+          ),
           Expanded(
             child: RefreshIndicator(
               color: AppColors.brandStrong,
@@ -147,6 +151,13 @@ class _LatestPayslipHero extends StatelessWidget {
               Money(payslip.netPay, symbol: symbol).formatted,
               style: AppText.heroNumber.copyWith(color: AppColors.surface),
             ),
+            const SizedBox(height: AppSpace.x4),
+            Text(
+              payslip.bankLast4 == null
+                  ? 'Net pay'
+                  : 'Net pay · ••${payslip.bankLast4}',
+              style: AppText.meta.copyWith(color: AppColors.onDark2),
+            ),
             const SizedBox(height: AppSpace.x18),
             Row(
               children: [
@@ -227,9 +238,18 @@ class _PayslipRow extends StatelessWidget {
         child: Row(
           children: [
             Expanded(
-              child: Text(
-                DateFormat('MMMM yyyy').format(payslip.endDate),
-                style: AppText.cardTitle.copyWith(fontSize: 14),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    DateFormat('MMMM yyyy').format(payslip.endDate),
+                    style: AppText.cardTitle.copyWith(fontSize: 14),
+                  ),
+                  if (payslip.daysLine != null) ...[
+                    const SizedBox(height: 2),
+                    Text(payslip.daysLine!, style: AppText.meta),
+                  ],
+                ],
               ),
             ),
             Text(

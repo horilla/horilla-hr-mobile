@@ -68,6 +68,9 @@ class PayslipSummary {
     required this.grossPay,
     required this.deduction,
     this.status,
+    this.paidDays,
+    this.unpaidDays,
+    this.bankLast4,
   });
 
   final int id;
@@ -78,6 +81,14 @@ class PayslipSummary {
   final double deduction;
   final String? status;
 
+  /// From `pay_head_data`. Absent when the server did not compute them.
+  final double? paidDays;
+  final double? unpaidDays;
+
+  /// Last four digits only. The API sends the whole account number; the rest
+  /// is dropped here so a payslip never holds it.
+  final String? bankLast4;
+
   static PayslipSummary? fromJson(Object? value) {
     if (value is! Map<String, dynamic>) return null;
     final start = value['start_date'];
@@ -85,6 +96,9 @@ class PayslipSummary {
     final startDate = start is String ? DateTime.tryParse(start) : null;
     final endDate = end is String ? DateTime.tryParse(end) : null;
     if (startDate == null || endDate == null) return null;
+
+    final head = value['pay_head_data'];
+    final data = head is Map ? head : const {};
 
     return PayslipSummary(
       id: value['id'] is int ? value['id'] as int : 0,
@@ -94,7 +108,20 @@ class PayslipSummary {
       grossPay: _toDouble(value['gross_pay']) ?? 0,
       deduction: _toDouble(value['deduction']) ?? 0,
       status: value['status'] is String ? value['status'] as String : null,
+      paidDays: _toDouble(data['paid_days']),
+      unpaidDays: _toDouble(data['unpaid_days']),
+      bankLast4: _last4(value['bank_account_check_number']),
     );
+  }
+
+  /// "Paid days 21 · LOP 0", or null when the server sent neither number.
+  String? get daysLine {
+    if (paidDays == null && unpaidDays == null) return null;
+    final parts = <String>[
+      if (paidDays != null) 'Paid days ${_days(paidDays!)}',
+      if (unpaidDays != null) 'LOP ${_days(unpaidDays!)}',
+    ];
+    return parts.join(' · ');
   }
 }
 
@@ -131,6 +158,8 @@ class PayslipDetail {
         ..._components(data['gross_pay_deductions']),
         ..._components(data['pretax_deductions']),
         ..._components(data['post_tax_deductions']),
+        ..._components(data['tax_deductions']),
+        ..._components(data['net_deductions']),
       ],
       basicPay: _toDouble(value['basic_pay']),
       contractWage: _toDouble(value['contract_wage']),
@@ -142,6 +171,17 @@ class PayslipDetail {
     return value.map(PayComponent.fromJson).whereType<PayComponent>().toList();
   }
 }
+
+/// Last four digits of an account number. Anything shorter is not a mask.
+String? _last4(Object? value) {
+  if (value is! String) return null;
+  final digits = value.replaceAll(RegExp(r'\D'), '');
+  if (digits.length < 4) return null;
+  return digits.substring(digits.length - 4);
+}
+
+String _days(double value) =>
+    value == value.roundToDouble() ? value.round().toString() : '$value';
 
 double? _toDouble(Object? value) => switch (value) {
       final double d => d,

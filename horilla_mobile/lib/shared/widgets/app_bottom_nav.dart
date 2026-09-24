@@ -47,8 +47,11 @@ class AppBottomNav extends StatelessWidget {
             // an int and cannot animate; the handoff eases the width change
             // over 280 ms.
             final n = items.length;
-            final unit =
-                (constraints.maxWidth - _gap * (n - 1)) / (n - 1 + _activeFlex);
+            final active = currentIndex >= 0 && currentIndex < n;
+            final unit = active
+                ? (constraints.maxWidth - _gap * (n - 1)) /
+                      (n - 1 + _activeFlex)
+                : (constraints.maxWidth - _gap * (n - 1)) / n;
             return Row(
               children: [
                 for (var i = 0; i < n; i++) ...[
