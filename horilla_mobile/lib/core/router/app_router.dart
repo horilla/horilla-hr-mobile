@@ -31,7 +31,10 @@ import '../../features/leave/ui/leave_screen.dart';
 import '../../features/notifications/ui/notifications_screen.dart';
 import '../../features/payroll/ui/payslip_detail_screen.dart';
 import '../../features/payroll/ui/payslips_screen.dart';
+import '../../features/requests/ui/asset_request_screen.dart';
+import '../../features/requests/ui/reimburse_screen.dart';
 import '../../features/requests/ui/requests_screen.dart';
+import '../../features/requests/ui/shift_request_screen.dart';
 import '../../features/shell/ui/app_shell.dart';
 import '../scope.dart';
 import '../../shared/widgets/not_in_this_build_screen.dart';
@@ -178,6 +181,29 @@ GoRouter buildRouter({
                             : const NotInThisBuildScreen(title: 'Payslip'),
                       ),
                     ],
+                  ),
+                  GoRoute(
+                    path: 'shift-request',
+                    builder: (context, state) => const ShiftRequestScreen(),
+                  ),
+                  GoRoute(
+                    path: 'asset',
+                    builder: (context, state) => const AssetRequestScreen(),
+                  ),
+                  GoRoute(
+                    path: 'reimburse',
+                    builder: (context, state) => const ReimburseScreen(),
+                  ),
+                  // Helpdesk and the ticket thread live here per the
+                  // handoff's nav model, but neither is built -- Modules.
+                  // helpdesk is not consulted because there is no real screen
+                  // yet for it to select. The route exists so a deep link
+                  // here (a push notification, say) explains itself instead
+                  // of the router reporting no match at all.
+                  GoRoute(
+                    path: 'helpdesk',
+                    builder: (context, state) =>
+                        const NotInThisBuildScreen(title: 'Helpdesk'),
                   ),
                 ],
               ),

@@ -85,29 +85,15 @@ void main() {
     handle.dispose();
   });
 
-  testWidgets('a switched-off module is not reachable by tab', (tester) async {
-    final handle = tester.ensureSemantics();
-    await pumpAt(tester, '/home');
-
-    expect(Modules.requests, isFalse, reason: 'guards the assertion below');
-    // A text search would pass vacuously now that inactive tabs show no
-    // text; the semantics label is present on every tab that exists.
-    expect(
-      find.descendant(
-        of: find.byType(AppBottomNav),
-        matching: find.bySemanticsLabel('Requests'),
-      ),
-      findsNothing,
-    );
-    handle.dispose();
-  });
-
   testWidgets('deep-linking into a switched-off module explains itself', (
     tester,
   ) async {
     // A push notification from a server whose modules do not match the app is
-    // exactly how someone lands here; it must not be a blank screen.
-    await pumpAt(tester, '/requests');
+    // exactly how someone lands here; it must not be a blank screen. Payroll
+    // and requests both widened back on once their screens were built, so
+    // helpdesk -- not built at all -- is what still has a stub for this.
+    expect(Modules.helpdesk, isFalse, reason: 'guards the assertion below');
+    await pumpAt(tester, '/requests/helpdesk');
 
     expect(find.text('NOT AVAILABLE YET'), findsOneWidget);
   });

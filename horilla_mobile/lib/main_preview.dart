@@ -204,6 +204,24 @@ final _sampleRequests = RequestInbox(
   ],
 );
 
+const _sampleShifts = [
+  RequestOption(id: 1, name: 'Day shift'),
+  RequestOption(id: 2, name: 'Night shift'),
+  RequestOption(id: 3, name: 'Rotational'),
+];
+
+const _sampleWorkTypes = [
+  RequestOption(id: 1, name: 'Work from office'),
+  RequestOption(id: 2, name: 'Work from home'),
+  RequestOption(id: 3, name: 'Hybrid'),
+];
+
+const _sampleAssetCategories = [
+  AssetCategoryOption(id: 1, name: 'Laptops', available: 4),
+  AssetCategoryOption(id: 2, name: 'Headphones', available: 12),
+  AssetCategoryOption(id: 3, name: 'Monitors', available: 0),
+];
+
 const _sampleDirectory = [
   DirectoryEntry(
     id: 1,
@@ -277,6 +295,10 @@ void main() {
         notificationInboxProvider
             .overrideWith((ref) async => _sampleNotifications),
         requestInboxProvider.overrideWith((ref) async => _sampleRequests),
+        shiftOptionsProvider.overrideWith((ref) async => _sampleShifts),
+        workTypeOptionsProvider.overrideWith((ref) async => _sampleWorkTypes),
+        assetCategoryOptionsProvider
+            .overrideWith((ref) async => _sampleAssetCategories),
         payslipsProvider.overrideWith((ref) async => _samplePayslips),
         payslipProvider.overrideWith(
           (ref, id) async => PayslipDetail(

@@ -6,9 +6,10 @@ import 'package:intl/intl.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/app_primitives.dart';
+import '../../../shared/widgets/app_top_bar.dart';
+import '../../../shared/widgets/pressable.dart';
 import '../data/request_models.dart';
 import '../data/requests_api.dart';
-import '../../../shared/widgets/app_top_bar.dart';
 
 enum _Filter { all, pending, closed }
 
@@ -32,9 +33,16 @@ class _RequestsScreenState extends ConsumerState<RequestsScreen> {
         children: [
           AppTopBar(
             title: 'Requests',
-            trailing: TopBarAction(
-              label: 'Payslips',
-              onTap: () => context.push('/requests/payslips'),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TopBarAction(
+                  label: 'Payslips',
+                  onTap: () => context.push('/requests/payslips'),
+                ),
+                const SizedBox(width: AppSpace.x8),
+                _NewRequestButton(onTap: () => _openCreateSheet(context)),
+              ],
             ),
           ),
           Expanded(
@@ -109,6 +117,153 @@ class _RequestsScreenState extends ConsumerState<RequestsScreen> {
             ),
           ),
       ],
+    );
+  }
+
+  void _openCreateSheet(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: AppColors.surface,
+      showDragHandle: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadii.hero)),
+      ),
+      builder: (sheetContext) => SafeArea(
+        top: false,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpace.x20,
+            0,
+            AppSpace.x20,
+            AppSpace.x20,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'What do you need?',
+                style: AppText.appBarTitle.copyWith(fontSize: 18),
+              ),
+              const SizedBox(height: AppSpace.x16),
+              _CreateOption(
+                icon: Icons.schedule_outlined,
+                title: 'Shift / work type',
+                subtitle: 'Swap or change your work type',
+                onTap: () {
+                  Navigator.of(sheetContext).pop();
+                  context.push('/requests/shift-request');
+                },
+              ),
+              const SizedBox(height: AppSpace.x10),
+              _CreateOption(
+                icon: Icons.receipt_long_outlined,
+                title: 'Reimbursement',
+                subtitle: 'Claim an expense',
+                onTap: () {
+                  Navigator.of(sheetContext).pop();
+                  context.push('/requests/reimburse');
+                },
+              ),
+              const SizedBox(height: AppSpace.x10),
+              _CreateOption(
+                icon: Icons.devices_outlined,
+                title: 'Asset',
+                subtitle: 'Laptop, monitor…',
+                onTap: () {
+                  Navigator.of(sheetContext).pop();
+                  context.push('/requests/asset');
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _NewRequestButton extends StatelessWidget {
+  const _NewRequestButton({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      label: 'New request',
+      excludeSemantics: true,
+      child: Pressable(
+        onTap: onTap,
+        child: Container(
+          width: 32,
+          height: 32,
+          decoration: BoxDecoration(
+            color: AppColors.brandStrong,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: const Icon(Icons.add, size: 18, color: AppColors.surface),
+        ),
+      ),
+    );
+  }
+}
+
+class _CreateOption extends StatelessWidget {
+  const _CreateOption({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      label: '$title, $subtitle',
+      excludeSemantics: true,
+      child: Pressable(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.all(AppSpace.x14),
+          decoration: BoxDecoration(
+            color: AppColors.bg2,
+            borderRadius: BorderRadius.circular(AppRadii.card),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(AppRadii.iconTile),
+                ),
+                child: Icon(icon, size: 20, color: AppColors.brandStrong),
+              ),
+              const SizedBox(width: AppSpace.x12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title, style: AppText.cardTitle.copyWith(fontSize: 14)),
+                    const SizedBox(height: 2),
+                    Text(subtitle, style: AppText.meta),
+                  ],
+                ),
+              ),
+              const Icon(Icons.chevron_right, color: AppColors.ink4),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
