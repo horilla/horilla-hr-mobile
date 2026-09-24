@@ -107,6 +107,17 @@ void main() {
     expect(find.text('Onam'), findsOneWidget);
   });
 
+  testWidgets('comp-off shows as a card, not hidden, while unbuilt', (
+    tester,
+  ) async {
+    await pumpLeave(tester, load: () async => sample());
+
+    // Modules.compOff is false in this build -- the card should still be
+    // visible, just non-interactive, rather than absent entirely.
+    expect(find.text('Comp-off'), findsOneWidget);
+    expect(find.text('Coming soon'), findsOneWidget);
+  });
+
   testWidgets('a status is shown per request, in its own tone', (tester) async {
     await pumpLeave(tester, load: () async => sample());
 

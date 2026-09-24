@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/api/api_failure.dart';
+import '../../../core/scope.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_card.dart';
@@ -119,6 +120,10 @@ class _LeaveBody extends StatelessWidget {
             ],
           ),
         ),
+        if (!Modules.compOff) ...[
+          const SizedBox(height: AppSpace.x12),
+          const _CompOffCard(),
+        ],
 
         const SizedBox(height: AppSpace.x20),
         _Heading('My requests'),
@@ -165,6 +170,42 @@ class _Heading extends StatelessWidget {
       style: AppText.cardTitle.copyWith(fontSize: 13.5, color: AppColors.ink2),
     ),
   );
+}
+
+/// Visible but non-interactive: `CompensatoryLeaveRequest` exists on the
+/// server, but there is no REST route for it at all, so there is nothing
+/// this card could actually call yet. Shown rather than hidden so the
+/// feature is not a surprise once [Modules.compOff] flips on.
+class _CompOffCard extends StatelessWidget {
+  const _CompOffCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return AppCard(
+      padding: const EdgeInsets.all(AppSpace.x16),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Comp-off',
+                  style: AppText.cardTitle.copyWith(
+                    fontSize: 14,
+                    color: AppColors.ink3,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text('Encash extra hours worked', style: AppText.meta),
+              ],
+            ),
+          ),
+          Text('Coming soon', style: AppText.meta),
+        ],
+      ),
+    );
+  }
 }
 
 /// Colour per leave type, cycled in the handoff's order.

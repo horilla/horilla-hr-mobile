@@ -41,4 +41,11 @@ abstract final class Modules {
 
   /// Objectives, feedback, meetings. Not built.
   static const performance = false;
+
+  /// Comp-off (encashing extra hours worked). `CompensatoryLeaveRequest`
+  /// exists server-side but has no REST endpoint at all -- unlike the
+  /// others above, this shows up as a real card in the Leave screen,
+  /// visibly disabled, rather than being hidden entirely. Flip once the
+  /// backend actually has a route to call.
+  static const compOff = false;
 }
