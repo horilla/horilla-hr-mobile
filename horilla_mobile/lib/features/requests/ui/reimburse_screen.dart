@@ -70,7 +70,9 @@ class _ReimburseScreenState extends ConsumerState<ReimburseScreen> {
       setState(() => _titleError = 'Say what this is for.');
       return;
     }
-    final amount = double.tryParse(_amount.text.trim());
+    // The numeric keypad follows the device locale, so some users can only
+    // type a comma as the decimal separator.
+    final amount = double.tryParse(_amount.text.trim().replaceAll(',', '.'));
     if (amount == null || amount <= 0) {
       setState(() => _amountError = 'Enter the amount you paid.');
       return;

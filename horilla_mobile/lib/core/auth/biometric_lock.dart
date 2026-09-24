@@ -178,6 +178,13 @@ class _BiometricGateState extends ConsumerState<BiometricGate>
 
   @override
   Widget build(BuildContext context) {
+    // A session can end while the lock screen is up (a failed refresh fires
+    // onSessionLost, not just the button below). Clear the lock with it, or
+    // the next sign-in lands straight back on this screen.
+    ref.listen(sessionProvider, (_, next) {
+      if (next == null && _locked) setState(() => _locked = false);
+    });
+
     final session = ref.watch(sessionProvider);
     if (!_locked || session == null) return widget.child;
 
@@ -203,10 +210,7 @@ class _BiometricGateState extends ConsumerState<BiometricGate>
                 // Never a dead end: biometric hardware fails, or someone
                 // re-enrolled a fingerprint and the prompt keeps declining.
                 Pressable(
-                  onTap: () {
-                    ref.read(sessionProvider.notifier).signOut();
-                    setState(() => _locked = false);
-                  },
+                  onTap: () => ref.read(sessionProvider.notifier).signOut(),
                   child: Text(
                     'Sign out instead',
                     style: AppText.body.copyWith(color: AppColors.ink4),

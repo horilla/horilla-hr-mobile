@@ -59,7 +59,9 @@ class _ShiftRequestScreenState extends ConsumerState<ShiftRequestScreen> {
     final picked = await showDatePicker(
       context: context,
       initialDate: initial,
-      firstDate: DateTime.now(),
+      // The end date can't precede the start -- the picker enforces it
+      // rather than letting a backwards range reach the server.
+      firstDate: isFrom ? DateTime.now() : _from,
       lastDate: DateTime.now().add(const Duration(days: 365)),
     );
     if (picked == null) return;

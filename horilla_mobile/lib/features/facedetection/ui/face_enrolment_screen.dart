@@ -78,19 +78,27 @@ class _FaceEnrolmentScreenState extends ConsumerState<FaceEnrolmentScreen> {
   Future<void> _capture() async {
     final controller = _controller;
     if (controller == null) return;
-    final file = await controller.takePicture();
-    final bytes = await File(file.path).readAsBytes();
-    if (mounted) {
-      setState(() {
-        _captured = bytes;
-        _status = _Status.reviewing;
-      });
+    try {
+      final file = await controller.takePicture();
+      final bytes = await File(file.path).readAsBytes();
+      if (mounted) {
+        setState(() {
+          _captured = bytes;
+          _error = null;
+          _status = _Status.reviewing;
+        });
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() => _error = 'Could not take the photo. Try again.');
+      }
     }
   }
 
   void _retake() {
     setState(() {
       _captured = null;
+      _error = null;
       _status = _Status.ready;
     });
   }
@@ -167,6 +175,17 @@ class _FaceEnrolmentScreenState extends ConsumerState<FaceEnrolmentScreen> {
                 ),
               ),
             ),
+            if (_error != null)
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpace.x20,
+                ),
+                child: Text(
+                  _error!,
+                  textAlign: TextAlign.center,
+                  style: AppText.body.copyWith(color: AppColors.danger),
+                ),
+              ),
             Padding(
               padding: const EdgeInsets.all(AppSpace.x20),
               child: AppButton(label: 'Take photo', onPressed: _capture),
