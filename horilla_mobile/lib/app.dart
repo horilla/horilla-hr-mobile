@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'l10n/app_localizations.dart';
 
+import 'core/auth/biometric_lock.dart';
 import 'core/auth/session.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_theme.dart';
@@ -18,6 +19,7 @@ import 'shared/widgets/toast.dart';
 /// request, not here.
 final sessionRestoreProvider = FutureProvider<void>((ref) async {
   await ref.read(sessionProvider.notifier).restore();
+  await ref.read(biometricEnabledProvider.notifier).restore();
 });
 
 class HorillaApp extends ConsumerWidget {
@@ -76,8 +78,11 @@ class _AppRouterState extends ConsumerState<_AppRouter> {
       supportedLocales: AppL10n.supportedLocales,
       routerConfig: _router,
       // One host for the whole app, so a toast raised on one screen survives
-      // the navigation that usually follows it.
-      builder: (context, child) => ToastHost(child: child!),
+      // the navigation that usually follows it. The biometric gate sits
+      // outside the toast host, so a lock screen is never seen carrying a
+      // stray toast meant for whatever was open before.
+      builder: (context, child) =>
+          BiometricGate(child: ToastHost(child: child!)),
     );
   }
 }

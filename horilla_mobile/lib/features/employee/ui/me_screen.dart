@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import '../../../core/auth/biometric_lock.dart';
 import '../../../core/auth/session.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../shared/widgets/app_card.dart';
@@ -24,6 +25,9 @@ class MeScreen extends ConsumerWidget {
     final session = ref.watch(sessionProvider);
     final version = ref.watch(_appVersionProvider).value;
     final canEdit = ref.watch(canEditProfileProvider);
+    final biometricAvailable =
+        ref.watch(biometricAvailableProvider).value ?? false;
+    final biometricEnabled = ref.watch(biometricEnabledProvider);
 
     return Scaffold(
       backgroundColor: AppColors.bg,
@@ -114,6 +118,16 @@ class MeScreen extends ConsumerWidget {
                         label: 'Notifications',
                         onTap: () => context.go('/home/notifications'),
                       ),
+                      if (biometricAvailable) ...[
+                        const Divider(height: 1, color: AppColors.line2),
+                        _SwitchRow(
+                          label: 'Biometric unlock',
+                          value: biometricEnabled,
+                          onChanged: (value) => ref
+                              .read(biometricEnabledProvider.notifier)
+                              .set(value),
+                        ),
+                      ],
                       const Divider(height: 1, color: AppColors.line2),
                       _Row(
                         label: 'Server',
@@ -140,9 +154,9 @@ class MeScreen extends ConsumerWidget {
                       const EyebrowLabel('In this version'),
                       const SizedBox(height: AppSpace.x8),
                       Text(
-                        'Attendance, leave and your team directory. '
-                        'Payslips, requests and helpdesk are in the Horilla '
-                        'web app for now.',
+                        'Attendance, leave, payslips, requests and your team '
+                        'directory. Helpdesk is in the Horilla web app for '
+                        'now.',
                         style: AppText.body,
                       ),
                     ],
@@ -179,6 +193,45 @@ class MeScreen extends ConsumerWidget {
     'manager' => 'Manager',
     _ => 'Employee',
   };
+}
+
+class _SwitchRow extends StatelessWidget {
+  const _SwitchRow({
+    required this.label,
+    required this.value,
+    required this.onChanged,
+  });
+
+  final String label;
+  final bool value;
+  final ValueChanged<bool> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: const BoxConstraints(minHeight: 56),
+      padding: const EdgeInsets.symmetric(horizontal: 18),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              label,
+              style: AppText.body.copyWith(
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          Switch(
+            value: value,
+            activeThumbColor: AppColors.surface,
+            activeTrackColor: AppColors.brandStrong,
+            onChanged: onChanged,
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 class _Row extends StatelessWidget {

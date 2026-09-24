@@ -33,6 +33,8 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>This app requires camera access to capture photos and videos.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>Use Face ID to unlock Horilla HR instead of leaving it open in the background.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>This app requires location access to function properly even when running in the background.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
