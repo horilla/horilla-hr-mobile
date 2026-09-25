@@ -226,14 +226,6 @@ class ApprovalsApi {
         "You don't have permission to decide this request.",
       );
     }
-    // "Please check the form" means nothing on a card with no form; show the
-    // server's first actual complaint instead.
-    if (f is ApiValidation && f.message == const ApiValidation({}).message) {
-      final first = f.fieldErrors.values.expand((m) => m).firstOrNull;
-      if (first != null && first.trim().isNotEmpty) {
-        return ApiUnknown(first.trim());
-      }
-    }
     return f;
   }
 }

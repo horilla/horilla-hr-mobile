@@ -2,6 +2,7 @@
 /// worth pinning are the ones where the backend overloads a status code and
 /// the UI has to tell two very different situations apart.
 library;
+
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:horilla_mobile/core/api/api_failure.dart';
@@ -109,9 +110,44 @@ void main() {
       expect(validation.forField('absent'), isNull);
     });
 
+    test("the headline is the server's first complaint, not a generic one", () {
+      // Forms show one or two fields inline. A rejection about anything else
+      // -- an overlapping request, a date rule -- must still say what it is.
+      expect(
+        mapError(
+          status: 400,
+          body: {
+            'requested_till': ['Requested till field is required.'],
+          },
+        ).message,
+        'Requested till: Requested till field is required.',
+      );
+      expect(
+        mapError(
+          status: 400,
+          body: {
+            'non_field_errors': ['A shift request already exists.'],
+          },
+        ).message,
+        'A shift request already exists.',
+      );
+      expect(
+        mapError(
+          status: 400,
+          body: {
+            'employee_id': ['Invalid pk "9" - object does not exist.'],
+          },
+        ).message,
+        'Employee: Invalid pk "9" - object does not exist.',
+      );
+    });
+
     test('a single message is not forced into a field map', () {
       // e.g. clock-in answering {"message": "Already clocked-in"}
-      final failure = mapError(status: 400, body: {'error': 'Already clocked-in'});
+      final failure = mapError(
+        status: 400,
+        body: {'error': 'Already clocked-in'},
+      );
       expect(failure, isA<ApiUnknown>());
       expect(failure.message, 'Already clocked-in');
     });
@@ -119,11 +155,17 @@ void main() {
 
   group('transport failures', () {
     test('connection error is a network failure', () {
-      expect(mapError(type: DioExceptionType.connectionError), isA<ApiNetwork>());
+      expect(
+        mapError(type: DioExceptionType.connectionError),
+        isA<ApiNetwork>(),
+      );
     });
 
     test('timeouts are their own case', () {
-      expect(mapError(type: DioExceptionType.receiveTimeout), isA<ApiTimeout>());
+      expect(
+        mapError(type: DioExceptionType.receiveTimeout),
+        isA<ApiTimeout>(),
+      );
     });
 
     test('a bad certificate reports TLS, not a network drop', () {

@@ -96,10 +96,23 @@ class ErrorInterceptor extends Interceptor {
 
     // Endpoints here report a single problem under `error` or `message` as
     // often as they report per-field errors; surface that as the headline.
-    final headline = _detail(body);
-    return headline == null
-        ? ApiValidation(fields)
-        : ApiValidation(fields, headline);
+    // Otherwise the headline is the server's first complaint: forms show
+    // only a field or two inline, and a generic "check the form" over a
+    // rejection like "a shift request already exists" leaves the person
+    // guessing at a form that has nothing wrong with it.
+    return ApiValidation(fields, _detail(body) ?? _firstComplaint(fields));
+  }
+
+  /// "Requested till: This field is required." -- or the bare message for
+  /// errors that belong to no field.
+  static String _firstComplaint(Map<String, List<String>> fields) {
+    final MapEntry(:key, :value) = fields.entries.first;
+    final message = value.first.trim();
+    final label = key.replaceAll(RegExp(r'_id$'), '').replaceAll('_', ' ');
+    if (label.isEmpty || key == 'non_field_errors' || key == '__all__') {
+      return message;
+    }
+    return '${label[0].toUpperCase()}${label.substring(1)}: $message';
   }
 
   static const _headlineKeys = {'error', 'message', 'detail'};
