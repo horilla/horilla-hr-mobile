@@ -62,7 +62,8 @@ class AuthInterceptor extends QueuedInterceptor {
     final status = err.response?.statusCode;
     final options = err.requestOptions;
 
-    final shouldTry = status == 401 &&
+    final shouldTry =
+        status == 401 &&
         options.extra[skipAuthKey] != true &&
         options.extra[_retriedKey] != true;
 

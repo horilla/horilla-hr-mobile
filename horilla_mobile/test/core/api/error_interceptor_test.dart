@@ -110,6 +110,15 @@ void main() {
       expect(validation.forField('absent'), isNull);
     });
 
+    test('a validation body under another status can still be read', () {
+      // Attendance corrections answer form errors with 404.
+      final failure = ErrorInterceptor().fromBadRequest({
+        'minimum_hour': ['This field is required.'],
+      });
+      expect(failure, isA<ApiValidation>());
+      expect(failure.message, 'Minimum hour: This field is required.');
+    });
+
     test("the headline is the server's first complaint, not a generic one", () {
       // Forms show one or two fields inline. A rejection about anything else
       // -- an overlapping request, a date rule -- must still say what it is.

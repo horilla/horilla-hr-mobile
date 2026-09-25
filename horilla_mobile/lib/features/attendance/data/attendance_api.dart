@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/api/api_failure.dart';
+import '../../../core/api/error_interceptor.dart';
 import '../../../core/auth/session.dart';
 import 'attendance_models.dart';
 import 'correction_models.dart';
@@ -110,6 +111,9 @@ class AttendanceApi {
     } on DioException catch (e) {
       final failure = e.error;
       if (failure is ApiNotFound) {
+        // The 404 body is the form's field errors -- use them when present.
+        final reason = ErrorInterceptor().fromBadRequest(e.response?.data);
+        if (reason is ApiValidation) throw reason;
         throw const ApiValidation(
           {},
           'The server rejected this correction. Check the times and try '

@@ -39,7 +39,9 @@ final class ApiTimeout extends ApiFailure {
 
 /// TLS could not be established or verified.
 final class ApiTls extends ApiFailure {
-  const ApiTls([super.message = 'The secure connection could not be verified.']);
+  const ApiTls([
+    super.message = 'The secure connection could not be verified.',
+  ]);
 }
 
 /// 401. Credentials are wrong, or the session is over and refresh failed.
@@ -68,7 +70,10 @@ final class ApiNotFound extends ApiFailure {
 
 /// 400 with field errors, as DRF returns them: {"field": ["problem", ...]}.
 final class ApiValidation extends ApiFailure {
-  const ApiValidation(this.fieldErrors, [super.message = 'Please check the form.']);
+  const ApiValidation(
+    this.fieldErrors, [
+    super.message = 'Please check the form.',
+  ]);
 
   final Map<String, List<String>> fieldErrors;
 

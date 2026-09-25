@@ -89,6 +89,9 @@ class _CorrectionScreenState extends ConsumerState<CorrectionScreen> {
       reason: _reason.text,
       shiftId: _idFrom(_original?['shift_id']),
       workTypeId: _idFrom(_original?['work_type_id']),
+      minimumHour: _original?['minimum_hour'] is String
+          ? _original!['minimum_hour'] as String
+          : widget.day.minimumHour,
     );
 
     if (correction.clockIn.isEmpty) {

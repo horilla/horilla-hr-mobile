@@ -21,8 +21,8 @@ class ApiClient {
     required OnSessionLost onSessionLost,
     Dio? dio,
     Dio? refreshDio,
-  })  : _dio = dio ?? Dio(),
-        _refreshDio = refreshDio ?? Dio() {
+  }) : _dio = dio ?? Dio(),
+       _refreshDio = refreshDio ?? Dio() {
     _dio.options
       ..connectTimeout = const Duration(seconds: 15)
       ..receiveTimeout = const Duration(seconds: 30)

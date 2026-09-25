@@ -12,11 +12,8 @@ import 'dart:math';
 import 'package:dio/dio.dart';
 
 class RetryInterceptor extends Interceptor {
-  RetryInterceptor({
-    required this.client,
-    this.maxAttempts = 3,
-    Random? random,
-  }) : _random = random ?? Random();
+  RetryInterceptor({required this.client, this.maxAttempts = 3, Random? random})
+    : _random = random ?? Random();
 
   final Dio client;
   final int maxAttempts;

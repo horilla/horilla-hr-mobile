@@ -48,7 +48,7 @@ class ErrorInterceptor extends Interceptor {
 
     switch (status) {
       case 400:
-        return _validationOrUnknown(body);
+        return fromBadRequest(body);
       case 401:
         return const ApiUnauthenticated();
       case 403:
@@ -75,7 +75,8 @@ class ErrorInterceptor extends Interceptor {
 
   /// DRF field errors arrive as {"field": ["problem", ...]}. Anything that
   /// does not fit that shape is not forced into it.
-  ApiFailure _validationOrUnknown(Object? body) {
+  /// Public for the endpoints that report validation under another status.
+  ApiFailure fromBadRequest(Object? body) {
     if (body is! Map) return ApiUnknown(_detail(body) ?? 'Invalid request.');
 
     final fields = <String, List<String>>{};

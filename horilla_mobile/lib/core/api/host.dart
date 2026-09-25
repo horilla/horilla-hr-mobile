@@ -20,9 +20,9 @@ class HostNormalisationResult {
   }) : error = null;
 
   const HostNormalisationResult.failure(String message)
-      : host = '',
-        isCleartext = false,
-        error = message;
+    : host = '',
+      isCleartext = false,
+      error = message;
 
   /// Normalised origin, e.g. `https://hr.company.com` — no trailing slash,
   /// no path.
@@ -74,9 +74,7 @@ HostNormalisationResult normaliseHost(String input) {
 
   final scheme = uri.scheme.toLowerCase();
   if (scheme != 'http' && scheme != 'https') {
-    return const HostNormalisationResult.failure(
-      'Use http:// or https://',
-    );
+    return const HostNormalisationResult.failure('Use http:// or https://');
   }
 
   if (scheme == 'http' && !isPrivateHost(uri.host)) {

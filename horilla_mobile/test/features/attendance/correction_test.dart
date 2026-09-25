@@ -15,17 +15,16 @@ AttendanceCorrection correction({
   int? shiftId = 3,
   int? workTypeId = 4,
   DateTime? date,
-}) =>
-    AttendanceCorrection(
-      attendanceId: 11,
-      employeeId: 42,
-      attendanceDate: date ?? DateTime(2026, 9, 22),
-      clockIn: clockIn,
-      clockOut: clockOut,
-      reason: reason,
-      shiftId: shiftId,
-      workTypeId: workTypeId,
-    );
+}) => AttendanceCorrection(
+  attendanceId: 11,
+  employeeId: 42,
+  attendanceDate: date ?? DateTime(2026, 9, 22),
+  clockIn: clockIn,
+  clockOut: clockOut,
+  reason: reason,
+  shiftId: shiftId,
+  workTypeId: workTypeId,
+);
 
 void main() {
   group('validity', () {
@@ -83,6 +82,34 @@ void main() {
       final json = correction(shiftId: null, workTypeId: null).toJson();
       expect(json.containsKey('shift_id'), isFalse);
       expect(json.containsKey('work_type_id'), isFalse);
+    });
+
+    // Live on hr.demo.horilla.com the form answered
+    // {"attendance_worked_hour": ["This field is required."],
+    //  "minimum_hour": ["This field is required."]} to every correction
+    // the app had ever sent.
+    test('sends the worked and minimum hours the form requires', () {
+      final json = AttendanceCorrection(
+        attendanceId: 11,
+        employeeId: 42,
+        attendanceDate: DateTime(2026, 9, 22),
+        clockIn: '09:15',
+        clockOut: '18:00',
+        reason: 'x',
+        minimumHour: '08:30',
+      ).toJson();
+      expect(json['attendance_worked_hour'], '08:45');
+      expect(json['minimum_hour'], '08:30');
+    });
+
+    test('worked hours cross midnight; unknown minimum is 00:00', () {
+      final json = correction(clockIn: '22:00', clockOut: '06:30').toJson();
+      expect(json['attendance_worked_hour'], '08:30');
+      expect(json['minimum_hour'], '00:00');
+      expect(
+        correction(clockOut: null).toJson()['attendance_worked_hour'],
+        '00:00',
+      );
     });
 
     test('an open day sends no clock-out at all', () {
