@@ -184,8 +184,8 @@ String _days(double value) =>
     value == value.roundToDouble() ? value.round().toString() : '$value';
 
 double? _toDouble(Object? value) => switch (value) {
-      final double d => d,
-      final int i => i.toDouble(),
-      final String s => double.tryParse(s),
-      _ => null,
-    };
+  final double d => d,
+  final int i => i.toDouble(),
+  final String s => double.tryParse(s),
+  _ => null,
+};

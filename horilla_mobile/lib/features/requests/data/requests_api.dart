@@ -19,10 +19,14 @@ class RequestsApi {
   /// makes the whole tab hostage to the least reliable endpoint.
   Future<RequestInbox> fetchInbox() async {
     final results = await Future.wait([
-      _collect('/base/shift-requests/',
-          (v) => WorkRequest.fromShiftLike(v, RequestKind.shift)),
-      _collect('/base/worktype-requests/',
-          (v) => WorkRequest.fromShiftLike(v, RequestKind.workType)),
+      _collect(
+        '/base/shift-requests/',
+        (v) => WorkRequest.fromShiftLike(v, RequestKind.shift),
+      ),
+      _collect(
+        '/base/worktype-requests/',
+        (v) => WorkRequest.fromShiftLike(v, RequestKind.workType),
+      ),
       _collect('/asset/asset-requests/', WorkRequest.fromAssetRequest),
       // Note the spelling: the server's route really is "reimbusement".
       _collect('/payroll/reimbusement/', WorkRequest.fromReimbursement),
@@ -63,10 +67,8 @@ class RequestsApi {
   Future<List<RequestOption>> fetchWorkTypes() =>
       _list('/base/worktypes/', RequestOption.fromWorkType);
 
-  Future<List<AssetCategoryOption>> fetchAssetCategories() => _list(
-    '/asset/asset-categories/',
-    AssetCategoryOption.fromJson,
-  );
+  Future<List<AssetCategoryOption>> fetchAssetCategories() =>
+      _list('/asset/asset-categories/', AssetCategoryOption.fromJson);
 
   Future<List<T>> _list<T>(String path, T? Function(Object?) parse) async {
     try {
@@ -192,7 +194,8 @@ final workTypeOptionsProvider = FutureProvider<List<RequestOption>>((ref) {
   return ref.watch(requestsApiProvider).fetchWorkTypes();
 });
 
-final assetCategoryOptionsProvider =
-    FutureProvider<List<AssetCategoryOption>>((ref) {
-      return ref.watch(requestsApiProvider).fetchAssetCategories();
-    });
+final assetCategoryOptionsProvider = FutureProvider<List<AssetCategoryOption>>((
+  ref,
+) {
+  return ref.watch(requestsApiProvider).fetchAssetCategories();
+});

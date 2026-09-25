@@ -26,7 +26,11 @@ const item = ApprovalItem(
 Session session(String role) => Session(
   host: 'https://hr.example.test',
   user: const SignedInUser(id: 1, fullName: 'Nisha Prakash'),
-  capabilities: Capabilities(role: role, permissions: const {}, features: const {}),
+  capabilities: Capabilities(
+    role: role,
+    permissions: const {},
+    features: const {},
+  ),
   isCleartext: false,
   geoFencingEnabled: false,
   faceDetectionEnabled: false,

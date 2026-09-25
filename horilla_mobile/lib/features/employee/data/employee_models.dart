@@ -104,12 +104,12 @@ class WorkInformation {
   /// Rows the profile screen shows, skipping anything the server left blank
   /// rather than printing a label with nothing after it.
   List<(String, String)> get rows => [
-        if (department != null) ('Department', department!),
-        if (jobPosition != null) ('Job position', jobPosition!),
-        if (reportingManager != null) ('Reports to', reportingManager!),
-        if (shift != null) ('Shift', shift!),
-        if (workType != null) ('Work type', workType!),
-        if (location != null) ('Work location', location!),
-        if (employeeType != null) ('Employment', employeeType!),
-      ];
+    if (department != null) ('Department', department!),
+    if (jobPosition != null) ('Job position', jobPosition!),
+    if (reportingManager != null) ('Reports to', reportingManager!),
+    if (shift != null) ('Shift', shift!),
+    if (workType != null) ('Work type', workType!),
+    if (location != null) ('Work location', location!),
+    if (employeeType != null) ('Employment', employeeType!),
+  ];
 }

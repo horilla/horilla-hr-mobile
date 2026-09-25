@@ -37,7 +37,11 @@ class LocationFailure implements Exception {
 }
 
 class Coordinates {
-  const Coordinates({required this.latitude, required this.longitude, this.accuracy});
+  const Coordinates({
+    required this.latitude,
+    required this.longitude,
+    this.accuracy,
+  });
 
   final double latitude;
   final double longitude;

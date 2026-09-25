@@ -58,13 +58,17 @@ void main() {
     });
 
     test("the manager's own request is not theirs to approve", () {
-      expect(ApprovalItem.fromLeave(leave(employee: self), selfId: self),
-          isNull);
+      expect(
+        ApprovalItem.fromLeave(leave(employee: self), selfId: self),
+        isNull,
+      );
     });
 
     test('an already-decided request is not pending', () {
-      expect(ApprovalItem.fromLeave(leave(status: 'approved'), selfId: self),
-          isNull);
+      expect(
+        ApprovalItem.fromLeave(leave(status: 'approved'), selfId: self),
+        isNull,
+      );
     });
 
     test('clashes become an advisory warning', () {
@@ -82,10 +86,14 @@ void main() {
     });
 
     test('approved or cancelled is not pending', () {
-      expect(ApprovalItem.fromShift(shift(approved: true), selfId: self),
-          isNull);
-      expect(ApprovalItem.fromShift(shift(canceled: true), selfId: self),
-          isNull);
+      expect(
+        ApprovalItem.fromShift(shift(approved: true), selfId: self),
+        isNull,
+      );
+      expect(
+        ApprovalItem.fromShift(shift(canceled: true), selfId: self),
+        isNull,
+      );
     });
 
     test('work type uses its own field names', () {
@@ -170,13 +178,8 @@ void main() {
     });
 
     test('the summary keeps the three largest kinds and folds the rest', () {
-      ApprovalItem of(ApprovalKind kind, int id) => ApprovalItem(
-        kind: kind,
-        id: id,
-        employeeId: 9,
-        name: 'X',
-        ask: 'x',
-      );
+      ApprovalItem of(ApprovalKind kind, int id) =>
+          ApprovalItem(kind: kind, id: id, employeeId: 9, name: 'X', ask: 'x');
       final busy = ApprovalInbox([
         for (var i = 0; i < 4; i++) of(ApprovalKind.leave, i),
         for (var i = 0; i < 3; i++) of(ApprovalKind.shift, i),

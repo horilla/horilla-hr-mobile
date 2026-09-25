@@ -19,22 +19,34 @@ void main() {
     // unauthenticated, and advisories name exact patched versions, so a patch
     // level would turn a scan into a list of applicable advisories.
     test('a Horilla health response carrying the contract is accepted', () {
-      final info =
-          ServerInfo.fromJson({'status': 'ok', 'product': 'horilla', 'api': 1});
+      final info = ServerInfo.fromJson({
+        'status': 'ok',
+        'product': 'horilla',
+        'api': 1,
+      });
       expect(info, isNotNull);
       expect(info!.apiContract, 1);
     });
 
     test('a newer contract is still accepted', () {
-      expect(ServerInfo.fromJson({'status': 'ok', 'product': 'horilla', 'api': 2})!
-          .apiContract, 2);
+      expect(
+        ServerInfo.fromJson({
+          'status': 'ok',
+          'product': 'horilla',
+          'api': 2,
+        })!.apiContract,
+        2,
+      );
     });
 
     test('a health response without the contract is not enough', () {
       // Every Horilla before the contract fields looks like this -- all of v1
       // and early v2. The caller distinguishes them with a route probe.
       expect(ServerInfo.fromJson({'status': 'ok'}), isNull);
-      expect(ServerInfo.fromJson({'status': 'ok', 'product': 'horilla'}), isNull);
+      expect(
+        ServerInfo.fromJson({'status': 'ok', 'product': 'horilla'}),
+        isNull,
+      );
     });
 
     test('a release string is not mistaken for a contract', () {
@@ -44,8 +56,10 @@ void main() {
     });
 
     test('something that is not Horilla is rejected', () {
-      expect(ServerInfo.fromJson({'status': 'ok', 'product': 'other', 'api': 1}),
-          isNull);
+      expect(
+        ServerInfo.fromJson({'status': 'ok', 'product': 'other', 'api': 1}),
+        isNull,
+      );
       expect(ServerInfo.fromJson({'status': 'healthy'}), isNull);
       expect(ServerInfo.fromJson({'ok': true}), isNull);
       expect(ServerInfo.fromJson(const {}), isNull);
@@ -53,7 +67,8 @@ void main() {
   });
 
   group('mobile API presence', () {
-    SignInResult parse(Map<String, dynamic> json) => SignInResult.fromJson(json)!;
+    SignInResult parse(Map<String, dynamic> json) =>
+        SignInResult.fromJson(json)!;
 
     Map<String, dynamic> body({
       String? refresh = 'r',
@@ -62,13 +77,12 @@ void main() {
         'permissions': {'view_team': false},
         'features': {'leave': true},
       },
-    }) =>
-        {
-          'access': 'a',
-          'refresh': ?refresh,
-          'employee': {'id': 1, 'full_name': 'Test'},
-          'capabilities': ?capabilities,
-        };
+    }) => {
+      'access': 'a',
+      'refresh': ?refresh,
+      'employee': {'id': 1, 'full_name': 'Test'},
+      'capabilities': ?capabilities,
+    };
 
     test('a v2 server with the mobile API is usable', () {
       expect(parse(body()).hasMobileApi, isTrue);

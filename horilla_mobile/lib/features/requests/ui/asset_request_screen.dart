@@ -61,13 +61,15 @@ class _AssetRequestScreenState extends ConsumerState<AssetRequestScreen> {
 
     setState(() => _busy = true);
     try {
-      await ref.read(requestsApiProvider).submitAssetRequest(
-        AssetRequestDraft(
-          categoryId: selected.id,
-          reason: _reason.text.trim(),
-        ),
-        session.user.id,
-      );
+      await ref
+          .read(requestsApiProvider)
+          .submitAssetRequest(
+            AssetRequestDraft(
+              categoryId: selected.id,
+              reason: _reason.text.trim(),
+            ),
+            session.user.id,
+          );
       ref.invalidate(requestInboxProvider);
       ref.read(toastProvider.notifier).show('Asset request sent');
       if (mounted) context.pop(true);
@@ -119,8 +121,7 @@ class _AssetRequestScreenState extends ConsumerState<AssetRequestScreen> {
                           _CategoryChip(
                             category: category,
                             selected: _selected?.id == category.id,
-                            onTap: () =>
-                                setState(() => _selected = category),
+                            onTap: () => setState(() => _selected = category),
                           ),
                       ],
                     );
@@ -269,7 +270,10 @@ class _ErrorBanner extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppRadii.tile),
           border: Border.all(color: AppColors.dangerBorder),
         ),
-        child: Text(message, style: AppText.body.copyWith(color: AppColors.danger)),
+        child: Text(
+          message,
+          style: AppText.body.copyWith(color: AppColors.danger),
+        ),
       ),
     );
   }

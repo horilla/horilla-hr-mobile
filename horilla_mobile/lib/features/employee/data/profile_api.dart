@@ -96,8 +96,9 @@ class ProfileApi {
 
   Future<PersonalInfo> fetch(int employeeId) async {
     try {
-      final response =
-          await _dio.get<dynamic>('/employee/employees/$employeeId/');
+      final response = await _dio.get<dynamic>(
+        '/employee/employees/$employeeId/',
+      );
       return PersonalInfo.fromJson(response.data);
     } on DioException catch (e) {
       final failure = e.error;
@@ -120,8 +121,9 @@ class ProfileApi {
   }
 }
 
-final profileApiProvider =
-    Provider<ProfileApi>((ref) => ProfileApi(ref.watch(apiClientProvider).dio));
+final profileApiProvider = Provider<ProfileApi>(
+  (ref) => ProfileApi(ref.watch(apiClientProvider).dio),
+);
 
 final personalInfoProvider = FutureProvider<PersonalInfo>((ref) async {
   final session = ref.watch(sessionProvider);

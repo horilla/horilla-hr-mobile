@@ -65,8 +65,9 @@ class Capabilities {
       role: json['role'] is String ? json['role'] as String : 'employee',
       permissions: _bools(json['permissions']),
       features: _bools(json['features']),
-      currencySymbol:
-          currency is String && currency.isNotEmpty ? currency : null,
+      currencySymbol: currency is String && currency.isNotEmpty
+          ? currency
+          : null,
     );
   }
 

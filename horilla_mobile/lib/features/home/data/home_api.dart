@@ -23,8 +23,9 @@ class HomeApi {
   }
 }
 
-final homeApiProvider =
-    Provider<HomeApi>((ref) => HomeApi(ref.watch(apiClientProvider).dio));
+final homeApiProvider = Provider<HomeApi>(
+  (ref) => HomeApi(ref.watch(apiClientProvider).dio),
+);
 
 /// The home screen's data.
 ///

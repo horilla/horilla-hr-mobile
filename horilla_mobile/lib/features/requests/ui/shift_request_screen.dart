@@ -87,9 +87,7 @@ class _ShiftRequestScreenState extends ConsumerState<ShiftRequestScreen> {
     final selected = _selected;
     if (selected == null) {
       setState(
-        () => _error = _forShift
-            ? 'Choose a shift.'
-            : 'Choose a work type.',
+        () => _error = _forShift ? 'Choose a shift.' : 'Choose a work type.',
       );
       return;
     }
@@ -98,8 +96,8 @@ class _ShiftRequestScreenState extends ConsumerState<ShiftRequestScreen> {
     // request with "Requested till field is required."
     if (!_permanent && _till == null) {
       setState(
-        () => _error =
-            'Choose an end date, or mark this as a permanent change.',
+        () =>
+            _error = 'Choose an end date, or mark this as a permanent change.',
       );
       return;
     }
@@ -110,21 +108,25 @@ class _ShiftRequestScreenState extends ConsumerState<ShiftRequestScreen> {
 
     setState(() => _busy = true);
     try {
-      await ref.read(requestsApiProvider).submitShiftOrWorkType(
-        ShiftOrWorkTypeRequest(
-          forShift: _forShift,
-          requestedId: selected.id,
-          previousId: null,
-          requestedDate: _from,
-          requestedTill: _permanent ? null : _till,
-          reason: _reason.text.trim(),
-        ),
-        session.user.id,
-      );
+      await ref
+          .read(requestsApiProvider)
+          .submitShiftOrWorkType(
+            ShiftOrWorkTypeRequest(
+              forShift: _forShift,
+              requestedId: selected.id,
+              previousId: null,
+              requestedDate: _from,
+              requestedTill: _permanent ? null : _till,
+              reason: _reason.text.trim(),
+            ),
+            session.user.id,
+          );
       ref.invalidate(requestInboxProvider);
       ref
           .read(toastProvider.notifier)
-          .show(_forShift ? 'Shift change requested' : 'Work type change requested');
+          .show(
+            _forShift ? 'Shift change requested' : 'Work type change requested',
+          );
       if (mounted) context.pop(true);
     } on ApiFailure catch (failure) {
       if (mounted) setState(() => _error = failure.message);
@@ -139,10 +141,7 @@ class _ShiftRequestScreenState extends ConsumerState<ShiftRequestScreen> {
       backgroundColor: AppColors.bg,
       body: Column(
         children: [
-          AppTopBar(
-            title: 'Shift / work type',
-            onBack: () => context.pop(),
-          ),
+          AppTopBar(title: 'Shift / work type', onBack: () => context.pop()),
           Expanded(
             child: ListView(
               padding: const EdgeInsets.fromLTRB(
@@ -183,7 +182,10 @@ class _ShiftRequestScreenState extends ConsumerState<ShiftRequestScreen> {
                         date: _from,
                         onTap: () => _pickDate(isFrom: true),
                       ),
-                      const Divider(height: AppSpace.x20, color: AppColors.line2),
+                      const Divider(
+                        height: AppSpace.x20,
+                        color: AppColors.line2,
+                      ),
                       Row(
                         children: [
                           Expanded(
@@ -201,7 +203,10 @@ class _ShiftRequestScreenState extends ConsumerState<ShiftRequestScreen> {
                           ),
                         ],
                       ),
-                      const Divider(height: AppSpace.x20, color: AppColors.line2),
+                      const Divider(
+                        height: AppSpace.x20,
+                        color: AppColors.line2,
+                      ),
                       Row(
                         children: [
                           Expanded(
@@ -347,7 +352,9 @@ class _OptionChips extends ConsumerWidget {
       data: (list) {
         if (list.isEmpty) {
           return Text(
-            forShift ? 'No shifts are configured.' : 'No work types are configured.',
+            forShift
+                ? 'No shifts are configured.'
+                : 'No work types are configured.',
             style: AppText.body,
           );
         }
@@ -365,7 +372,9 @@ class _OptionChips extends ConsumerWidget {
                   onTap: () => onSelect(option),
                   child: Container(
                     constraints: const BoxConstraints(minHeight: 40),
-                    padding: const EdgeInsets.symmetric(horizontal: AppSpace.x14),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpace.x14,
+                    ),
                     decoration: BoxDecoration(
                       color: selected?.id == option.id
                           ? AppColors.brandTint
@@ -431,12 +440,15 @@ class _DateRow extends StatelessWidget {
         EyebrowLabel(label),
         Semantics(
           button: onTap != null,
-          label: '$label ${date == null ? placeholder : DateFormat('EEE d MMM yyyy').format(date!)}',
+          label:
+              '$label ${date == null ? placeholder : DateFormat('EEE d MMM yyyy').format(date!)}',
           excludeSemantics: true,
           child: Pressable(
             onTap: onTap,
             child: Text(
-              date == null ? placeholder : DateFormat('EEE d MMM yyyy').format(date!),
+              date == null
+                  ? placeholder
+                  : DateFormat('EEE d MMM yyyy').format(date!),
               style: AppText.cardTitle.copyWith(
                 fontSize: 14,
                 color: onTap == null ? AppColors.ink4 : AppColors.brandStrong,
@@ -466,7 +478,10 @@ class _ErrorBanner extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppRadii.tile),
           border: Border.all(color: AppColors.dangerBorder),
         ),
-        child: Text(message, style: AppText.body.copyWith(color: AppColors.danger)),
+        child: Text(
+          message,
+          style: AppText.body.copyWith(color: AppColors.danger),
+        ),
       ),
     );
   }

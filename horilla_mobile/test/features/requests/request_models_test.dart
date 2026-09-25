@@ -46,8 +46,9 @@ void main() {
     });
 
     test('a missing shift name falls back to the kind, not to blank', () {
-      final request =
-          WorkRequest.fromShiftLike({'id': 1}, RequestKind.workType)!;
+      final request = WorkRequest.fromShiftLike({
+        'id': 1,
+      }, RequestKind.workType)!;
       expect(request.title, 'Work type');
     });
 
@@ -111,20 +112,18 @@ void main() {
   });
 
   group('the inbox', () {
-    WorkRequest request(RequestState state) => WorkRequest(
-          id: 1,
-          kind: RequestKind.shift,
-          title: 'x',
-          state: state,
-        );
+    WorkRequest request(RequestState state) =>
+        WorkRequest(id: 1, kind: RequestKind.shift, title: 'x', state: state);
 
     test('open means pending, and nothing else', () {
-      final inbox = RequestInbox(requests: [
-        request(RequestState.pending),
-        request(RequestState.approved),
-        request(RequestState.rejected),
-        request(RequestState.cancelled),
-      ]);
+      final inbox = RequestInbox(
+        requests: [
+          request(RequestState.pending),
+          request(RequestState.approved),
+          request(RequestState.rejected),
+          request(RequestState.cancelled),
+        ],
+      );
 
       expect(inbox.open.length, 1);
       expect(inbox.closed.length, 3);
@@ -189,35 +188,42 @@ void main() {
       expect(json['asset_category_id'], 1);
     });
 
-    test('reimbursement sends employee_id plus the fields validation needs', () {
-      final json = ReimbursementDraft(
-        title: 'Client taxi',
-        amount: 450,
-        incurredOn: DateTime(2026, 9, 20),
-      ).toJson(3);
+    test(
+      'reimbursement sends employee_id plus the fields validation needs',
+      () {
+        final json = ReimbursementDraft(
+          title: 'Client taxi',
+          amount: 450,
+          incurredOn: DateTime(2026, 9, 20),
+        ).toJson(3);
 
-      expect(json['employee_id'], 3);
-      expect(json['type'], 'reimbursement');
-      // badge_id/employee_full_name are required by the server's validation
-      // despite being derived from employee_id -- any non-blank value
-      // passes and is discarded server-side. This only pins "non-blank",
-      // not their content.
-      expect(json['badge_id'], isNotEmpty);
-      expect(json['employee_full_name'], isNotEmpty);
-    });
+        expect(json['employee_id'], 3);
+        expect(json['type'], 'reimbursement');
+        // badge_id/employee_full_name are required by the server's validation
+        // despite being derived from employee_id -- any non-blank value
+        // passes and is discarded server-side. This only pins "non-blank",
+        // not their content.
+        expect(json['badge_id'], isNotEmpty);
+        expect(json['employee_full_name'], isNotEmpty);
+      },
+    );
   });
 
   group('the create screens\' lookup options', () {
     test('a shift option reads employee_shift, not work_type', () {
-      final option =
-          RequestOption.fromShift({'id': 4, 'employee_shift': 'Night'});
+      final option = RequestOption.fromShift({
+        'id': 4,
+        'employee_shift': 'Night',
+      });
       expect(option?.id, 4);
       expect(option?.name, 'Night');
     });
 
     test('a work-type option reads work_type, not employee_shift', () {
-      final option =
-          RequestOption.fromWorkType({'id': 2, 'work_type': 'Hybrid'});
+      final option = RequestOption.fromWorkType({
+        'id': 2,
+        'work_type': 'Hybrid',
+      });
       expect(option?.id, 2);
       expect(option?.name, 'Hybrid');
     });

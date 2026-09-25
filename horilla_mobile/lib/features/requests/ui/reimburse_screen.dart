@@ -80,14 +80,16 @@ class _ReimburseScreenState extends ConsumerState<ReimburseScreen> {
 
     setState(() => _busy = true);
     try {
-      await ref.read(requestsApiProvider).submitReimbursement(
-        ReimbursementDraft(
-          title: title,
-          amount: amount,
-          incurredOn: _incurredOn,
-        ),
-        session.user.id,
-      );
+      await ref
+          .read(requestsApiProvider)
+          .submitReimbursement(
+            ReimbursementDraft(
+              title: title,
+              amount: amount,
+              incurredOn: _incurredOn,
+            ),
+            session.user.id,
+          );
       ref.invalidate(requestInboxProvider);
       ref.read(toastProvider.notifier).show('Reimbursement claim submitted');
       if (mounted) context.pop(true);
@@ -230,7 +232,10 @@ class _ErrorBanner extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppRadii.tile),
           border: Border.all(color: AppColors.dangerBorder),
         ),
-        child: Text(message, style: AppText.body.copyWith(color: AppColors.danger)),
+        child: Text(
+          message,
+          style: AppText.body.copyWith(color: AppColors.danger),
+        ),
       ),
     );
   }

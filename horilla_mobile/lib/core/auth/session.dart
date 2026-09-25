@@ -46,11 +46,13 @@ final apiClientProvider = Provider<ApiClient>((ref) {
   );
 });
 
-final authApiProvider =
-    Provider<AuthApi>((ref) => AuthApi(ref.watch(apiClientProvider)));
+final authApiProvider = Provider<AuthApi>(
+  (ref) => AuthApi(ref.watch(apiClientProvider)),
+);
 
-final sessionProvider =
-    NotifierProvider<SessionController, Session?>(SessionController.new);
+final sessionProvider = NotifierProvider<SessionController, Session?>(
+  SessionController.new,
+);
 
 class SessionController extends Notifier<Session?> {
   @override
@@ -92,7 +94,9 @@ class SessionController extends Notifier<Session?> {
       );
     }
 
-    await ref.read(tokenStoreProvider).write(
+    await ref
+        .read(tokenStoreProvider)
+        .write(
           StoredSession(
             host: host,
             accessToken: result.accessToken,
@@ -150,13 +154,13 @@ class SessionController extends Notifier<Session?> {
   }
 
   Session _sessionFrom(String host, StoredProfile profile) => Session(
-        host: host,
-        user: profile.user,
-        capabilities: profile.capabilities,
-        isCleartext: profile.isCleartext,
-        geoFencingEnabled: profile.geoFencingEnabled,
-        faceDetectionEnabled: profile.faceDetectionEnabled,
-      );
+    host: host,
+    user: profile.user,
+    capabilities: profile.capabilities,
+    isCleartext: profile.isCleartext,
+    geoFencingEnabled: profile.geoFencingEnabled,
+    faceDetectionEnabled: profile.faceDetectionEnabled,
+  );
 
   Future<void> signOut() async {
     await ref.read(tokenStoreProvider).clear();

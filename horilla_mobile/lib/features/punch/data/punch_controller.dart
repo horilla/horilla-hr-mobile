@@ -131,7 +131,8 @@ class PunchController {
       // render throws. The API reports that throw as 400 "Already clocked-out"
       // even though the punch was just saved — which is the banner people see
       // when the hold finishes. Whether they are still clocked in is the fact.
-      final savedDespiteError = !preparation.isClockingIn &&
+      final savedDespiteError =
+          !preparation.isClockingIn &&
           apiFailure.message == 'Already clocked-out' &&
           !await _stillClockedIn();
       if (!savedDespiteError) throw apiFailure;

@@ -19,20 +19,28 @@ void main() {
     });
 
     test('trailing slashes and paths are stripped to the origin', () {
-      expect(normaliseHost('https://hr.company.com/api/v1/').host,
-          'https://hr.company.com');
-      expect(normaliseHost('https://hr.company.com/').host,
-          'https://hr.company.com');
+      expect(
+        normaliseHost('https://hr.company.com/api/v1/').host,
+        'https://hr.company.com',
+      );
+      expect(
+        normaliseHost('https://hr.company.com/').host,
+        'https://hr.company.com',
+      );
     });
 
     test('case is normalised', () {
-      expect(normaliseHost('HTTPS://HR.Company.COM').host,
-          'https://hr.company.com');
+      expect(
+        normaliseHost('HTTPS://HR.Company.COM').host,
+        'https://hr.company.com',
+      );
     });
 
     test('an explicit port survives', () {
-      expect(normaliseHost('http://192.168.1.9:8000').host,
-          'http://192.168.1.9:8000');
+      expect(
+        normaliseHost('http://192.168.1.9:8000').host,
+        'http://192.168.1.9:8000',
+      );
     });
 
     test('empty input is rejected with something actionable', () {

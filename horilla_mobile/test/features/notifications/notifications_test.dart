@@ -44,14 +44,16 @@ void main() {
 
   group('the redirect is treated as untrusted input', () {
     AppNotification parse(Object? redirect) => AppNotification.fromJson({
-          'id': 1,
-          'verb': 'x',
-          'data': {'redirect': redirect},
-        })!;
+      'id': 1,
+      'verb': 'x',
+      'data': {'redirect': redirect},
+    })!;
 
     test('a local path is kept', () {
-      expect(parse('/leave/request-view?id=3').redirect,
-          '/leave/request-view?id=3');
+      expect(
+        parse('/leave/request-view?id=3').redirect,
+        '/leave/request-view?id=3',
+      );
     });
 
     test('an absolute URL is refused', () {
@@ -72,8 +74,11 @@ void main() {
         isNull,
       );
       expect(
-        AppNotification.fromJson({'id': 1, 'verb': 'x', 'data': 'no'})!
-            .redirect,
+        AppNotification.fromJson({
+          'id': 1,
+          'verb': 'x',
+          'data': 'no',
+        })!.redirect,
         isNull,
       );
     });
@@ -82,13 +87,12 @@ void main() {
   group('grouping', () {
     final now = DateTime(2026, 9, 23, 14, 0);
 
-    AppNotification at(DateTime when, {bool unread = false}) =>
-        AppNotification(
-          id: when.millisecondsSinceEpoch ~/ 1000,
-          verb: 'x',
-          unread: unread,
-          timestamp: when,
-        );
+    AppNotification at(DateTime when, {bool unread = false}) => AppNotification(
+      id: when.millisecondsSinceEpoch ~/ 1000,
+      verb: 'x',
+      unread: unread,
+      timestamp: when,
+    );
 
     test('today and earlier are split by calendar day, not by 24 hours', () {
       // 00:30 today is "today"; 23:30 yesterday is not, even though it is
@@ -118,11 +122,7 @@ void main() {
     test('the unread count counts only unread', () {
       final inbox = NotificationInbox(
         now: now,
-        all: [
-          at(now, unread: true),
-          at(now, unread: true),
-          at(now),
-        ],
+        all: [at(now, unread: true), at(now, unread: true), at(now)],
       );
 
       expect(inbox.unreadCount, 2);

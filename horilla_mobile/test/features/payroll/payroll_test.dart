@@ -80,15 +80,15 @@ void main() {
 
   group('payslip parsing', () {
     Map<String, dynamic> body({Object? payHead}) => {
-          'id': 7,
-          'start_date': '2026-08-01',
-          'end_date': '2026-08-31',
-          'net_pay': 86420.0,
-          'gross_pay': 102000.0,
-          'deduction': 15580.0,
-          'basic_pay': 60000.0,
-          'pay_head_data': ?payHead,
-        };
+      'id': 7,
+      'start_date': '2026-08-01',
+      'end_date': '2026-08-31',
+      'net_pay': 86420.0,
+      'gross_pay': 102000.0,
+      'deduction': 15580.0,
+      'basic_pay': 60000.0,
+      'pay_head_data': ?payHead,
+    };
 
     test('a summary parses the money fields', () {
       final summary = PayslipSummary.fromJson(body())!;
@@ -152,9 +152,8 @@ void main() {
 
     test('paid days, LOP and the bank mask come from the payload', () {
       final summary = PayslipSummary.fromJson(
-        body(
-          payHead: {'paid_days': 21, 'unpaid_days': 0},
-        )..['bank_account_check_number'] = 'HDFC00004821',
+        body(payHead: {'paid_days': 21, 'unpaid_days': 0})
+          ..['bank_account_check_number'] = 'HDFC00004821',
       )!;
 
       expect(summary.daysLine, 'Paid days 21 · LOP 0');

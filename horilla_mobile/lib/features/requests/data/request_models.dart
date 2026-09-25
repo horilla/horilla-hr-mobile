@@ -75,8 +75,8 @@ class WorkRequest {
       state: value['canceled'] == true
           ? RequestState.cancelled
           : value['approved'] == true
-              ? RequestState.approved
-              : RequestState.pending,
+          ? RequestState.approved
+          : RequestState.pending,
       date: _date(value['requested_date']),
       detail: value['previous_shift_name'] is String
           ? 'from ${value['previous_shift_name']}'
@@ -136,8 +136,7 @@ class RequestInbox {
 
   static const empty = RequestInbox(requests: []);
 
-  List<WorkRequest> get open =>
-      requests.where((r) => r.state.isOpen).toList();
+  List<WorkRequest> get open => requests.where((r) => r.state.isOpen).toList();
 
   List<WorkRequest> get closed =>
       requests.where((r) => !r.state.isOpen).toList();
@@ -221,7 +220,8 @@ class ShiftOrWorkTypeRequest {
   final DateTime? requestedTill;
   final String reason;
 
-  String get path => forShift ? '/base/shift-requests/' : '/base/worktype-requests/';
+  String get path =>
+      forShift ? '/base/shift-requests/' : '/base/worktype-requests/';
 
   // employeeId is a parameter, not a field: the server only auto-fills it
   // for employees without add-permission on the request, so a manager or

@@ -13,15 +13,14 @@ LeaveApplication application({
   DateTime? end,
   LeaveBreakdown startBreakdown = LeaveBreakdown.fullDay,
   LeaveBreakdown endBreakdown = LeaveBreakdown.fullDay,
-}) =>
-    LeaveApplication(
-      leaveTypeId: 1,
-      startDate: start ?? DateTime(2026, 9, 21),
-      endDate: end ?? DateTime(2026, 9, 21),
-      startBreakdown: startBreakdown,
-      endBreakdown: endBreakdown,
-      reason: 'Because',
-    );
+}) => LeaveApplication(
+  leaveTypeId: 1,
+  startDate: start ?? DateTime(2026, 9, 21),
+  endDate: end ?? DateTime(2026, 9, 21),
+  startBreakdown: startBreakdown,
+  endBreakdown: endBreakdown,
+  reason: 'Because',
+);
 
 void main() {
   _allocationTests();
@@ -152,16 +151,9 @@ void main() {
 
     test('a holiday needs both a name and a date', () {
       expect(Holiday.fromJson({'id': 1, 'name': 'Onam'}), isNull);
+      expect(Holiday.fromJson({'id': 1, 'start_date': '2026-09-24'}), isNull);
       expect(
-        Holiday.fromJson({'id': 1, 'start_date': '2026-09-24'}),
-        isNull,
-      );
-      expect(
-        Holiday.fromJson({
-          'id': 1,
-          'name': 'Onam',
-          'start_date': '2026-09-24',
-        }),
+        Holiday.fromJson({'id': 1, 'name': 'Onam', 'start_date': '2026-09-24'}),
         isNotNull,
       );
     });

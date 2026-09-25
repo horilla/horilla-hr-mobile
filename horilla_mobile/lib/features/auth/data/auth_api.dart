@@ -76,9 +76,9 @@ class AuthApi {
     throw ApiIncompatibleServer(
       hasVersionedApi
           ? 'This server runs an older Horilla 2. Update it to a release that '
-              'includes the mobile API.'
+                'includes the mobile API.'
           : 'This server runs Horilla 1, which the app does not support. '
-              'It needs migrating to Horilla 2.',
+                'It needs migrating to Horilla 2.',
     );
   }
 
@@ -131,8 +131,9 @@ class AuthApi {
       );
 
       final body = response.data;
-      final result =
-          body is Map<String, dynamic> ? SignInResult.fromJson(body) : null;
+      final result = body is Map<String, dynamic>
+          ? SignInResult.fromJson(body)
+          : null;
       if (result == null) throw const ApiIncompatibleServer();
       return result;
     } on DioException catch (e) {

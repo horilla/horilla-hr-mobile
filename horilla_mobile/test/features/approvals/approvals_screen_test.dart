@@ -63,7 +63,10 @@ class _Manager extends SessionController {
   );
 }
 
-Future<FakeApprovalsApi> pump(WidgetTester tester, List<ApprovalItem> items) async {
+Future<FakeApprovalsApi> pump(
+  WidgetTester tester,
+  List<ApprovalItem> items,
+) async {
   tester.view.physicalSize = const Size(402 * 3, 874 * 3);
   tester.view.devicePixelRatio = 3.0;
   addTearDown(tester.view.reset);

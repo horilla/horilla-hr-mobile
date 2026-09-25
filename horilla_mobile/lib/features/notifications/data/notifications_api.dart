@@ -72,8 +72,9 @@ final notificationsApiProvider = Provider<NotificationsApi>(
   (ref) => NotificationsApi(ref.watch(apiClientProvider).dio),
 );
 
-final notificationInboxProvider =
-    FutureProvider<NotificationInbox>((ref) async {
+final notificationInboxProvider = FutureProvider<NotificationInbox>((
+  ref,
+) async {
   final all = await ref.watch(notificationsApiProvider).fetchAll();
   return NotificationInbox(all: all, now: DateTime.now());
 });

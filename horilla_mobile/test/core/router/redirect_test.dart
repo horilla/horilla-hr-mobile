@@ -61,8 +61,9 @@ class GoRouterHarness {
 }
 
 void main() {
-  testWidgets('a protected route redirects to sign-in when signed out',
-      (tester) async {
+  testWidgets('a protected route redirects to sign-in when signed out', (
+    tester,
+  ) async {
     await pump(tester, signedIn: false, at: '/home');
 
     expect(find.textContaining('Your workday'), findsOneWidget);

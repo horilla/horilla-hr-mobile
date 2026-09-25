@@ -30,15 +30,14 @@ class AppShell extends StatelessWidget {
 
   /// Router branch indices that currently have a tab.
   static List<int> get visibleBranchIndices => [
-        for (var i = 0; i < branches.length; i++)
-          if (branches[i].enabled) i,
-      ];
+    for (var i = 0; i < branches.length; i++)
+      if (branches[i].enabled) i,
+  ];
 
   static List<AppNavItem> get visibleItems => [
-        for (final branch in branches)
-          if (branch.enabled)
-            AppNavItem(label: branch.label, icon: branch.icon),
-      ];
+    for (final branch in branches)
+      if (branch.enabled) AppNavItem(label: branch.label, icon: branch.icon),
+  ];
 
   @override
   Widget build(BuildContext context) {

@@ -26,10 +26,10 @@ class StoredSession {
   final String refreshToken;
 
   Map<String, dynamic> toJson() => {
-        'host': host,
-        'access': accessToken,
-        'refresh': refreshToken,
-      };
+    'host': host,
+    'access': accessToken,
+    'refresh': refreshToken,
+  };
 
   static StoredSession? fromJson(Map<String, dynamic> json) {
     final host = json['host'];
@@ -54,7 +54,7 @@ class StoredSession {
 
 class TokenStore {
   TokenStore({FlutterSecureStorage? storage})
-      : _storage = storage ?? const FlutterSecureStorage();
+    : _storage = storage ?? const FlutterSecureStorage();
 
   static const _key = 'horilla.session';
 

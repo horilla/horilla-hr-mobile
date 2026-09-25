@@ -52,10 +52,9 @@ Future<PunchPreparation> prepare({
   );
   addTearDown(container.dispose);
 
-  return container.read(punchControllerProvider).prepare(
-        isClockingIn: isClockingIn,
-        geofence: geofence,
-      );
+  return container
+      .read(punchControllerProvider)
+      .prepare(isClockingIn: isClockingIn, geofence: geofence);
 }
 
 void main() {
@@ -126,21 +125,23 @@ void main() {
       expect(preparation.locationFailure!.isRetryable, isTrue);
     });
 
-    test('permanently denied points at Settings instead of asking again',
-        () async {
-      final preparation = await prepare(
-        location: FakeLocation.failing(
-          const LocationFailure(
-            LocationProblem.deniedForever,
-            'Location access is blocked for this app. Allow it in Settings '
-            'to clock in.',
+    test(
+      'permanently denied points at Settings instead of asking again',
+      () async {
+        final preparation = await prepare(
+          location: FakeLocation.failing(
+            const LocationFailure(
+              LocationProblem.deniedForever,
+              'Location access is blocked for this app. Allow it in Settings '
+              'to clock in.',
+            ),
           ),
-        ),
-      );
+        );
 
-      expect(preparation.locationFailure!.isRetryable, isFalse);
-      expect(preparation.blockedReason, contains('Settings'));
-    });
+        expect(preparation.locationFailure!.isRetryable, isFalse);
+        expect(preparation.blockedReason, contains('Settings'));
+      },
+    );
 
     test('location switched off device-wide is its own message', () async {
       final preparation = await prepare(
@@ -191,15 +192,13 @@ void main() {
   });
 
   test('a clock-out the server saved, then rejected, still counts', () async {
-    final adapter = _ScriptedAdapter(
-      clockedInAfter: false,
-    );
+    final adapter = _ScriptedAdapter(clockedInAfter: false);
     final container = _submitContainer(adapter);
     addTearDown(container.dispose);
 
-    await container.read(punchControllerProvider).submit(
-          const PunchPreparation(isClockingIn: false),
-        );
+    await container
+        .read(punchControllerProvider)
+        .submit(const PunchPreparation(isClockingIn: false));
 
     expect(adapter.clockOuts, 1);
   });
@@ -213,9 +212,9 @@ void main() {
     addTearDown(container.dispose);
 
     expect(
-      () => container.read(punchControllerProvider).submit(
-            const PunchPreparation(isClockingIn: true),
-          ),
+      () => container
+          .read(punchControllerProvider)
+          .submit(const PunchPreparation(isClockingIn: true)),
       throwsA(
         isA<ApiUnknown>().having(
           (e) => e.message,
@@ -232,9 +231,9 @@ void main() {
     addTearDown(container.dispose);
 
     expect(
-      () => container.read(punchControllerProvider).submit(
-            const PunchPreparation(isClockingIn: false),
-          ),
+      () => container
+          .read(punchControllerProvider)
+          .submit(const PunchPreparation(isClockingIn: false)),
       throwsA(
         isA<ApiUnknown>().having(
           (e) => e.message,
@@ -263,11 +262,7 @@ ProviderContainer _submitContainer(_ScriptedAdapter adapter) {
   return ProviderContainer(
     overrides: [
       apiClientProvider.overrideWithValue(
-        ApiClient(
-          tokenStore: _MemoryTokens(),
-          onSessionLost: () {},
-          dio: dio,
-        ),
+        ApiClient(tokenStore: _MemoryTokens(), onSessionLost: () {}, dio: dio),
       ),
     ],
   );

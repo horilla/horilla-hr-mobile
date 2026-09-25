@@ -12,11 +12,8 @@ enum LeaveBreakdown {
   final String wire;
   final String label;
 
-  static LeaveBreakdown fromWire(Object? value) =>
-      LeaveBreakdown.values.firstWhere(
-        (b) => b.wire == value,
-        orElse: () => LeaveBreakdown.fullDay,
-      );
+  static LeaveBreakdown fromWire(Object? value) => LeaveBreakdown.values
+      .firstWhere((b) => b.wire == value, orElse: () => LeaveBreakdown.fullDay);
 }
 
 /// Where a request has got to. Unknown values fall back to [requested] rather
@@ -33,9 +30,9 @@ enum LeaveStatus {
   final String label;
 
   static LeaveStatus fromWire(Object? value) => LeaveStatus.values.firstWhere(
-        (s) => s.wire == value,
-        orElse: () => LeaveStatus.requested,
-      );
+    (s) => s.wire == value,
+    orElse: () => LeaveStatus.requested,
+  );
 }
 
 class LeaveType {
@@ -122,7 +119,11 @@ class LeaveRequestSummary {
 }
 
 class Holiday {
-  const Holiday({required this.id, required this.name, required this.startDate});
+  const Holiday({
+    required this.id,
+    required this.name,
+    required this.startDate,
+  });
 
   final int id;
   final String name;
@@ -192,14 +193,14 @@ class LeaveApplication {
   }
 
   Map<String, dynamic> toJson(int employeeId) => {
-        'employee_id': employeeId,
-        'leave_type_id': leaveTypeId,
-        'start_date': _date(startDate),
-        'end_date': _date(endDate),
-        'start_date_breakdown': startBreakdown.wire,
-        'end_date_breakdown': endBreakdown.wire,
-        'description': reason,
-      };
+    'employee_id': employeeId,
+    'leave_type_id': leaveTypeId,
+    'start_date': _date(startDate),
+    'end_date': _date(endDate),
+    'start_date_breakdown': startBreakdown.wire,
+    'end_date_breakdown': endBreakdown.wire,
+    'description': reason,
+  };
 
   static String _date(DateTime value) =>
       '${value.year.toString().padLeft(4, '0')}-'
@@ -208,11 +209,11 @@ class LeaveApplication {
 }
 
 double? _toDouble(Object? value) => switch (value) {
-      final double d => d,
-      final int i => i.toDouble(),
-      final String s => double.tryParse(s),
-      _ => null,
-    };
+  final double d => d,
+  final int i => i.toDouble(),
+  final String s => double.tryParse(s),
+  _ => null,
+};
 
 /// Asking HR for more days of a leave type.
 ///
@@ -235,9 +236,9 @@ class LeaveAllocationRequest {
   bool get isValid => requestedDays > 0 && reason.trim().isNotEmpty;
 
   Map<String, dynamic> toJson(int employeeId) => {
-        'employee_id': employeeId,
-        'leave_type_id': leaveTypeId,
-        'requested_days': requestedDays,
-        'description': reason.trim(),
-      };
+    'employee_id': employeeId,
+    'leave_type_id': leaveTypeId,
+    'requested_days': requestedDays,
+    'description': reason.trim(),
+  };
 }

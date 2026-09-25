@@ -50,7 +50,9 @@ bool isSupportedCameraFrame({
 /// frames before it left.
 @visibleForTesting
 class PresenceCounter {
-  PresenceCounter({this.requiredConsecutiveFrames = _kRequiredConsecutiveFrames});
+  PresenceCounter({
+    this.requiredConsecutiveFrames = _kRequiredConsecutiveFrames,
+  });
 
   final int requiredConsecutiveFrames;
   int _consecutive = 0;

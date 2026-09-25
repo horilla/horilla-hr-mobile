@@ -163,9 +163,7 @@ class _FaceEnrolmentScreenState extends ConsumerState<FaceEnrolmentScreen> {
             ),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpace.x20,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpace.x20),
                 child: AspectRatio(
                   aspectRatio: 1,
                   child: ClipRRect(
@@ -177,9 +175,7 @@ class _FaceEnrolmentScreenState extends ConsumerState<FaceEnrolmentScreen> {
             ),
             if (_error != null)
               Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpace.x20,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpace.x20),
                 child: Text(
                   _error!,
                   textAlign: TextAlign.center,
@@ -209,9 +205,7 @@ class _FaceEnrolmentScreenState extends ConsumerState<FaceEnrolmentScreen> {
             ),
             if (_error != null)
               Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpace.x20,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpace.x20),
                 child: Text(
                   _error!,
                   textAlign: TextAlign.center,
@@ -255,11 +249,7 @@ class _FaceEnrolmentScreenState extends ConsumerState<FaceEnrolmentScreen> {
     return Padding(
       padding: const EdgeInsets.all(AppSpace.screen),
       child: Center(
-        child: Text(
-          message,
-          textAlign: TextAlign.center,
-          style: AppText.body,
-        ),
+        child: Text(message, textAlign: TextAlign.center, style: AppText.body),
       ),
     );
   }

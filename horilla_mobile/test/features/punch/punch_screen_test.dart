@@ -134,41 +134,41 @@ void main() {
       final semantics = tester.ensureSemantics();
       final fake = _FakePunchController();
       try {
-      await _pumpPunch(tester, fake);
+        await _pumpPunch(tester, fake);
 
-      // A sighted press must not be a tap action. On the phone that action
-      // fired as soon as the finger went down, clocking out before the bar
-      // finished, and the bar's own confirm then got "Already clocked-out".
-      final node = tester.getSemantics(find.byType(HoldToConfirmButton));
-      expect(node.getSemanticsData().hasAction(SemanticsAction.tap), isFalse);
+        // A sighted press must not be a tap action. On the phone that action
+        // fired as soon as the finger went down, clocking out before the bar
+        // finished, and the bar's own confirm then got "Already clocked-out".
+        final node = tester.getSemantics(find.byType(HoldToConfirmButton));
+        expect(node.getSemanticsData().hasAction(SemanticsAction.tap), isFalse);
 
-      // Press and hold: completion is time-based on the animation, not on
-      // the gesture ending, so advancing past holdFor is the hold.
-      final gesture = await tester.startGesture(
-        tester.getCenter(find.byType(HoldToConfirmButton)),
-      );
-      // Margin beyond holdFor: the first pumped tick only resolves the tap
-      // recognizer's arena and registers the gesture down -- it contributes
-      // no animation progress of its own -- so the animation's own clock
-      // starts slightly after this loop's clock does.
-      await pumpTicks(tester, const Duration(milliseconds: 1300));
+        // Press and hold: completion is time-based on the animation, not on
+        // the gesture ending, so advancing past holdFor is the hold.
+        final gesture = await tester.startGesture(
+          tester.getCenter(find.byType(HoldToConfirmButton)),
+        );
+        // Margin beyond holdFor: the first pumped tick only resolves the tap
+        // recognizer's arena and registers the gesture down -- it contributes
+        // no animation progress of its own -- so the animation's own clock
+        // starts slightly after this loop's clock does.
+        await pumpTicks(tester, const Duration(milliseconds: 1300));
 
-      // The moment the hold completes, before the screen has changed:
-      // exactly one submit, and something on screen unambiguously says so.
-      expect(fake.submitCalls, 1);
-      expect(find.text('Checked out'), findsOneWidget);
+        // The moment the hold completes, before the screen has changed:
+        // exactly one submit, and something on screen unambiguously says so.
+        expect(fake.submitCalls, 1);
+        expect(find.text('Checked out'), findsOneWidget);
 
-      // The hold control itself is gone -- there is nothing left to press
-      // that could trigger a second, now-invalid, check-out.
-      expect(find.byType(HoldToConfirmButton), findsNothing);
+        // The hold control itself is gone -- there is nothing left to press
+        // that could trigger a second, now-invalid, check-out.
+        expect(find.byType(HoldToConfirmButton), findsNothing);
 
-      await gesture.up();
-      // Past the confirmation pause, the screen has actually moved on.
-      await pumpTicks(tester, const Duration(milliseconds: 950));
-      expect(find.text('HOME'), findsOneWidget);
+        await gesture.up();
+        // Past the confirmation pause, the screen has actually moved on.
+        await pumpTicks(tester, const Duration(milliseconds: 950));
+        expect(find.text('HOME'), findsOneWidget);
 
-      // No further submit happened on the way out.
-      expect(fake.submitCalls, 1);
+        // No further submit happened on the way out.
+        expect(fake.submitCalls, 1);
       } finally {
         semantics.dispose();
       }

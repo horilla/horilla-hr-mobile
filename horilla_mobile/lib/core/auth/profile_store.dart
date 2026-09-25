@@ -34,21 +34,21 @@ class StoredProfile {
   final bool faceDetectionEnabled;
 
   Map<String, dynamic> toJson() => {
-        'user': {
-          'id': user.id,
-          'full_name': user.fullName,
-          'employee_profile': user.avatarUrl,
-        },
-        'capabilities': {
-          'role': capabilities.role,
-          'permissions': capabilities.permissions,
-          'features': capabilities.features,
-          'currency_symbol': capabilities.currencySymbol,
-        },
-        'cleartext': isCleartext,
-        'geo_fencing': geoFencingEnabled,
-        'face_detection': faceDetectionEnabled,
-      };
+    'user': {
+      'id': user.id,
+      'full_name': user.fullName,
+      'employee_profile': user.avatarUrl,
+    },
+    'capabilities': {
+      'role': capabilities.role,
+      'permissions': capabilities.permissions,
+      'features': capabilities.features,
+      'currency_symbol': capabilities.currencySymbol,
+    },
+    'cleartext': isCleartext,
+    'geo_fencing': geoFencingEnabled,
+    'face_detection': faceDetectionEnabled,
+  };
 
   static StoredProfile? fromJson(Map<String, dynamic> json) {
     final user = json['user'];
@@ -69,7 +69,7 @@ class StoredProfile {
 
 class ProfileStore {
   ProfileStore({SharedPreferencesAsync? prefs})
-      : _prefs = prefs ?? SharedPreferencesAsync();
+    : _prefs = prefs ?? SharedPreferencesAsync();
 
   static const _key = 'horilla.profile';
 

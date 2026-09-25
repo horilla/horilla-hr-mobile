@@ -2,6 +2,7 @@
 /// part that cannot be checked by hand: the failure only shows up when several
 /// requests expire at the same moment.
 library;
+
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:horilla_mobile/core/api/auth_interceptor.dart';
@@ -62,16 +63,19 @@ class _Adapter implements HttpClientAdapter {
       server.refreshCalls++;
       await Future<void>.delayed(const Duration(milliseconds: 20));
       if (!server.refreshSucceeds) {
-        return ResponseBody.fromString('{"detail":"invalid"}', 401,
-            headers: {
-              Headers.contentTypeHeader: [Headers.jsonContentType]
-            });
+        return ResponseBody.fromString(
+          '{"detail":"invalid"}',
+          401,
+          headers: {
+            Headers.contentTypeHeader: [Headers.jsonContentType],
+          },
+        );
       }
       return ResponseBody.fromString(
         '{"access":"access-2","refresh":"refresh-2"}',
         200,
         headers: {
-          Headers.contentTypeHeader: [Headers.jsonContentType]
+          Headers.contentTypeHeader: [Headers.jsonContentType],
         },
       );
     }
@@ -86,13 +90,15 @@ class _Adapter implements HttpClientAdapter {
       expired ? '{"detail":"expired"}' : '{"ok":true}',
       expired ? 401 : 200,
       headers: {
-        Headers.contentTypeHeader: [Headers.jsonContentType]
+        Headers.contentTypeHeader: [Headers.jsonContentType],
       },
     );
   }
 }
 
-Dio buildClient(FakeServer server, FakeTokenStore store, {
+Dio buildClient(
+  FakeServer server,
+  FakeTokenStore store, {
   required void Function() onSessionLost,
 }) {
   final dio = Dio(BaseOptions(baseUrl: 'https://hr.example.com/api/v1'));
@@ -108,10 +114,10 @@ Dio buildClient(FakeServer server, FakeTokenStore store, {
 }
 
 StoredSession seed() => const StoredSession(
-      host: 'https://hr.example.com',
-      accessToken: 'access-1',
-      refreshToken: 'refresh-1',
-    );
+  host: 'https://hr.example.com',
+  accessToken: 'access-1',
+  refreshToken: 'refresh-1',
+);
 
 void main() {
   test('attaches the stored access token', () async {
@@ -148,8 +154,11 @@ void main() {
     final session = await store.read();
     expect(session!.accessToken, 'access-2');
     expect(session.refreshToken, 'refresh-2');
-    expect(session.host, 'https://hr.example.com',
-        reason: 'the host must survive a refresh');
+    expect(
+      session.host,
+      'https://hr.example.com',
+      reason: 'the host must survive a refresh',
+    );
   });
 
   test('concurrent 401s trigger exactly one refresh', () async {
@@ -167,8 +176,11 @@ void main() {
       dio.get<dynamic>('/four'),
     ]);
 
-    expect(server.refreshCalls, 1,
-        reason: 'six concurrent refreshes would invalidate each other');
+    expect(
+      server.refreshCalls,
+      1,
+      reason: 'six concurrent refreshes would invalidate each other',
+    );
   });
 
   test('a failed refresh reports the session lost and does not loop', () async {

@@ -21,13 +21,11 @@ class PayrollApi {
       };
       if (raw is! List) return const [];
 
-      final payslips = raw
-          .map(PayslipSummary.fromJson)
-          .whereType<PayslipSummary>()
-          .toList()
-        // Newest first: the one someone opens the screen for is the last one
-        // they were paid.
-        ..sort((a, b) => b.endDate.compareTo(a.endDate));
+      final payslips =
+          raw.map(PayslipSummary.fromJson).whereType<PayslipSummary>().toList()
+            // Newest first: the one someone opens the screen for is the last one
+            // they were paid.
+            ..sort((a, b) => b.endDate.compareTo(a.endDate));
       return payslips;
     } on DioException catch (e) {
       final failure = e.error;
@@ -48,15 +46,15 @@ class PayrollApi {
   }
 }
 
-final payrollApiProvider =
-    Provider<PayrollApi>((ref) => PayrollApi(ref.watch(apiClientProvider).dio));
+final payrollApiProvider = Provider<PayrollApi>(
+  (ref) => PayrollApi(ref.watch(apiClientProvider).dio),
+);
 
 final payslipsProvider = FutureProvider<List<PayslipSummary>>((ref) {
   return ref.watch(payrollApiProvider).fetchPayslips();
 });
 
-final payslipProvider =
-    FutureProvider.family<PayslipDetail, int>((ref, id) {
+final payslipProvider = FutureProvider.family<PayslipDetail, int>((ref, id) {
   return ref.watch(payrollApiProvider).fetchPayslip(id);
 });
 

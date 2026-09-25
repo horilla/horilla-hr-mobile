@@ -55,7 +55,8 @@ class AppNotification {
       // is not a local path is ignored rather than followed: a redirect is a
       // navigation instruction from the server, and one pointing off-app is
       // not something to obey blindly.
-      redirect: redirect is String &&
+      redirect:
+          redirect is String &&
               redirect.startsWith('/') &&
               !redirect.startsWith('//')
           ? redirect
@@ -67,7 +68,7 @@ class AppNotification {
 /// The list, split the way the screen draws it.
 class NotificationInbox {
   const NotificationInbox({required this.all, required DateTime now})
-      : _now = now;
+    : _now = now;
 
   final List<AppNotification> all;
   final DateTime _now;
@@ -75,8 +76,7 @@ class NotificationInbox {
   static NotificationInbox empty(DateTime now) =>
       NotificationInbox(all: const [], now: now);
 
-  List<AppNotification> get today =>
-      all.where((n) => n.isToday(_now)).toList();
+  List<AppNotification> get today => all.where((n) => n.isToday(_now)).toList();
 
   List<AppNotification> get earlier =>
       all.where((n) => !n.isToday(_now)).toList();

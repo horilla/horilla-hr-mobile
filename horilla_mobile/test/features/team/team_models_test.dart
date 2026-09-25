@@ -45,8 +45,10 @@ void main() {
       clockIns: {11: '09:30'},
       leaves: [off(11, 'Arun Menon', 23, 23)],
     );
-    expect(team.members.firstWhere((m) => m.id == 11).state,
-        TeamState.checkedIn);
+    expect(
+      team.members.firstWhere((m) => m.id == 11).state,
+      TeamState.checkedIn,
+    );
   });
 
   test('the roster is in, then on leave, then not in', () {
@@ -71,10 +73,7 @@ void main() {
     expect(quiet.worstDay, isNull);
 
     final thin = build(
-      leaves: [
-        off(10, 'Priya Nair', 24, 25),
-        off(11, 'Arun Menon', 24, 24),
-      ],
+      leaves: [off(10, 'Priya Nair', 24, 25), off(11, 'Arun Menon', 24, 24)],
     );
     expect(thin.worstDay?.date.day, 24);
     expect(thin.worstDay?.off, ['Priya', 'Arun']);
@@ -82,10 +81,7 @@ void main() {
 
   test('leave outside the team does not count toward a clash', () {
     final team = build(
-      leaves: [
-        off(10, 'Priya Nair', 24, 24),
-        off(99, 'Someone Else', 24, 24),
-      ],
+      leaves: [off(10, 'Priya Nair', 24, 24), off(99, 'Someone Else', 24, 24)],
     );
     expect(team.worstDay, isNull);
   });

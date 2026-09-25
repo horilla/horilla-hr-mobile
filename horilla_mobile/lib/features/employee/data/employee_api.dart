@@ -39,9 +39,10 @@ class EmployeeApi {
           .map(DirectoryEntry.fromJson)
           .whereType<DirectoryEntry>()
           .toList()
-        ..sort((a, b) => a.fullName.toLowerCase().compareTo(
-              b.fullName.toLowerCase(),
-            ));
+        ..sort(
+          (a, b) =>
+              a.fullName.toLowerCase().compareTo(b.fullName.toLowerCase()),
+        );
     } on DioException catch (e) {
       final failure = e.error;
       throw failure is ApiFailure ? failure : const ApiUnknown();
@@ -81,8 +82,9 @@ class DirectorySearch extends Notifier<String> {
   void update(String value) => state = value;
 }
 
-final directorySearchProvider =
-    NotifierProvider<DirectorySearch, String>(DirectorySearch.new);
+final directorySearchProvider = NotifierProvider<DirectorySearch, String>(
+  DirectorySearch.new,
+);
 
 final directoryProvider = FutureProvider<List<DirectoryEntry>>((ref) async {
   final search = ref.watch(directorySearchProvider);
