@@ -122,11 +122,14 @@ CI runs all three on every pull request.
 
 ### Screenshots are code
 
-The images above are rendered by a script from the same sample data as the preview build. After a UI change, regenerate them:
+The images above are real data from `hr.demo.horilla.com`, rendered by a script that signs in for real and reads (never writes) before capturing each screen:
 
 ```bash
-flutter test tool/readme_screenshots.dart   # writes docs/screenshots/*.png
+DEMO_HOST=https://hr.demo.horilla.com DEMO_USERNAME=... DEMO_PASSWORD=... \
+flutter test tool/demo_screenshots.dart   # writes docs/screenshots/*.png
 ```
+
+No server handy, or want the made-up sample data instead? `tool/readme_screenshots.dart` renders the same set from the preview build's fixed data, no sign-in required.
 
 ## Contributing
 
