@@ -104,7 +104,44 @@ class RequestsApi {
       await _dio.post<dynamic>(draft.path, data: draft.toJson(employeeId));
     } on DioException catch (e) {
       final failure = e.error;
-      throw failure is ApiFailure ? failure : const ApiUnknown();
+      final mapped = failure is ApiFailure ? failure : const ApiUnknown();
+      // Work-type create saves the request, *then* notifies the reporting
+      // manager -- and answers 400 with an empty body if that fails (no
+      // manager, no work information). Reporting that as a failure invites
+      // a retry and a duplicate, so look for the request first. Only for
+      // the empty-body case: real validation errors arrive as ApiValidation.
+      if (!draft.forShift &&
+          mapped is ApiUnknown &&
+          await _workTypeRequestExists(draft, employeeId)) {
+        return;
+      }
+      throw mapped;
+    }
+  }
+
+  Future<bool> _workTypeRequestExists(
+    ShiftOrWorkTypeRequest draft,
+    int employeeId,
+  ) async {
+    final wanted = draft.toJson(employeeId)['requested_date'];
+    try {
+      final response = await _dio.get<dynamic>(
+        '/base/worktype-requests/',
+        queryParameters: {'page_size': 100},
+      );
+      return _items<Map<String, dynamic>>(
+        response.data,
+        (v) => v is Map<String, dynamic> ? v : null,
+      ).any(
+        (r) =>
+            r['employee_id'] == employeeId &&
+            r['work_type_id'] == draft.requestedId &&
+            r['requested_date'] == wanted &&
+            r['approved'] != true &&
+            r['canceled'] != true,
+      );
+    } on DioException {
+      return false;
     }
   }
 

@@ -169,6 +169,27 @@ void main() {
       expect(inbox.summary(), '1 leave · 1 shift change');
     });
 
+    test('the summary keeps the three largest kinds and folds the rest', () {
+      ApprovalItem of(ApprovalKind kind, int id) => ApprovalItem(
+        kind: kind,
+        id: id,
+        employeeId: 9,
+        name: 'X',
+        ask: 'x',
+      );
+      final busy = ApprovalInbox([
+        for (var i = 0; i < 4; i++) of(ApprovalKind.leave, i),
+        for (var i = 0; i < 3; i++) of(ApprovalKind.shift, i),
+        for (var i = 0; i < 2; i++) of(ApprovalKind.attendance, i),
+        of(ApprovalKind.reimbursement, 1),
+        of(ApprovalKind.workType, 1),
+      ]);
+      expect(
+        busy.summary(),
+        '4 leave · 3 shift change · 2 attendance fix · 2 more',
+      );
+    });
+
     test('keys are unique across kinds even when ids collide', () {
       final a = ApprovalItem.fromLeave(leave(), selfId: self)!;
       final b = ApprovalItem.fromShift({...shift(), 'id': a.id}, selfId: self)!;

@@ -288,13 +288,18 @@ class ApprovalInbox {
       ? items
       : items.where((i) => i.kind.filter == filter).toList();
 
-  /// "3 leave · 1 shift change" -- the Home band's subline.
+  /// "3 leave · 1 shift change" -- the Home band's subline. The three
+  /// largest kinds only, so it stays one line when everything is pending.
   String summary() {
     final counts = <String, int>{};
     for (final item in items) {
       final label = item.kind.label.toLowerCase();
       counts[label] = (counts[label] ?? 0) + 1;
     }
-    return counts.entries.map((e) => '${e.value} ${e.key}').join(' · ');
+    final ranked = counts.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+    final shown = ranked.take(3).map((e) => '${e.value} ${e.key}');
+    final rest = ranked.skip(3).fold<int>(0, (sum, e) => sum + e.value);
+    return [...shown, if (rest > 0) '$rest more'].join(' · ');
   }
 }
