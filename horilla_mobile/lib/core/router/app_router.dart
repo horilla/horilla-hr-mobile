@@ -15,6 +15,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/announcements/ui/announcements_screen.dart';
 import '../../features/auth/ui/sign_in_screen.dart';
 import '../../features/approvals/ui/approvals_screen.dart';
 import '../../features/attendance/data/attendance_models.dart';
@@ -117,6 +118,20 @@ GoRouter buildRouter({
                   GoRoute(
                     path: 'notifications',
                     builder: (context, state) => const NotificationsScreen(),
+                  ),
+                  GoRoute(
+                    path: 'announcements',
+                    builder: (context, state) => const AnnouncementsScreen(),
+                    routes: [
+                      GoRoute(
+                        path: ':id',
+                        builder: (context, state) => AnnouncementDetailScreen(
+                          announcementId:
+                              int.tryParse(state.pathParameters['id'] ?? '') ??
+                              0,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

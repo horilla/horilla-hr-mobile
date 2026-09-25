@@ -11,6 +11,7 @@ import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/horilla_mark.dart';
 import '../../../shared/widgets/pressable.dart';
 import '../../../shared/widgets/error_state_card.dart';
+import '../../announcements/ui/announcements_screen.dart';
 import '../../punch/ui/punch_screen.dart';
 import '../data/home_api.dart';
 import '../../approvals/data/approvals_controller.dart';
@@ -62,13 +63,13 @@ class HomeScreen extends ConsumerWidget {
   }
 }
 
-class _HomeBody extends StatelessWidget {
+class _HomeBody extends ConsumerWidget {
   const _HomeBody({required this.data});
 
   final HomeData data;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return ListView(
       padding: EdgeInsets.zero,
       children: [
@@ -174,7 +175,12 @@ class _HomeBody extends StatelessWidget {
 
               if (data.announcement != null) ...[
                 const SizedBox(height: AppSpace.x12),
-                AnnouncementCard(announcement: data.announcement!),
+                AnnouncementCard(
+                  announcement: data.announcement!,
+                  onTap: () =>
+                      openAnnouncement(context, ref, data.announcement!.id),
+                  onSeeAll: () => context.push('/home/announcements'),
+                ),
               ],
             ],
           ),

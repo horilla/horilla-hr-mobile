@@ -233,10 +233,16 @@ class OnLeaveToday extends StatelessWidget {
 }
 
 class AnnouncementCard extends StatelessWidget {
-  const AnnouncementCard({super.key, required this.announcement, this.onTap});
+  const AnnouncementCard({
+    super.key,
+    required this.announcement,
+    this.onTap,
+    this.onSeeAll,
+  });
 
   final AnnouncementSummary announcement;
   final VoidCallback? onTap;
+  final VoidCallback? onSeeAll;
 
   @override
   Widget build(BuildContext context) {
@@ -245,8 +251,31 @@ class AnnouncementCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const EyebrowLabel('Announcement'),
-          const SizedBox(height: AppSpace.x6),
+          Row(
+            children: [
+              const Expanded(child: EyebrowLabel('Latest announcement')),
+              if (onSeeAll != null)
+                Semantics(
+                  button: true,
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: onSeeAll,
+                    child: Padding(
+                      // Grows the tap target; the text alone is ~16pt tall.
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Text(
+                        'See all',
+                        style: AppText.meta.copyWith(
+                          color: AppColors.brandStrong,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: AppSpace.x4),
           Text(
             announcement.title,
             style: AppText.cardTitle.copyWith(fontSize: 14),
