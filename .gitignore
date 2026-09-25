@@ -1,0 +1,16 @@
+.DS_Store
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+*.iml
+.idea/
+horilla_mobile/.dart_tool/
+horilla_mobile/build/
+horilla_mobile/.flutter-plugins
+horilla_mobile/.flutter-plugins-dependencies
+horilla_mobile/lib/l10n/app_localizations*.dart
+horilla_mobile/android/local.properties
+horilla_mobile/android/.gradle/
+horilla_mobile/android/local.properties

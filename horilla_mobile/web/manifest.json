@@ -1,6 +1,6 @@
 {
-    "name": "horilla_project",
-    "short_name": "horilla_project",
+    "name": "horilla_mobile",
+    "short_name": "horilla_mobile",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

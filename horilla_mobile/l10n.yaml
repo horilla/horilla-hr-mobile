@@ -1,0 +1,9 @@
+# English only for v1, but every user-facing string goes through the
+# localisation system from the first screen. Retrofitting i18n across 32
+# screens later is a miserable project; doing it now costs a few days and
+# means a translation can be added without touching a single widget.
+arb-dir: lib/l10n
+template-arb-file: app_en.arb
+output-localization-file: app_localizations.dart
+output-class: AppL10n
+nullable-getter: false
