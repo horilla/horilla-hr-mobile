@@ -11,8 +11,10 @@
 /// by accident.
 library;
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 
 import 'app.dart';
 import 'core/auth/session.dart';
@@ -31,6 +33,12 @@ import 'features/payroll/data/payroll_models.dart';
 import 'features/requests/data/request_models.dart';
 import 'features/requests/data/requests_api.dart';
 import 'features/home/data/home_models.dart';
+import 'features/announcements/data/announcement_models.dart';
+import 'features/announcements/data/announcements_api.dart';
+import 'features/approvals/data/approval_models.dart';
+import 'features/approvals/data/approvals_api.dart';
+import 'features/team/data/team_api.dart';
+import 'features/team/data/team_models.dart';
 
 final _sampleHome = HomeData(
   user: const SignedInUser(id: 1, fullName: 'Nisha Prakash'),
@@ -284,57 +292,195 @@ final _sampleNotifications = NotificationInbox(
   ],
 );
 
-void main() {
-  runApp(
-    ProviderScope(
-      overrides: [
-        homeProvider.overrideWith((ref) async => _sampleHome),
-        attendanceOverviewProvider.overrideWith((ref) async => _sampleAttendance),
-        leaveOverviewProvider.overrideWith((ref) async => _sampleLeave),
-        directoryProvider.overrideWith((ref) async => _sampleDirectory),
-        notificationInboxProvider
-            .overrideWith((ref) async => _sampleNotifications),
-        requestInboxProvider.overrideWith((ref) async => _sampleRequests),
-        shiftOptionsProvider.overrideWith((ref) async => _sampleShifts),
-        workTypeOptionsProvider.overrideWith((ref) async => _sampleWorkTypes),
-        assetCategoryOptionsProvider
-            .overrideWith((ref) async => _sampleAssetCategories),
-        payslipsProvider.overrideWith((ref) async => _samplePayslips),
-        payslipProvider.overrideWith(
-          (ref, id) async => PayslipDetail(
-            summary: _samplePayslips.firstWhere(
-              (p) => p.id == id,
-              orElse: () => _samplePayslips.first,
-            ),
-            earnings: const [
-              PayComponent(title: 'Basic', amount: 60000),
-              PayComponent(title: 'House rent allowance', amount: 24000),
-              PayComponent(title: 'Travel allowance', amount: 18000),
-            ],
-            deductions: const [
-              PayComponent(title: 'Provident fund', amount: 7200),
-              PayComponent(title: 'Professional tax', amount: 200),
-              PayComponent(title: 'Income tax', amount: 8180),
-            ],
-            basicPay: 60000,
-          ),
-        ),
-        sessionRestoreProvider.overrideWith((ref) async {}),
-        sessionProvider.overrideWith(_PreviewSession.new),
+/// Every sample-data override; shared with the README screenshot script.
+final List<Override> previewOverrides = [
+  homeProvider.overrideWith((ref) async => _sampleHome),
+  attendanceOverviewProvider.overrideWith((ref) async => _sampleAttendance),
+  leaveOverviewProvider.overrideWith((ref) async => _sampleLeave),
+  directoryProvider.overrideWith((ref) async => _sampleDirectory),
+  notificationInboxProvider.overrideWith((ref) async => _sampleNotifications),
+  requestInboxProvider.overrideWith((ref) async => _sampleRequests),
+  shiftOptionsProvider.overrideWith((ref) async => _sampleShifts),
+  workTypeOptionsProvider.overrideWith((ref) async => _sampleWorkTypes),
+  assetCategoryOptionsProvider.overrideWith(
+    (ref) async => _sampleAssetCategories,
+  ),
+  payslipsProvider.overrideWith((ref) async => _samplePayslips),
+  payslipProvider.overrideWith(
+    (ref, id) async => PayslipDetail(
+      summary: _samplePayslips.firstWhere(
+        (p) => p.id == id,
+        orElse: () => _samplePayslips.first,
+      ),
+      earnings: const [
+        PayComponent(title: 'Basic', amount: 60000),
+        PayComponent(title: 'House rent allowance', amount: 24000),
+        PayComponent(title: 'Travel allowance', amount: 18000),
       ],
-      child: const HorillaApp(),
+      deductions: const [
+        PayComponent(title: 'Provident fund', amount: 7200),
+        PayComponent(title: 'Professional tax', amount: 200),
+        PayComponent(title: 'Income tax', amount: 8180),
+      ],
+      basicPay: 60000,
     ),
+  ),
+  approvalsApiProvider.overrideWithValue(_PreviewApprovalsApi()),
+  teamTodayProvider.overrideWith((ref) async => _sampleTeam()),
+  announcementsProvider.overrideWith((ref) async => _sampleAnnouncements),
+  announcementProvider.overrideWith(
+    (ref, id) async => _sampleAnnouncements.firstWhere(
+      (a) => a.id == id,
+      orElse: () => _sampleAnnouncements.first,
+    ),
+  ),
+  sessionRestoreProvider.overrideWith((ref) async {}),
+  sessionProvider.overrideWith(_PreviewSession.new),
+];
+
+void main() {
+  runApp(ProviderScope(overrides: previewOverrides, child: const HorillaApp()));
+}
+
+final _sampleApprovals = ApprovalInbox([
+  ApprovalItem(
+    kind: ApprovalKind.leave,
+    id: 1,
+    employeeId: 2,
+    name: 'Arun Menon',
+    ask: 'Casual leave · 6 Oct – 8 Oct · 3 days',
+    reason: 'Family function in Kochi.',
+    submitted: DateTime.now().subtract(const Duration(hours: 3)),
+    warning: 'Overlaps 1 approved leave in the team.',
+  ),
+  ApprovalItem(
+    kind: ApprovalKind.shift,
+    id: 2,
+    employeeId: 3,
+    name: 'Priya Nair',
+    ask: 'Day shift → Night shift · 13 Oct – 24 Oct',
+    reason: 'Covering the APAC release window.',
+    submitted: DateTime.now().subtract(const Duration(days: 1)),
+  ),
+  ApprovalItem(
+    kind: ApprovalKind.reimbursement,
+    id: 3,
+    employeeId: 4,
+    name: 'David Cole',
+    ask: 'Client visit taxi · ₹1,450',
+    submitted: DateTime.now().subtract(const Duration(days: 2)),
+  ),
+  ApprovalItem(
+    kind: ApprovalKind.attendance,
+    id: 4,
+    employeeId: 5,
+    name: 'Meera Iyer',
+    ask: 'Correction for 22 Sep · 09:10–18:05',
+    canReject: false,
+  ),
+]);
+
+class _PreviewApprovalsApi extends ApprovalsApi {
+  _PreviewApprovalsApi() : super(Dio());
+
+  @override
+  Future<ApprovalInbox> fetchInbox({
+    required int selfId,
+    String? currencySymbol,
+  }) async => _sampleApprovals;
+}
+
+TeamToday _sampleTeam() {
+  final today = DateTime.now();
+  DateTime day(int offset) =>
+      DateTime(today.year, today.month, today.day + offset);
+  return TeamToday.build(
+    reports: {
+      2: 'Senior engineer',
+      3: 'Designer',
+      4: 'QA engineer',
+      5: 'Engineer',
+      6: 'Engineer',
+    },
+    names: {
+      2: 'Arun Menon',
+      3: 'Priya Nair',
+      4: 'David Cole',
+      5: 'Meera Iyer',
+      6: 'Rahul Das',
+    },
+    clockIns: {3: '09:02', 5: '08:55', 6: '09:20'},
+    leaves: [
+      TeamLeave(
+        employeeId: 2,
+        name: 'Arun Menon',
+        start: day(0),
+        end: day(1),
+        type: 'Casual',
+      ),
+      TeamLeave(
+        employeeId: 4,
+        name: 'David Cole',
+        start: day(0),
+        end: day(0),
+        type: 'Sick',
+      ),
+    ],
+    today: today,
   );
 }
+
+final _sampleAnnouncements = [
+  Announcement(
+    id: 1,
+    title: 'Q3 review cycle opens on Monday',
+    createdAt: DateTime.now(),
+    hasViewed: false,
+    author: 'Nisha Prakash',
+    content: const [
+      ContentBlock(
+        BlockType.paragraph,
+        'Self reviews open on Monday and close on 10 October. Managers review from 13 October.',
+      ),
+      ContentBlock(BlockType.heading, 'Before you start'),
+      ContentBlock(BlockType.bullet, 'Update your objectives in Performance'),
+      ContentBlock(BlockType.bullet, 'Collect feedback from two peers'),
+      ContentBlock(BlockType.bullet, 'Book a 1:1 with your manager'),
+    ],
+    expireDate: DateTime.now().add(const Duration(days: 21)),
+  ),
+  Announcement(
+    id: 2,
+    title: 'Office closed for Onam',
+    createdAt: DateTime.now().subtract(const Duration(days: 3)),
+    content: const [
+      ContentBlock(
+        BlockType.paragraph,
+        'Both Kochi and Bengaluru offices are closed on the 15th. Happy Onam!',
+      ),
+    ],
+  ),
+  Announcement(
+    id: 3,
+    title: 'New work-from-home policy',
+    createdAt: DateTime.now().subtract(const Duration(days: 9)),
+    content: const [
+      ContentBlock(
+        BlockType.paragraph,
+        'Up to three remote days a week, requested through the app.',
+      ),
+    ],
+  ),
+];
 
 class _PreviewSession extends SessionController {
   @override
   Session? build() => Session(
-        host: 'https://demo.horilla.com',
-        user: _sampleHome.user,
-        capabilities: _sampleHome.capabilities,
-        isCleartext: false,
-        geoFencingEnabled: true,
-        faceDetectionEnabled: false,
-      );
+    host: 'https://demo.horilla.com',
+    user: _sampleHome.user,
+    capabilities: _sampleHome.capabilities,
+    isCleartext: false,
+    geoFencingEnabled: true,
+    faceDetectionEnabled: false,
+  );
 }
