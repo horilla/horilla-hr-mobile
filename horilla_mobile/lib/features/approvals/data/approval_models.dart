@@ -296,10 +296,54 @@ class ApprovalInbox {
       final label = item.kind.label.toLowerCase();
       counts[label] = (counts[label] ?? 0) + 1;
     }
-    final ranked = counts.entries.toList()
-      ..sort((a, b) => b.value.compareTo(a.value));
-    final shown = ranked.take(3).map((e) => '${e.value} ${e.key}');
-    final rest = ranked.skip(3).fold<int>(0, (sum, e) => sum + e.value);
-    return [...shown, if (rest > 0) '$rest more'].join(' · ');
+    return summarizeCounts(counts);
   }
+}
+
+/// Shared by [ApprovalInbox.summary] and [PendingApprovals.summary]: the
+/// three largest labels, then "N more" for the rest, so it stays one line
+/// however many kinds are actually pending.
+String summarizeCounts(Map<String, int> counts) {
+  final ranked = counts.entries.where((e) => e.value > 0).toList()
+    ..sort((a, b) => b.value.compareTo(a.value));
+  final shown = ranked.take(3).map((e) => '${e.value} ${e.key}');
+  final rest = ranked.skip(3).fold<int>(0, (sum, e) => sum + e.value);
+  return [...shown, if (rest > 0) '$rest more'].join(' · ');
+}
+
+/// The Home aggregate's cheap stand-in for a full [ApprovalInbox] fetch --
+/// just the counts, one per kind, so the band on Home can show "N pending"
+/// without pulling six paginated lists just to count them.
+class PendingApprovals {
+  const PendingApprovals({required this.total, required this.byKind});
+
+  final int total;
+  final Map<ApprovalKind, int> byKind;
+
+  static const _keys = {
+    'leave': ApprovalKind.leave,
+    'allocation': ApprovalKind.allocation,
+    'attendance': ApprovalKind.attendance,
+    'shift': ApprovalKind.shift,
+    'work_type': ApprovalKind.workType,
+    'reimbursement': ApprovalKind.reimbursement,
+  };
+
+  static PendingApprovals? fromJson(Object? value) {
+    if (value is! Map<String, dynamic>) return null;
+    final total = value['total'];
+    final byKindJson = value['by_kind'];
+    if (total is! int || byKindJson is! Map<String, dynamic>) return null;
+    final byKind = <ApprovalKind, int>{
+      for (final MapEntry(:key, :value) in byKindJson.entries)
+        if (_keys[key] case final kind?)
+          if (value is int) kind: value,
+    };
+    return PendingApprovals(total: total, byKind: byKind);
+  }
+
+  String summary() => summarizeCounts({
+    for (final MapEntry(:key, :value) in byKind.entries)
+      key.label.toLowerCase(): value,
+  });
 }

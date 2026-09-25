@@ -14,6 +14,7 @@ import '../../../shared/widgets/error_state_card.dart';
 import '../../announcements/ui/announcements_screen.dart';
 import '../../punch/ui/punch_screen.dart';
 import '../data/home_api.dart';
+import '../../approvals/data/approval_models.dart';
 import '../../approvals/data/approvals_controller.dart';
 import '../data/home_models.dart';
 import 'home_sections.dart';
@@ -101,10 +102,10 @@ class _HomeBody extends ConsumerWidget {
                 ),
               ),
 
-              // Counted from the approvals queue itself -- the home aggregate
-              // carries no pending count -- and hidden at zero rather than
-              // telling every manager "0 requests need you".
-              if (data.capabilities.isManager) const _ApprovalsBand(),
+              // Hidden at zero rather than telling every manager "0 requests
+              // need you".
+              if (data.capabilities.isManager)
+                _ApprovalsBand(pendingApprovals: data.pendingApprovals),
 
               const SizedBox(height: 22),
               Text(
@@ -366,22 +367,44 @@ class _HomeSkeleton extends StatelessWidget {
 }
 
 class _ApprovalsBand extends ConsumerWidget {
-  const _ApprovalsBand();
+  const _ApprovalsBand({required this.pendingApprovals});
+
+  /// From the home aggregate. When present this band costs nothing extra --
+  /// no six-source, up-to-thirty-request fetch just to show a count.
+  final PendingApprovals? pendingApprovals;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final fromServer = pendingApprovals;
+    if (fromServer != null) {
+      if (fromServer.total == 0) return const SizedBox.shrink();
+      return _band(
+        context,
+        count: fromServer.total,
+        subtitle: fromServer.summary(),
+      );
+    }
+
+    // A server before PR #3407 has no pending_approvals field at all --
+    // fall back to counting the full inbox client-side, as this always did.
     final inbox = ref.watch(approvalsProvider).value;
     if (inbox == null || inbox.items.isEmpty) return const SizedBox.shrink();
-    return Padding(
-      padding: const EdgeInsets.only(top: AppSpace.x14),
-      child: RoleBand(
-        // The approvals band for HR executives too: the HR desk it would
-        // otherwise advertise is not built.
-        role: 'manager',
-        count: inbox.items.length,
-        subtitle: inbox.summary(),
-        onTap: () => context.go('/team/approvals'),
-      ),
-    );
+    return _band(context, count: inbox.items.length, subtitle: inbox.summary());
   }
+
+  Widget _band(
+    BuildContext context, {
+    required int count,
+    required String subtitle,
+  }) => Padding(
+    padding: const EdgeInsets.only(top: AppSpace.x14),
+    child: RoleBand(
+      // The approvals band for HR executives too: the HR desk it would
+      // otherwise advertise is not built.
+      role: 'manager',
+      count: count,
+      subtitle: subtitle,
+      onTap: () => context.go('/team/approvals'),
+    ),
+  );
 }

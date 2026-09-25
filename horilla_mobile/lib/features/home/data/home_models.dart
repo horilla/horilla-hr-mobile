@@ -6,6 +6,7 @@
 /// the whole screen.
 library;
 
+import '../../approvals/data/approval_models.dart';
 import '../../auth/data/auth_models.dart';
 
 class PunchState {
@@ -191,6 +192,7 @@ class HomeData {
     required this.onLeaveToday,
     required this.unreadNotifications,
     this.announcement,
+    this.pendingApprovals,
   });
 
   final SignedInUser user;
@@ -201,6 +203,10 @@ class HomeData {
   final List<ColleagueOnLeave> onLeaveToday;
   final int unreadNotifications;
   final AnnouncementSummary? announcement;
+
+  /// Null on a server before PR #3407 -- the Home approvals band falls back
+  /// to counting the full inbox client-side when this is absent.
+  final PendingApprovals? pendingApprovals;
 
   static HomeData fromJson(Map<String, dynamic> json) {
     Map<String, dynamic>? sub(String key) => json[key] is Map<String, dynamic>
@@ -223,6 +229,7 @@ class HomeData {
           ? json['unread_notifications'] as int
           : 0,
       announcement: AnnouncementSummary.fromJson(sub('announcement')),
+      pendingApprovals: PendingApprovals.fromJson(json['pending_approvals']),
     );
   }
 }

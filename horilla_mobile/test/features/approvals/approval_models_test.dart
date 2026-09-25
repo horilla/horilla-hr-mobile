@@ -199,4 +199,48 @@ void main() {
       expect(a.key, isNot(b.key));
     });
   });
+
+  group('pending approvals (the Home band, without the full fetch)', () {
+    test(
+      'parses total and each kind, matching the server\'s own field names',
+      () {
+        final p = PendingApprovals.fromJson({
+          'total': 63,
+          'by_kind': {
+            'leave': 37,
+            'allocation': 1,
+            'attendance': 7,
+            'shift': 8,
+            'work_type': 4,
+            'reimbursement': 6,
+          },
+        })!;
+        expect(p.total, 63);
+        expect(p.byKind[ApprovalKind.leave], 37);
+        expect(p.byKind[ApprovalKind.workType], 4);
+        expect(
+          p.summary(),
+          '37 leave · 8 shift change · 7 attendance fix · 11 more',
+        );
+      },
+    );
+
+    test(
+      'reimbursement is absent, not zero, for a caller without payroll perm',
+      () {
+        final p = PendingApprovals.fromJson({
+          'total': 12,
+          'by_kind': {'leave': 12},
+        })!;
+        expect(p.byKind.containsKey(ApprovalKind.reimbursement), isFalse);
+        expect(p.summary(), '12 leave');
+      },
+    );
+
+    test('missing or malformed is null, not a crash', () {
+      expect(PendingApprovals.fromJson(null), isNull);
+      expect(PendingApprovals.fromJson({'total': 'a lot'}), isNull);
+      expect(PendingApprovals.fromJson({'total': 3}), isNull);
+    });
+  });
 }
