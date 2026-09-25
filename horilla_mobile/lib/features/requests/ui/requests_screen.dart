@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 
 import '../../../core/theme/tokens.dart';
 import '../../../shared/widgets/app_card.dart';
+import '../../../shared/widgets/app_filter_chip.dart';
 import '../../../shared/widgets/app_primitives.dart';
 import '../../../shared/widgets/app_top_bar.dart';
 import '../../../shared/widgets/pressable.dart';
@@ -77,19 +78,19 @@ class _RequestsScreenState extends ConsumerState<RequestsScreen> {
       children: [
         Row(
           children: [
-            _FilterChip(
+            AppFilterChip(
               label: 'All ${inbox.requests.length}',
               selected: _filter == _Filter.all,
               onTap: () => setState(() => _filter = _Filter.all),
             ),
             const SizedBox(width: AppSpace.x8),
-            _FilterChip(
+            AppFilterChip(
               label: 'Pending ${inbox.open.length}',
               selected: _filter == _Filter.pending,
               onTap: () => setState(() => _filter = _Filter.pending),
             ),
             const SizedBox(width: AppSpace.x8),
-            _FilterChip(
+            AppFilterChip(
               label: 'Closed',
               selected: _filter == _Filter.closed,
               onTap: () => setState(() => _filter = _Filter.closed),
@@ -126,7 +127,9 @@ class _RequestsScreenState extends ConsumerState<RequestsScreen> {
       backgroundColor: AppColors.surface,
       showDragHandle: true,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadii.hero)),
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(AppRadii.hero),
+        ),
       ),
       builder: (sheetContext) => SafeArea(
         top: false,
@@ -253,7 +256,10 @@ class _CreateOption extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(title, style: AppText.cardTitle.copyWith(fontSize: 14)),
+                    Text(
+                      title,
+                      style: AppText.cardTitle.copyWith(fontSize: 14),
+                    ),
                     const SizedBox(height: 2),
                     Text(subtitle, style: AppText.meta),
                   ],
@@ -318,50 +324,6 @@ class _RequestRow extends StatelessWidget {
     RequestState.cancelled => StatusTone.neutral,
     RequestState.pending => StatusTone.warning,
   };
-}
-
-class _FilterChip extends StatelessWidget {
-  const _FilterChip({
-    required this.label,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final String label;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Semantics(
-      button: true,
-      selected: selected,
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpace.x14,
-            vertical: AppSpace.x8,
-          ),
-          decoration: BoxDecoration(
-            // The handoff fills the active chip with ink, not brand.
-            color: selected ? AppColors.ink : AppColors.surface,
-            borderRadius: BorderRadius.circular(AppRadii.chip),
-            border: Border.all(
-              color: selected ? AppColors.ink : AppColors.line,
-            ),
-          ),
-          child: Text(
-            label,
-            style: AppText.meta.copyWith(
-              color: selected ? AppColors.surface : AppColors.ink2,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 }
 
 class _EmptyRequests extends StatelessWidget {

@@ -13,6 +13,7 @@ import '../../../shared/widgets/pressable.dart';
 import '../../../shared/widgets/error_state_card.dart';
 import '../../punch/ui/punch_screen.dart';
 import '../data/home_api.dart';
+import '../../approvals/data/approvals_controller.dart';
 import '../data/home_models.dart';
 import 'home_sections.dart';
 import 'punch_card.dart';
@@ -66,10 +67,6 @@ class _HomeBody extends StatelessWidget {
 
   final HomeData data;
 
-  /// ponytail: always 0 until the home aggregate carries a pending count
-  /// (backend backlog). Wire it here when it does; the band appears on its own.
-  static const _pendingApprovals = 0;
-
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -103,18 +100,10 @@ class _HomeBody extends StatelessWidget {
                 ),
               ),
 
-              // Hidden until the server reports a pending-approvals count. The
-              // band used to render with a hard-wired 0 -- "0 requests need
-              // you" on every manager's home, true or not. The approvals
-              // screen is out of scope for this build anyway.
-              if (data.capabilities.isManager && _pendingApprovals > 0) ...[
-                const SizedBox(height: AppSpace.x14),
-                RoleBand(
-                  role: data.capabilities.role,
-                  count: _pendingApprovals,
-                  onTap: () => context.go('/team'),
-                ),
-              ],
+              // Counted from the approvals queue itself -- the home aggregate
+              // carries no pending count -- and hidden at zero rather than
+              // telling every manager "0 requests need you".
+              if (data.capabilities.isManager) const _ApprovalsBand(),
 
               const SizedBox(height: 22),
               Text(
@@ -157,7 +146,7 @@ class _HomeBody extends StatelessWidget {
                       icon: Icons.group_outlined,
                       label: 'Directory',
                       tone: QuickActionTone.info,
-                      onTap: () => context.go('/team'),
+                      onTap: () => context.go('/team/directory'),
                     ),
                   if (Modules.payroll)
                     QuickAction(
@@ -366,6 +355,27 @@ class _HomeSkeleton extends StatelessWidget {
         SizedBox(height: AppSpace.x16),
         AppCard.skeleton(height: 96),
       ],
+    );
+  }
+}
+
+class _ApprovalsBand extends ConsumerWidget {
+  const _ApprovalsBand();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final inbox = ref.watch(approvalsProvider).value;
+    if (inbox == null || inbox.items.isEmpty) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpace.x14),
+      child: RoleBand(
+        // The approvals band for HR executives too: the HR desk it would
+        // otherwise advertise is not built.
+        role: 'manager',
+        count: inbox.items.length,
+        subtitle: inbox.summary(),
+        onTap: () => context.go('/team/approvals'),
+      ),
     );
   }
 }

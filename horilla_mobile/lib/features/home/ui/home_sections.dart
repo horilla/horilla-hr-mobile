@@ -18,11 +18,15 @@ class RoleBand extends StatelessWidget {
     super.key,
     required this.role,
     required this.count,
+    this.subtitle,
     this.onTap,
   });
 
   final String role;
   final int count;
+
+  /// A breakdown under the headline, e.g. "3 leave · 1 shift change".
+  final String? subtitle;
   final VoidCallback? onTap;
 
   @override
@@ -57,9 +61,16 @@ class RoleBand extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: Text(
-              text,
-              style: AppText.cardTitle.copyWith(color: ink, fontSize: 13.5),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  text,
+                  style: AppText.cardTitle.copyWith(color: ink, fontSize: 13.5),
+                ),
+                if (subtitle != null && subtitle!.isNotEmpty)
+                  Text(subtitle!, style: AppText.meta.copyWith(color: ink)),
+              ],
             ),
           ),
           Icon(Icons.chevron_right, size: 20, color: ink),

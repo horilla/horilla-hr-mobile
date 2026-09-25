@@ -8,7 +8,14 @@ import 'pressable.dart';
 /// Not Material's ElevatedButton/OutlinedButton: those carry M3 tonal
 /// elevation and ripples, and this design has its own press state -- the
 /// shared 0.97 scale -- and its own brand shadow on the primary.
-enum AppButtonTone { primary, onDark, outlinedOnDark, danger, quiet }
+enum AppButtonTone {
+  primary,
+  onDark,
+  outlinedOnDark,
+  danger,
+  outlinedDanger,
+  quiet,
+}
 
 class AppButton extends StatelessWidget {
   const AppButton({
@@ -106,6 +113,11 @@ class AppButton extends StatelessWidget {
         );
       case AppButtonTone.danger:
         return (AppColors.danger, AppColors.surface, null);
+      case AppButtonTone.outlinedDanger:
+        // The secondary half of an Approve / Reject pair: same weight as
+        // Approve's footprint, but not a second filled button competing
+        // with it.
+        return (AppColors.surface, AppColors.danger, AppColors.dangerBorder);
       case AppButtonTone.quiet:
         return (AppColors.surface, AppColors.ink, AppColors.line);
     }

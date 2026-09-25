@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/auth/ui/sign_in_screen.dart';
+import '../../features/approvals/ui/approvals_screen.dart';
 import '../../features/attendance/data/attendance_models.dart';
 import '../../features/attendance/ui/attendance_screen.dart';
 import '../../features/attendance/ui/correction_screen.dart';
@@ -38,6 +39,7 @@ import '../../features/requests/ui/reimburse_screen.dart';
 import '../../features/requests/ui/requests_screen.dart';
 import '../../features/requests/ui/shift_request_screen.dart';
 import '../../features/shell/ui/app_shell.dart';
+import '../../features/team/ui/team_screen.dart';
 import '../scope.dart';
 import '../../shared/widgets/not_in_this_build_screen.dart';
 
@@ -221,9 +223,21 @@ GoRouter buildRouter({
             routes: [
               GoRoute(
                 path: '/team',
+                // Managers land on their team; everyone else on the
+                // directory, which is all this tab ever was for them.
                 builder: (context, state) => Modules.employee
-                    ? const DirectoryScreen()
+                    ? const TeamTab()
                     : const NotInThisBuildScreen(title: 'Team'),
+                routes: [
+                  GoRoute(
+                    path: 'approvals',
+                    builder: (context, state) => const ApprovalsScreen(),
+                  ),
+                  GoRoute(
+                    path: 'directory',
+                    builder: (context, state) => const DirectoryScreen(),
+                  ),
+                ],
               ),
             ],
           ),
