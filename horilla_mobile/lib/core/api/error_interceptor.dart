@@ -116,13 +116,31 @@ class ErrorInterceptor extends Interceptor {
     return '${label[0].toUpperCase()}${label.substring(1)}: $message';
   }
 
-  static const _headlineKeys = {'error', 'message', 'detail'};
+  // `non_field_errors` is DRF's key for an object-level ValidationError --
+  // it names no field, so rendering it beside one would invent a field
+  // called "non field errors". It belongs in the headline.
+  static const _headlineKeys = {
+    'error',
+    'message',
+    'detail',
+    'non_field_errors',
+  };
 
   String? _detail(Object? body) {
     if (body is! Map) return null;
     for (final key in _headlineKeys) {
       final value = body[key];
       if (value is String && value.isNotEmpty) return value;
+      // `non_field_errors` is always a list, and DRF will put several
+      // complaints in one. Reading only strings here would drop the message
+      // and leave the caller with a generic "Invalid request."
+      if (value is List) {
+        final messages = value
+            .whereType<Object>()
+            .map((v) => '$v')
+            .where((v) => v.isNotEmpty);
+        if (messages.isNotEmpty) return messages.join(' ');
+      }
     }
     return null;
   }

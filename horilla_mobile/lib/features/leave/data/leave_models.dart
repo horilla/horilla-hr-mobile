@@ -21,6 +21,11 @@ enum LeaveBreakdown {
 enum LeaveStatus {
   requested('requested', 'Pending'),
   approved('approved', 'Approved'),
+  // The leave is still approved and still in force -- the server keeps it in
+  // LEAVE_IN_EFFECT_STATUSES until a manager decides on the cancellation.
+  // Falling back to `requested` here (as any unknown status does) would have
+  // told the employee the opposite of the truth.
+  cancelRequested('cancel_requested', 'Cancellation requested'),
   cancelled('cancelled', 'Cancelled'),
   rejected('rejected', 'Rejected');
 

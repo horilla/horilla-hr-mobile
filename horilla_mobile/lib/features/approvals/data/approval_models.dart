@@ -25,6 +25,7 @@ enum ApprovalFilter {
 
 enum ApprovalKind {
   leave('Leave', ApprovalFilter.leave),
+  leaveCancellation('Leave cancellation', ApprovalFilter.leave),
   allocation('Leave allocation', ApprovalFilter.leave),
   attendance('Attendance fix', ApprovalFilter.attendance),
   shift('Shift change', ApprovalFilter.workType),
@@ -100,6 +101,34 @@ class ApprovalItem {
           ? 'Overlaps $clashes approved '
                 '${clashes == 1 ? 'leave' : 'leaves'} in the team.'
           : null,
+    );
+  }
+
+  /// A cancellation asked for on an *approved* leave (HR 2.2.0+).
+  ///
+  /// The leave is still in force until this is decided, which is why it has
+  /// to reach a manager: ignoring the status would leave the queue growing
+  /// where only the web can see it.
+  static ApprovalItem? fromLeaveCancellation(Object? v, {required int selfId}) {
+    if (v is! Map<String, dynamic> || v['status'] != 'cancel_requested') {
+      return null;
+    }
+    final employee = _nested(v['employee_id']);
+    if (employee == null || employee.$1 == selfId) return null;
+    final start = _date(v['start_date']);
+    final end = _date(v['end_date']);
+    final days = _num(v['requested_days']);
+    return ApprovalItem(
+      kind: ApprovalKind.leaveCancellation,
+      id: _int(v['id']),
+      employeeId: employee.$1,
+      name: employee.$2,
+      ask: [
+        'Cancel ${_nestedName(v['leave_type_id']) ?? 'leave'}',
+        if (start != null) _range(start, end),
+        if (days != null) _days(days),
+      ].join(' \u00b7 '),
+      warning: 'The leave stays approved until this is decided.',
     );
   }
 

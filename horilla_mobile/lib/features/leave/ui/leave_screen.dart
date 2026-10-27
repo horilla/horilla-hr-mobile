@@ -416,6 +416,9 @@ class _RequestCard extends StatelessWidget {
     LeaveStatus.approved => StatusTone.success,
     LeaveStatus.rejected => StatusTone.danger,
     LeaveStatus.cancelled => StatusTone.neutral,
+    // Still approved, still in force -- warning, not neutral, because
+    // something is outstanding on it.
+    LeaveStatus.cancelRequested => StatusTone.warning,
     LeaveStatus.requested => StatusTone.warning,
   };
 }
