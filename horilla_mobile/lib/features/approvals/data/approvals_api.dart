@@ -46,6 +46,13 @@ class ApprovalsApi {
         (v) => ApprovalItem.fromLeave(v, selfId: selfId),
       ),
       (
+        // HR 2.2.0+. Older servers have no such status and answer with an
+        // empty list, so this source simply contributes nothing there.
+        '/leave/request/',
+        {'status': 'cancel_requested'},
+        (v) => ApprovalItem.fromLeaveCancellation(v, selfId: selfId),
+      ),
+      (
         '/leave/allocation-request/',
         const {},
         (v) => ApprovalItem.fromAllocation(v, selfId: selfId),
@@ -147,6 +154,11 @@ class ApprovalsApi {
       switch (item.kind) {
         case ApprovalKind.leave:
           await _send('PUT', '/leave/${approve ? 'approve' : 'reject'}/$id/');
+        case ApprovalKind.leaveCancellation:
+          await _send(
+            'PUT',
+            '/leave/cancellation-${approve ? 'approve' : 'reject'}/$id/',
+          );
         case ApprovalKind.allocation:
           await _send(
             'PUT',

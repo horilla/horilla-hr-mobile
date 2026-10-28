@@ -35,6 +35,7 @@ class Capabilities {
     required this.permissions,
     required this.features,
     this.currencySymbol,
+    this.serverVersion,
   });
 
   final String role;
@@ -45,6 +46,16 @@ class Capabilities {
   /// come from the server. Null when this release does not send it -- money
   /// is then rendered without a symbol rather than in a guessed currency.
   final String? currencySymbol;
+
+  /// The server's own release string, e.g. `2.2.0`. `/health/` deliberately
+  /// withholds it (see [kMinimumApiContract]); it arrives here instead, once
+  /// the caller is authenticated.
+  ///
+  /// Behaviour must not be branched on this casually -- a feature that can be
+  /// detected should be detected. It exists because some server changes are
+  /// visible only as changed semantics on an unchanged endpoint, and a single
+  /// app build meets installs several releases apart.
+  final String? serverVersion;
 
   static const empty = Capabilities(
     role: 'employee',
@@ -61,6 +72,7 @@ class Capabilities {
   static Capabilities fromJson(Map<String, dynamic>? json) {
     if (json == null) return empty;
     final currency = json['currency_symbol'];
+    final version = json['version'];
     return Capabilities(
       role: json['role'] is String ? json['role'] as String : 'employee',
       permissions: _bools(json['permissions']),
@@ -68,6 +80,7 @@ class Capabilities {
       currencySymbol: currency is String && currency.isNotEmpty
           ? currency
           : null,
+      serverVersion: version is String && version.isNotEmpty ? version : null,
     );
   }
 
