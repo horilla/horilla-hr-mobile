@@ -170,4 +170,18 @@ void main() {
       expect(formatDistance(-5), '0 m');
     });
   });
+
+  group('uncertainty-aware office boundary', () {
+    test('40 m plus 9 m accuracy is accepted', () {
+      expect(isWithinAccuracyBoundary(distanceFromOffice: 40, accuracy: 9), isTrue);
+    });
+
+    test('40 m plus 10 m accuracy is accepted at exactly 50 m', () {
+      expect(isWithinAccuracyBoundary(distanceFromOffice: 40, accuracy: 10), isTrue);
+    });
+
+    test('49 m plus 25 m accuracy is rejected', () {
+      expect(isWithinAccuracyBoundary(distanceFromOffice: 49, accuracy: 25), isFalse);
+    });
+  });
 }

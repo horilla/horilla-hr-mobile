@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/api/api_failure.dart';
-import '../../../core/auth/session.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_top_bar.dart';
@@ -14,6 +13,7 @@ import '../../../shared/widgets/toast.dart';
 import '../../home/data/home_models.dart';
 import '../../home/ui/live_clock.dart';
 import '../data/punch_controller.dart';
+import 'punch_photo_capture_screen.dart';
 
 /// Screen 3 of the handoff: confirm a punch.
 ///
@@ -77,17 +77,19 @@ class _PunchScreenState extends ConsumerState<PunchScreen> {
     if (mounted) setState(() => _preparation = preparation);
   }
 
-  /// Runs the presence check first when the server has face detection on
-  /// for this company -- a liveness-style nudge, not a security control (see
-  /// FacePresenceGate). Camera failure or a declined permission still lets
-  /// the punch through via that screen's own skip button, so hardware never
-  /// blocks the one action this whole screen exists for.
   Future<void> _confirmThenSubmit() async {
-    final session = ref.read(sessionProvider);
-    if (session != null && session.faceDetectionEnabled) {
-      final confirmed = await context.push<bool>('/punch/face-check');
-      if (confirmed != true) return;
-    }
+    final photo = await context.push<PunchPhotoCaptureResult>('/punch/face-check');
+    if (photo == null || !mounted) return;
+    final preparation = _preparation;
+    if (preparation == null) return;
+    setState(() => _preparation = PunchPreparation(
+      isClockingIn: preparation.isClockingIn,
+      coordinates: preparation.coordinates,
+      fence: preparation.fence,
+      locationFailure: preparation.locationFailure,
+      faceImage: photo.jpegBytes,
+      faceCapturedAt: photo.capturedAt,
+    ));
     await _submit();
   }
 

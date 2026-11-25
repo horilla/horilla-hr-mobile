@@ -89,7 +89,7 @@ class SessionController extends Notifier<Session?> {
     // so this leaves no half-session behind.
     if (!result.hasMobileApi) {
       throw const ApiIncompatibleServer(
-        'Signed in, but this Horilla server is missing the mobile API. '
+        'Signed in, but this eQOURSE Work server is missing the mobile API. '
         'It needs updating before the app can use it.',
       );
     }
@@ -113,6 +113,21 @@ class SessionController extends Notifier<Session?> {
     );
     await ref.read(profileStoreProvider).write(profile);
 
+    ref.read(apiClientProvider).useHost(host);
+    state = _sessionFrom(host, profile);
+  }
+
+  Future<void> signInWithGoogle({required String rawHost, required String idToken}) async {
+    final normalised = normaliseHost(rawHost);
+    if (!normalised.isValid) throw ApiIncompatibleServer(normalised.error!);
+    final host = normalised.host;
+    final api = ref.read(authApiProvider);
+    await api.probe(host);
+    final result = await api.signInWithGoogle(host: host, idToken: idToken);
+    if (!result.hasMobileApi) throw const ApiIncompatibleServer('Signed in, but this eQOURSE Work server is missing the mobile API. It needs updating before the app can use it.');
+    await ref.read(tokenStoreProvider).write(StoredSession(host: host, accessToken: result.accessToken, refreshToken: result.refreshToken));
+    final profile = StoredProfile(user: result.user, capabilities: result.capabilities, isCleartext: normalised.isCleartext, geoFencingEnabled: result.geoFencingEnabled, faceDetectionEnabled: result.faceDetectionEnabled);
+    await ref.read(profileStoreProvider).write(profile);
     ref.read(apiClientProvider).useHost(host);
     state = _sessionFrom(host, profile);
   }

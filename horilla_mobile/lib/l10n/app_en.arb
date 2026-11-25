@@ -1,11 +1,11 @@
 {
   "@@locale": "en",
-  "appTitle": "Horilla HR",
+  "appTitle": "eQOURSE Work",
   "signInHeadline": "Your workday,\nin your pocket.",
   "@signInHeadline": {
     "description": "Sign-in screen headline. The line break is intentional; it is set as two lines in the design."
   },
-  "signInSubcopy": "Punch in, book leave and track approvals on your company's Horilla HRMS.",
+  "signInSubcopy": "Punch in, book leave and track approvals on your company's eQOURSE Work.",
   "signInServerLabel": "Server",
   "signInServerHint": "https://hr.yourcompany.com",
   "signInUsernameLabel": "Username",

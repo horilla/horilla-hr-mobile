@@ -243,7 +243,7 @@ class _ApprovalCard extends StatelessWidget {
             // Said rather than hidden, so a manager looking for Reject knows
             // where it went.
             Text(
-              'To reject this one, use the Horilla web app.',
+              'To reject this one, use eQOURSE Work on the web.',
               style: AppText.meta,
             ),
           ],

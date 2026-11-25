@@ -41,6 +41,7 @@ class Coordinates {
     required this.latitude,
     required this.longitude,
     this.accuracy,
+    this.capturedAt,
   });
 
   final double latitude;
@@ -48,6 +49,7 @@ class Coordinates {
 
   /// Metres of uncertainty, when the platform reports it.
   final double? accuracy;
+  final DateTime? capturedAt;
 }
 
 abstract interface class LocationService {
@@ -98,6 +100,7 @@ class GeolocatorLocationService implements LocationService {
         latitude: position.latitude,
         longitude: position.longitude,
         accuracy: position.accuracy,
+        capturedAt: (position.timestamp ?? DateTime.now()).toUtc(),
       );
     } on Exception {
       throw const LocationFailure(

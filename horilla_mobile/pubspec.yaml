@@ -1,5 +1,5 @@
-name: horilla_mobile
-description: Horilla HR — your workday, in your pocket.
+name: eqourse_work
+description: eQOURSE Work — your workday, in your pocket.
 publish_to: 'none'
 
 # versionCode must only ever increase. A device in the field was found
@@ -44,6 +44,7 @@ dependencies:
   cached_network_image: ^3.4.1
   intl: ^0.20.2
   package_info_plus: ^8.3.1
+  google_sign_in: ^6.2.2
 
 # path_provider_android 2.3.x pulls in `jni`, which adds a CMake/NDK native
 # build to every Android build. Nothing here needs JNI -- it arrives

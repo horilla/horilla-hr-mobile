@@ -162,7 +162,7 @@ class MeScreen extends ConsumerWidget {
                       const SizedBox(height: AppSpace.x8),
                       Text(
                         'Attendance, leave, payslips, requests and your team '
-                        'directory. Helpdesk is in the Horilla web app for '
+                        'directory. Helpdesk is in eQOURSE Work on the web for '
                         'now.',
                         style: AppText.body,
                       ),
@@ -175,7 +175,7 @@ class MeScreen extends ConsumerWidget {
                   child: Text(
                     // The host is already a row above; the footer names only
                     // the app and its build.
-                    ['Horilla HR', ?version].join(' · '),
+                    ['eQOURSE Work', ?version].join(' · '),
                     textAlign: TextAlign.center,
                     style: AppText.mono.copyWith(
                       fontSize: 11,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../../../core/api/api_failure.dart';
 import '../../../core/api/host.dart';
@@ -16,7 +17,7 @@ import '../../../shared/widgets/pressable.dart';
 /// The host field is on the first screen rather than buried in settings
 /// because self-hosted installs are the common case for this product.
 /// Server the host field starts on. See the controller below for why.
-const String kDefaultHost = 'https://hr.demo.horilla.com';
+const String kDefaultHost = 'https://work.eqourse.com';
 
 class SignInScreen extends ConsumerStatefulWidget {
   const SignInScreen({super.key, this.onSignedIn});
@@ -115,6 +116,22 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
             _formError = failure.message;
         }
       });
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  Future<void> _signInWithGoogle() async {
+    setState(() { _busy = true; _formError = null; _hostError = null; });
+    try {
+      final account = await GoogleSignIn(scopes: const ['email']).signIn();
+      if (account == null) return;
+      final token = (await account.authentication).idToken;
+      if (token == null || token.isEmpty) throw const ApiUnknown('Google did not return a verifiable sign-in token.');
+      await ref.read(sessionProvider.notifier).signInWithGoogle(rawHost: _host.text, idToken: token);
+      if (mounted) widget.onSignedIn?.call();
+    } on ApiFailure catch (failure) {
+      if (mounted) setState(() => _formError = failure.message);
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -241,14 +258,11 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                   ),
                   const SizedBox(height: AppSpace.x18),
 
-                  // Disabled deliberately: there is no SAML or SSO anywhere in
-                  // the Horilla backend, so a live-looking button would
-                  // promise something that does not exist.
                   AppButton(
-                    label: l10n.signInSso,
+                    label: 'Continue with Google',
                     tone: AppButtonTone.quiet,
-                    icon: Icons.shield_outlined,
-                    onPressed: null,
+                    icon: Icons.login,
+                    onPressed: _busy ? null : _signInWithGoogle,
                   ),
 
                   const SizedBox(height: 40),

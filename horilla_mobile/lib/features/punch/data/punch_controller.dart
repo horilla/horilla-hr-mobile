@@ -6,6 +6,8 @@
 /// injected.
 library;
 
+import 'dart:typed_data';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,12 +28,16 @@ class PunchPreparation {
     this.coordinates,
     this.fence,
     this.locationFailure,
+    this.faceImage,
+    this.faceCapturedAt,
   });
 
   final bool isClockingIn;
   final Coordinates? coordinates;
   final FencePosition? fence;
   final LocationFailure? locationFailure;
+  final Uint8List? faceImage;
+  final DateTime? faceCapturedAt;
 
   /// Whether the punch button should be live.
   ///
@@ -40,17 +46,20 @@ class PunchPreparation {
   /// does not offer a button that the server will refuse -- being told "no"
   /// before tapping is better than after.
   bool get canSubmit {
-    if (locationFailure != null) return false;
-    if (fence == null) return true; // no fence configured, or not required
-    return fence!.isInside;
+    if (locationFailure != null || coordinates == null) return false;
+    final accuracy = coordinates!.accuracy;
+    return accuracy != null && accuracy >= 0 && accuracy <= 25;
   }
 
   String? get blockedReason {
     if (locationFailure != null) return locationFailure!.message;
+    if (coordinates == null) return 'Getting your location…';
+    final accuracy = coordinates!.accuracy;
+    if (accuracy == null || accuracy > 25) {
+      return 'GPS accuracy is ${accuracy == null ? 'unavailable' : '±${accuracy.toStringAsFixed(1)} m'}. It must be ±25 m or better. Retry your location.';
+    }
     if (fence != null && !fence!.isInside) {
-      return 'You are ${formatDistance(fence!.metresOutside)} outside your '
-          'workplace. Move closer to clock '
-          '${isClockingIn ? 'in' : 'out'}.';
+      return 'Estimated distance is ${formatDistance(fence!.distanceFromCentre)} with ±${accuracy.toStringAsFixed(1)} m accuracy. Approved WFH/remote staff may continue; onsite punches must be within the approved boundary.';
     }
     return null;
   }
@@ -70,11 +79,6 @@ class PunchController {
     required bool isClockingIn,
     required GeofenceState geofence,
   }) async {
-    if (!geofence.enabled) {
-      // No fence, so no reason to ask for a location the server will not use.
-      return PunchPreparation(isClockingIn: isClockingIn);
-    }
-
     try {
       final coordinates = await _ref.read(locationServiceProvider).current();
       return PunchPreparation(
@@ -98,6 +102,9 @@ class PunchController {
 
   /// Sends the punch, then drops the screens whose data it just changed.
   Future<void> submit(PunchPreparation preparation) async {
+    if (preparation.faceImage == null || preparation.faceImage!.isEmpty) {
+      throw const ApiUnknown('Camera evidence is required. Take and submit a face photo first.');
+    }
     final dio = _ref.read(apiClientProvider).dio;
     final path = preparation.isClockingIn
         ? '/attendance/clock-in/'
@@ -106,15 +113,18 @@ class PunchController {
     try {
       final response = await dio.post<dynamic>(
         path,
-        data: {
-          // Sent when there is a fence; the server re-checks them and is the
-          // authority. Omitted entirely when there is no fence, rather than
-          // sent as nulls the server would have to interpret.
+        data: FormData.fromMap({
           if (preparation.coordinates != null) ...{
             'latitude': preparation.coordinates!.latitude,
             'longitude': preparation.coordinates!.longitude,
+            'accuracy': preparation.coordinates!.accuracy,
+            'location_timestamp': preparation.coordinates!.capturedAt?.millisecondsSinceEpoch,
           },
-        },
+          'face_image': MultipartFile.fromBytes(
+            preparation.faceImage ?? Uint8List(0),
+            filename: 'attendance-face.jpg',
+          ),
+        }),
       );
       // Clock-in answers 200 with {"error": "..."} when the employee has no
       // work information. That is a refusal, not a saved punch.

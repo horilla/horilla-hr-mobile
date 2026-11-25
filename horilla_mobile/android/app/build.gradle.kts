@@ -8,7 +8,7 @@ plugins {
 }
 
 android {
-    namespace = "com.cybrosys.horilla_project"
+    namespace = "com.eqourse.work"
     compileSdk = 36
     // camera_android_camerax, google_mlkit_* and several other plugins all
     // require this NDK; the flutter tool prints the exact version to pin
@@ -24,7 +24,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.cybrosys.horilla_project"
+        applicationId = "com.eqourse.work"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion

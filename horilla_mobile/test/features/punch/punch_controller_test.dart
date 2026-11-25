@@ -7,6 +7,7 @@
 library;
 
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -37,9 +38,9 @@ class FakeLocation implements LocationService {
 
 const _office = GeofenceState(
   enabled: true,
-  latitude: 12.9716,
-  longitude: 77.5946,
-  radiusInMeters: 150,
+  latitude: 25.14402,
+  longitude: 75.84506,
+  radiusInMeters: 50,
 );
 
 Future<PunchPreparation> prepare({
@@ -61,7 +62,7 @@ void main() {
   test('inside the fence, the punch is allowed', () async {
     final preparation = await prepare(
       location: FakeLocation.at(
-        const Coordinates(latitude: 12.9716, longitude: 77.5946),
+        Coordinates(latitude: 25.14402, longitude: 75.84506, accuracy: 9, capturedAt: DateTime.now().toUtc()),
       ),
     );
 
@@ -70,33 +71,30 @@ void main() {
     expect(preparation.fence!.isInside, isTrue);
   });
 
-  test('outside the fence, the punch is refused before it is sent', () async {
-    // Better to say no here than to let the server say no after a round trip.
+  test('outside the fence is shown while the server decides onsite versus WFH', () async {
     final preparation = await prepare(
       location: FakeLocation.at(
-        const Coordinates(latitude: 9.9312, longitude: 76.2673),
+        Coordinates(latitude: 9.9312, longitude: 76.2673, accuracy: 9, capturedAt: DateTime.now().toUtc()),
       ),
     );
 
-    expect(preparation.canSubmit, isFalse);
-    expect(preparation.blockedReason, contains('outside your workplace'));
+    expect(preparation.canSubmit, isTrue);
+    expect(preparation.blockedReason, contains('Estimated distance'));
   });
 
   test('the refusal says which way the punch was going', () async {
     final out = await prepare(
       location: FakeLocation.at(
-        const Coordinates(latitude: 9.9312, longitude: 76.2673),
+        Coordinates(latitude: 9.9312, longitude: 76.2673, accuracy: 9, capturedAt: DateTime.now().toUtc()),
       ),
       isClockingIn: false,
     );
-    expect(out.blockedReason, contains('clock out'));
+    expect(out.blockedReason, contains('Approved WFH'));
   });
 
-  test('no fence configured means no location is requested at all', () async {
-    // Asking for a location the server will not use is a permission prompt
-    // with nothing behind it.
+  test('no fence configured still requests fresh evidence for every punch', () async {
     final location = FakeLocation.at(
-      const Coordinates(latitude: 0, longitude: 0),
+      Coordinates(latitude: 0, longitude: 0, accuracy: 9, capturedAt: DateTime.now().toUtc()),
     );
 
     final preparation = await prepare(
@@ -104,9 +102,9 @@ void main() {
       geofence: const GeofenceState(enabled: false),
     );
 
-    expect(location.calls, 0);
+    expect(location.calls, 1);
     expect(preparation.canSubmit, isTrue);
-    expect(preparation.coordinates, isNull);
+    expect(preparation.coordinates, isNotNull);
   });
 
   group('location failures each block, with their own words', () {
@@ -177,7 +175,7 @@ void main() {
     // A misconfigured radius must not become a fence nobody can be inside.
     final preparation = await prepare(
       location: FakeLocation.at(
-        const Coordinates(latitude: 12.9716, longitude: 77.5946),
+        Coordinates(latitude: 12.9716, longitude: 77.5946, accuracy: 9, capturedAt: DateTime.now().toUtc()),
       ),
       geofence: const GeofenceState(
         enabled: true,
@@ -198,7 +196,7 @@ void main() {
 
     await container
         .read(punchControllerProvider)
-        .submit(const PunchPreparation(isClockingIn: false));
+        .submit(PunchPreparation(isClockingIn: false, faceImage: Uint8List.fromList([1])));
 
     expect(adapter.clockOuts, 1);
   });
@@ -214,7 +212,7 @@ void main() {
     expect(
       () => container
           .read(punchControllerProvider)
-          .submit(const PunchPreparation(isClockingIn: true)),
+          .submit(PunchPreparation(isClockingIn: true, faceImage: Uint8List.fromList([1]))),
       throwsA(
         isA<ApiUnknown>().having(
           (e) => e.message,
@@ -233,7 +231,7 @@ void main() {
     expect(
       () => container
           .read(punchControllerProvider)
-          .submit(const PunchPreparation(isClockingIn: false)),
+          .submit(PunchPreparation(isClockingIn: false, faceImage: Uint8List.fromList([1]))),
       throwsA(
         isA<ApiUnknown>().having(
           (e) => e.message,

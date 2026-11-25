@@ -141,4 +141,26 @@ class AuthApi {
       throw failure is ApiFailure ? failure : const ApiUnknown();
     }
   }
+
+  Future<SignInResult> signInWithGoogle({
+    required String host,
+    required String idToken,
+  }) async {
+    try {
+      final response = await _client.dio.post<dynamic>(
+        '$host$kApiPrefix/auth/google/',
+        data: {'id_token': idToken},
+        options: Options(extra: {AuthInterceptor.skipAuthKey: true}),
+      );
+      final body = response.data;
+      final result = body is Map<String, dynamic>
+          ? SignInResult.fromJson(body)
+          : null;
+      if (result == null) throw const ApiIncompatibleServer();
+      return result;
+    } on DioException catch (e) {
+      final failure = e.error;
+      throw failure is ApiFailure ? failure : const ApiUnknown();
+    }
+  }
 }

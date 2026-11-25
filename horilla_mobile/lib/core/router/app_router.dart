@@ -25,7 +25,7 @@ import '../../features/employee/ui/directory_screen.dart';
 import '../../features/employee/ui/me_screen.dart';
 import '../../features/employee/ui/personal_info_screen.dart';
 import '../../features/facedetection/ui/face_enrolment_screen.dart';
-import '../../features/facedetection/ui/face_presence_gate.dart';
+import '../../features/punch/ui/punch_photo_capture_screen.dart';
 import '../../features/home/data/home_models.dart';
 import '../../features/home/ui/home_screen.dart';
 import '../../features/punch/ui/punch_screen.dart';
@@ -100,7 +100,7 @@ GoRouter buildRouter({
         routes: [
           GoRoute(
             path: 'face-check',
-            builder: (context, state) => const FacePresenceGate(),
+            builder: (context, state) => const PunchPhotoCaptureScreen(),
           ),
         ],
       ),

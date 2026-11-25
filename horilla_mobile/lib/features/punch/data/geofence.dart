@@ -16,6 +16,20 @@ import 'dart:math' as math;
 /// closely enough at fence distances (tens to hundreds of metres).
 const double _earthRadiusMetres = 6371008.8;
 
+const double kOfficeRadiusMetres = 50;
+const double kMaximumGpsAccuracyMetres = 25;
+
+/// The uncertainty-aware onsite rule used by the server.
+bool isWithinAccuracyBoundary({
+  required double distanceFromOffice,
+  required double accuracy,
+  double radius = kOfficeRadiusMetres,
+  double maximumAccuracy = kMaximumGpsAccuracyMetres,
+}) =>
+    accuracy >= 0 &&
+    accuracy <= maximumAccuracy &&
+    distanceFromOffice + accuracy <= radius;
+
 /// Great-circle distance between two points, in metres.
 ///
 /// Haversine rather than a flat approximation: a flat one is fine at 100 m

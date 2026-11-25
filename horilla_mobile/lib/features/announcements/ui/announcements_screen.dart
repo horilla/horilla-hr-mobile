@@ -373,7 +373,7 @@ class _FileAttachment extends StatelessWidget {
                   style: AppText.body.copyWith(fontWeight: FontWeight.w600),
                 ),
                 Text(
-                  'Open Horilla on the web to download',
+                  'Open eQOURSE Work on the web to download',
                   style: AppText.meta.copyWith(color: AppColors.ink4),
                 ),
               ],

@@ -3,5 +3,5 @@
      launcher from the released app, which sits beside it under a different
      application id. -->
 <resources>
-    <string name="app_name">Horilla dev</string>
+    <string name="app_name">eQOURSE Work dev</string>
 </resources>

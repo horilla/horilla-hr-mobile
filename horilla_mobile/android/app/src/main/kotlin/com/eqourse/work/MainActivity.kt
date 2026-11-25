@@ -1,4 +1,4 @@
-package com.cybrosys.horilla_project
+package com.eqourse.work
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 
@@ -6,3 +6,4 @@ import io.flutter.embedding.android.FlutterFragmentActivity
 // androidx.biometric.BiometricPrompt -- plain FlutterActivity isn't one and
 // crashes with a ClassCastException the first time authenticate() is called.
 class MainActivity : FlutterFragmentActivity()
+

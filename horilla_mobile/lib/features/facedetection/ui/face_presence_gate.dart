@@ -1,9 +1,8 @@
-/// A presence check between the punch button and the actual punch.
+/// Legacy presence screen retained for upstream compatibility.
 ///
-/// This confirms *a face is in frame*, nothing more -- there is no
-/// server-side matching to compare against (see facedetection_api.dart), and
-/// this screen makes no identity claim. It is a liveness-style nudge against
-/// the most casual buddy-punch, not a security control.
+/// The production punch route uses PunchPhotoCaptureScreen, which sends the
+/// confirmed image to the server. This legacy screen must never provide a
+/// skip path to attendance.
 ///
 /// ponytail: "N consecutive frames with a face" is the whole liveness story
 /// here -- no blink/smile prompt, no anti-spoof check against a photo held
@@ -235,8 +234,8 @@ class _FacePresenceGateState extends State<FacePresenceGate> {
         return _fallback(
           context,
           message:
-              'Camera access is off for Horilla HR, so this step can\'t run. '
-              'Turn it on in Settings, or skip and punch without it.',
+              'Camera access is off for eQOURSE Work. Turn it on in Settings '
+              'before submitting attendance.',
         );
       case _Status.unavailable:
         return _fallback(
@@ -259,9 +258,9 @@ class _FacePresenceGateState extends State<FacePresenceGate> {
           ),
           const SizedBox(height: AppSpace.x20),
           AppButton(
-            label: 'Skip and punch anyway',
+            label: 'Back to punch',
             tone: AppButtonTone.onDark,
-            onPressed: () => context.pop(true),
+            onPressed: () => context.pop(false),
           ),
         ],
       ),

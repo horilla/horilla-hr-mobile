@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Horilla</string>
+	<string>eQOURSE Work</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -15,7 +15,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>Horilla</string>
+	<string>eQOURSE Work</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -34,7 +34,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>This app requires camera access to capture photos and videos.</string>
 	<key>NSFaceIDUsageDescription</key>
-	<string>Use Face ID to unlock Horilla HR instead of leaving it open in the background.</string>
+	<string>Use Face ID to unlock eQOURSE Work instead of leaving it open in the background.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>This app requires location access to function properly even when running in the background.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>

@@ -237,7 +237,7 @@ class _FaceEnrolmentScreenState extends ConsumerState<FaceEnrolmentScreen> {
         );
       case _Status.denied:
         return _fallback(
-          'Camera access is off for Horilla HR. Turn it on in Settings to '
+          'Camera access is off for eQOURSE Work. Turn it on in Settings to '
           'enrol a reference photo.',
         );
       case _Status.unavailable:
